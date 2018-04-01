@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on David Salazar</title>
-    <link>/post/</link>
-    <description>Recent content in Posts on David Salazar</description>
+    <title>Posts on Humanistic Musings</title>
+    <link>https://David-Salazar.github.io/post/</link>
+    <description>Recent content in Posts on Humanistic Musings</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 23 Jul 2015 21:13:14 -0500</lastBuildDate>
+    <lastBuildDate>Sun, 01 Apr 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://David-Salazar.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Hello R Markdown</title>
-      <link>/post/2015-07-23-r-rmarkdown/</link>
-      <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
+      <title>Shiny e iCOLCAP</title>
+      <link>https://David-Salazar.github.io/2018/04/01/shiny-e-icolcap/</link>
+      <pubDate>Sun, 01 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/post/2015-07-23-r-rmarkdown/</guid>
-      <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
-You can embed an R code chunk like this:
-summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.</description>
+      <guid>https://David-Salazar.github.io/2018/04/01/shiny-e-icolcap/</guid>
+      <description>Siguiendo una inversión decepecionante El mercado colombiano ha sido una decepción en los últimos cinco años. Para ver qué tan decepcionado debería estar, cree esta Shiny app. Para no ovlidarme de cómo se construyen en el futuro, acá un tutorial breve comentando selecciones del código:
+ui: User Interface En la ui especificamos la organización de los inputs y outputs, aún cuando no hayamos creado estos últimos.
+ui &amp;lt;- fluidPage( # Application title titlePanel(&amp;quot;Comparación de Mercado&amp;quot;), # Sidebar with a date input sidebarLayout( dateInput(&amp;quot;fecha_inicial&amp;quot;, &amp;quot;Fecha de inicio de comparación:&amp;quot;, value = &amp;quot;2013-01-01&amp;quot;) # primer argumento input$fecha_inicial, como nos referiremos a esto en server.</description>
     </item>
     
   </channel>
