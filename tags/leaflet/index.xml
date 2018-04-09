@@ -2,24 +2,24 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Leaflet on Humanistic Musings</title>
-    <link>/tags/leaflet/</link>
+    <link>https://david-salazar.github.io/tags/leaflet/</link>
     <description>Recent content in Leaflet on Humanistic Musings</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 03 Apr 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/leaflet/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://david-salazar.github.io/tags/leaflet/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Tutorial Leaflet Chorophlets</title>
-      <link>/2018/04/tutorial-leaflet-chorophlets/</link>
+      <link>https://david-salazar.github.io/2018/04/tutorial-leaflet-chorophlets/</link>
       <pubDate>Tue, 03 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/04/tutorial-leaflet-chorophlets/</guid>
+      <guid>https://david-salazar.github.io/2018/04/tutorial-leaflet-chorophlets/</guid>
       <description>Leaflet Leaflet is javascript library. You can access it, like many other cool interactive libraries (i.e., dygraphs) thanks to the work of people in RStudio. Here, I’ll layout a basic structure for plotting simple maps in leaflet and then how to advance them and plot chorophlets.
 Inspired by:
- https://rstudio.github.io/leaflet/choropleths.html https://stackoverflow.com/questions/47571337/how-to-create-a-choropleth-on-a-leaflet-map-r  Loading packages library(tidyverse) ## ── Attaching packages ────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.</description>
+ https://rstudio.github.io/leaflet/choropleths.html https://stackoverflow.com/questions/47571337/how-to-create-a-choropleth-on-a-leaflet-map-r  Loading packages library(tidyverse) ## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────────── tidyverse 1.</description>
     </item>
     
   </channel>
