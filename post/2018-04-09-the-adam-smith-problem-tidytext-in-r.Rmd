@@ -17,7 +17,7 @@ This is a fun (for me) exercise to explore [Text Mining with R](https://www.tidy
 
 Around the XIX century, some german scholars posited that Wealth of Nations' Adam Smith was too different to Theory of Moral Sentiments' Adam Smith, thus concluded that he must have had a change of heart somewhere along his life or that he was simply an incoherent man. 
 
-I tend to think that the differences between the books are overstated, and, although they treat very different subjects, they fit within a greater scientific investigation. Let's use `tidytext` principles to investigate the differences between the books. However, I do not think these similarities can be found with a quantitative bend; quite the opposite, I believe this little experiment will yield the superficial differences between the books. Let's see what we find. 
+I tend to think that the differences between the books are overstated, and, although they treat very different subjects, they fit within a greater scientific investigation. Let's use `tidytext` principles to investigate the books. However, I do not think that any of the similarities can be found with a quantitative bend; quite the opposite, I believe this little experiment will yield the superficial differences between the books. Let's see what we find. 
 
 ## Load packages and Data
 
@@ -38,7 +38,7 @@ Let's use the `gutenbergr` to access the books:
 gutenberg_works(author == "Smith, Adam")
 ```
 
-Revealing that project gutenber has no "Theory of the moral Sentiments" :). Let's download the text from [here](http://ota.ox.ac.uk/desc/3189).
+Revealing that project gutenberg has no "Theory of the moral Sentiments" :). Let's download the text from [here](http://ota.ox.ac.uk/desc/3189).
 
 ```{r}
 wealth <- gutenberg_download(gutenberg_id = 3300) %>% 
@@ -85,7 +85,7 @@ smith_books_tidy %>%
     labs(x = "")
 ```
 
-Well, Smith definitely wrote two books with (just in the surface, as his theses were very similar. cf. Marketplace Smith) different subjects, as shown by the very different words he uses in both books. 
+Well, Smith definitely wrote two books with (cf. Adam Smith's Marketplace of Life) different subjects, as shown by the very different words he uses in both books. 
 
 ## Sentiment Analysis
 
@@ -104,7 +104,7 @@ smith_books_tidy %>%
     ggthemes::scale_color_gdocs(guide = FALSE)
 ```
 
-Whereas the "Theory" seems to start off neutral and end on a happy note, the "Wealth" seems to progressively get more positive but ends on a quite sad note. My former Adam Smith obsessed self may have told you why this is thus, but I forgot the chapters order and their corresponding subjects. However, there does not seem to be a ground to argue that the "Wealth of Nations" is "much dismal" than the "Theory of Moral Sentiments".
+Whereas the "Theory" seems to start off neutral and end on a happy note, the "Wealth" seems to progressively get more positive but ends on quite a sad note. My former Adam Smith obsessed self may have told you why this is thus, but I forgot the chapters order and their corresponding subjects. However, there does not seem to be a ground to argue that the "Wealth of Nations" is "much dismal" than the "Theory of Moral Sentiments".
 
 ## TF-IDF
 

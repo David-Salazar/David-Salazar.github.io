@@ -220,7 +220,7 @@
 <div id="what-is-it" class="section level1">
 <h1>What is it ?</h1>
 <p>Around the XIX century, some german scholars posited that Wealth of Nations’ Adam Smith was too different to Theory of Moral Sentiments’ Adam Smith, thus concluded that he must have had a change of heart somewhere along his life or that he was simply an incoherent man.</p>
-<p>I tend to think that the differences between the books are overstated, and, although they treat very different subjects, they fit within a greater scientific investigation. Let’s use <code>tidytext</code> principles to investigate the differences between the books. However, I do not think these similarities can be found with a quantitative bend; quite the opposite, I believe this little experiment will yield the superficial differences between the books. Let’s see what we find.</p>
+<p>I tend to think that the differences between the books are overstated, and, although they treat very different subjects, they fit within a greater scientific investigation. Let’s use <code>tidytext</code> principles to investigate the books. However, I do not think that any of the similarities can be found with a quantitative bend; quite the opposite, I believe this little experiment will yield the superficial differences between the books. Let’s see what we find.</p>
 <div id="load-packages-and-data" class="section level2">
 <h2>Load packages and Data</h2>
 <pre class="r"><code>library(tidyverse)
@@ -238,7 +238,7 @@ library(widyr)</code></pre>
 ##          &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;             &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;            
 ## 1         3300 An Inqu… Smith…             1158 en       Harvard Classics…
 ## # ... with 2 more variables: rights &lt;chr&gt;, has_text &lt;lgl&gt;</code></pre>
-<p>Revealing that project gutenber has no “Theory of the moral Sentiments” :). Let’s download the text from <a href="http://ota.ox.ac.uk/desc/3189">here</a>.</p>
+<p>Revealing that project gutenberg has no “Theory of the moral Sentiments” :). Let’s download the text from <a href="http://ota.ox.ac.uk/desc/3189">here</a>.</p>
 <pre class="r"><code>wealth &lt;- gutenberg_download(gutenberg_id = 3300) %&gt;% 
   select(-gutenberg_id) %&gt;% 
   mutate(chapter = cumsum(str_detect(text, regex(&quot;^chapter [\\divxlc]&quot;,
@@ -309,7 +309,7 @@ smith_books_tidy &lt;- smith_books %&gt;%
     labs(x = &quot;&quot;)</code></pre>
 <pre><code>## Selecting by n</code></pre>
 <p><img src="https://david-salazar.github.io/post/2018-04-09-the-adam-smith-problem-tidytext-in-r_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<p>Well, Smith definitely wrote two books with (just in the surface, as his theses were very similar. cf. Marketplace Smith) different subjects, as shown by the very different words he uses in both books.</p>
+<p>Well, Smith definitely wrote two books with (cf. Adam Smith’s Marketplace of Life) different subjects, as shown by the very different words he uses in both books.</p>
 </div>
 <div id="sentiment-analysis" class="section level2">
 <h2>Sentiment Analysis</h2>
@@ -325,7 +325,7 @@ smith_books_tidy &lt;- smith_books %&gt;%
     hrbrthemes::theme_ipsum() +
     ggthemes::scale_color_gdocs(guide = FALSE)</code></pre>
 <p><img src="https://david-salazar.github.io/post/2018-04-09-the-adam-smith-problem-tidytext-in-r_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<p>Whereas the “Theory” seems to start off neutral and end on a happy note, the “Wealth” seems to progressively get more positive but ends on a quite sad note. My former Adam Smith obsessed self may have told you why this is thus, but I forgot the chapters order and their corresponding subjects. However, there does not seem to be a ground to argue that the “Wealth of Nations” is “much dismal” than the “Theory of Moral Sentiments”.</p>
+<p>Whereas the “Theory” seems to start off neutral and end on a happy note, the “Wealth” seems to progressively get more positive but ends on quite a sad note. My former Adam Smith obsessed self may have told you why this is thus, but I forgot the chapters order and their corresponding subjects. However, there does not seem to be a ground to argue that the “Wealth of Nations” is “much dismal” than the “Theory of Moral Sentiments”.</p>
 </div>
 <div id="tf-idf" class="section level2">
 <h2>TF-IDF</h2>
