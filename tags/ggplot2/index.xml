@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ggplot2 on Humanistic Musings</title>
+    <link>/tags/ggplot2/</link>
+    <description>Recent content in Ggplot2 on Humanistic Musings</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 20 May 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/ggplot2/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Plotting Supply and Demand Curves with ggplot2</title>
+      <link>/2018/05/ggsupplydemand/</link>
+      <pubDate>Sun, 20 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/05/ggsupplydemand/</guid>
+      <description>What is it? ggsupplyDemand is an R package that makes it extremely easy to plot basic supply and demands using ggplot2
+library(ggsupplyDemand) create_supply_and_demand() %&amp;gt;% shift_demand(outwards = TRUE) %&amp;gt;% plot_supply_and_demand(consumer_surplus = TRUE)  Why? I needed to plot some basic supply and demand curves in R. Obviously, I thought of ggplot2. However, it is not that straightforward. The best resource I could find was this blogpost from Andrew Heiss. I recopilated most of his functions, created a simple API and put all the functions on an package.</description>
+    </item>
+    
+  </channel>
+</rss>

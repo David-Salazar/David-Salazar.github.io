@@ -1,0 +1,51 @@
+---
+title: Plotting Supply and Demand Curves with ggplot2
+subtitle: ggsupplyDemand
+author: David Salazar
+date: '2018-05-20'
+slug: ggsupplydemand
+categories:
+  - Packages
+tags:
+  - Ggplot2
+---
+
+# What is it?
+
+`ggsupplyDemand` is an R [package](https://github.com/David-Salazar/ggsupplyDemand) that makes it extremely easy to plot basic supply and demands using ggplot2
+
+```{r message=FALSE, warning=FALSE}
+library(ggsupplyDemand)
+
+create_supply_and_demand() %>% 
+  shift_demand(outwards = TRUE) %>% 
+  plot_supply_and_demand(consumer_surplus = TRUE)
+```
+
+# Why?
+
+I needed to plot some basic supply and demand curves in R. Obviously, I thought of `ggplot2`. However, it is not that straightforward. The best resource I could find was [this](https://www.andrewheiss.com/blog/2017/09/15/create-supply-and-demand-economics-curves-with-ggplot2/) blogpost from Andrew Heiss. I recopilated most of his functions, created a simple API and put all the functions on an [package](https://github.com/David-Salazar/ggsupplyDemand).  
+
+## How does it work?
+
+Build step-by-step a `tibble` that represents a system of supply and demand. Use `create_supply_and_demand()` and `shift_demand()`, `shift_supply()`. Then, use the `plot_supply_and_demand()` function on the said `tibble`. 
+
+```{r message=FALSE, warning=FALSE}
+create_supply_and_demand() %>% 
+  shift_demand(outwards = TRUE) %>% 
+  shift_supply(outwards = FALSE) %>% 
+  plot_supply_and_demand(consumer_surplus = FALSE)
+```
+
+### Customization
+
+`ggsupplyDemand` has a default shifter for both the demand and supply. However, if you need something different, you can always change it:
+
+```{r message=FALSE, warning=FALSE}
+create_supply_and_demand() %>% 
+  shift_supply() %>% 
+  shift_supply(shifter = 250) %>% 
+  shift_demand(outwards = FALSE, shifter = 400) %>% 
+  plot_supply_and_demand()
+```
+

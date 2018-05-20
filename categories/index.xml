@@ -2,20 +2,29 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Humanistic Musings</title>
-    <link>https://david-salazar.github.io/categories/</link>
+    <link>/categories/</link>
     <description>Recent content in Categories on Humanistic Musings</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     
-	<atom:link href="https://david-salazar.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>Packages</title>
+      <link>/categories/packages/</link>
+      <pubDate>Sun, 20 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/packages/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Tutorial</title>
-      <link>https://david-salazar.github.io/categories/tutorial/</link>
+      <link>/categories/tutorial/</link>
       <pubDate>Mon, 09 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://david-salazar.github.io/categories/tutorial/</guid>
+      <guid>/categories/tutorial/</guid>
       <description></description>
     </item>
     

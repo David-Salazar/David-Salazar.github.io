@@ -3,62 +3,79 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://david-salazar.github.io/2018/04/the-adam-smith-problem-tidytext-in-r/</loc>
+    <loc>/2018/05/ggsupplydemand/</loc>
+    <lastmod>2018-05-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2018/04/the-adam-smith-problem-tidytext-in-r/</loc>
     <lastmod>2018-04-09T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://david-salazar.github.io/2018/04/tutorial-leaflet-chorophlets/</loc>
+    <loc>/2018/04/tutorial-leaflet-chorophlets/</loc>
     <lastmod>2018-04-03T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://david-salazar.github.io/2018/04/shiny-e-icolcap/</loc>
+    <loc>/2018/04/shiny-e-icolcap/</loc>
     <lastmod>2018-04-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://david-salazar.github.io/archives/</loc>
+    <loc>/archives/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://david-salazar.github.io/categories/</loc>
+    <loc>/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://david-salazar.github.io/</loc>
-    <lastmod>2018-04-09T00:00:00+00:00</lastmod>
+    <loc>/tags/ggplot2/</loc>
+    <lastmod>2018-05-20T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://david-salazar.github.io/tags/leaflet/</loc>
+    <loc>/</loc>
+    <lastmod>2018-05-20T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/leaflet/</loc>
     <lastmod>2018-04-03T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://david-salazar.github.io/post/</loc>
+    <loc>/categories/packages/</loc>
+    <lastmod>2018-05-20T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/post/</loc>
+    <lastmod>2018-05-20T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <lastmod>2018-05-20T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/tidytext/</loc>
     <lastmod>2018-04-09T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://david-salazar.github.io/tags/</loc>
-    <lastmod>2018-04-03T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://david-salazar.github.io/tags/tidytext/</loc>
-    <lastmod>2018-04-09T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://david-salazar.github.io/categories/tutorial/</loc>
+    <loc>/categories/tutorial/</loc>
     <lastmod>2018-04-09T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
