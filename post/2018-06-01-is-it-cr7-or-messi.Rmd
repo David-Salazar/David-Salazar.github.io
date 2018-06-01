@@ -1,0 +1,407 @@
+---
+title: Is it CR7 or Messi?
+author: David Salazar
+date: '2018-06-01'
+slug: is-it-cr7-or-messi
+categories:
+  - Deep Learning
+tags:
+  - Python
+---
+
+
+# World Cup Mode: CR vs Messi
+
+To try to solidify what I have learned from Deep Learning for coders from fast.ai, I'll try to train a computer vision algorithm such that it can recognize whether is Messi or Cristiano Ronaldo in the picture. 
+
+## Imports
+
+
+```python
+# Put these at the top of every notebook, to get automatic reloading and inline plotting
+%reload_ext autoreload
+%autoreload 2
+%matplotlib inline
+```
+
+
+```python
+# This file contains all the main external libs we'll use
+from fastai.imports import *
+```
+
+
+```python
+from fastai.transforms import *
+from fastai.conv_learner import *
+from fastai.model import *
+from fastai.dataset import *
+from fastai.sgdr import *
+from fastai.plots import *
+```
+
+## Create your own dataset
+
+Using the wonderful [`googleimages`](https://github.com/hardikvasa/google-images-download) from fast.ai student Hardik Vasa, this is extremely easy running shell comands. For example
+
+
+```python
+#! googleimagesdownload -k "cr7, messi" -f jpg -l 100 -o train
+```
+
+The above shell comand will download for each of the keywords 100 .jpg images and will put them on the folder train. Cannot be easier!
+
+## Fast.ai workflow
+
+
+```python
+PATH = "cr_vs_messi/"
+sz=224
+arch=resnet34
+bs = 64
+```
+
+
+```python
+!ls {PATH}
+```
+
+    train  valid
+
+
+
+```python
+data = ImageClassifierData.from_paths(PATH, tfms=tfms_from_model(arch, sz))
+```
+
+
+```python
+fn = PATH+ data.trn_ds.fnames[100]; fn
+```
+
+
+
+
+    'cr_vs_messi/train/cr7/6. cristiano-ronaldo-of-real-madrid-celebrates-after-scoring-a-goal-the-picture-id481747786?s=612x612.jpg'
+
+
+
+
+```python
+img = PIL.Image.open(fn); img
+```
+
+
+
+
+![png](output_12_0.png)
+
+
+
+Great picture :) (big Real Madrid fan, here). Let's find our images' sizes:
+
+
+```python
+size_d = {k: PIL.Image.open(PATH+k).size for k in data.trn_ds.fnames}
+row_sz, col_sz = list(zip(*size_d.values()))
+row_sz = np.array(row_sz) 
+col_sz = np.array(col_sz)
+plt.hist(row_sz)
+```
+
+
+
+
+    (array([76., 71., 26., 14.,  1.,  3.,  0.,  1.,  1.,  2.]),
+     array([ 170.,  653., 1136., 1619., 2102., 2585., 3068., 3551., 4034., 4517., 5000.]),
+     <a list of 10 Patch objects>)
+
+
+
+
+![png](output_14_1.png)
+
+
+
+```python
+plt.hist(col_sz)
+```
+
+
+
+
+    (array([55., 84., 27., 14.,  6.,  3.,  2.,  0.,  1.,  3.]),
+     array([ 110. ,  431.8,  753.6, 1075.4, 1397.2, 1719. , 2040.8, 2362.6, 2684.4, 3006.2, 3328. ]),
+     <a list of 10 Patch objects>)
+
+
+
+
+![png](output_15_1.png)
+
+
+Seems images are a little big bigger than we are used to. 
+
+## Training 
+
+Training with fast.ai is as simple and fast as it could possibly be. When training neural networks for computer vision, it is always best to use a pretrained network (usually on ImageNet). Thus, we use a whole network pre-trained, take out the final layer of prediction, and use the weights that have learned to identify certain features as the first part of our own neural network. Above those, we add further layers of our own to predict. 
+
+
+```python
+learn = ConvLearner.pretrained(arch, data, precompute=True)
+learn.fit(0.01, 2)
+```
+
+
+    HBox(children=(IntProgress(value=0, description='Epoch', max=2), HTML(value='')))
+
+
+    epoch      trn_loss   val_loss   accuracy                
+        0      0.98899    0.50631    0.85      
+        1      0.728332   0.327768   0.833333                
+    
+
+
+
+
+
+    [0.3277679681777954, 0.8333333134651184]
+
+
+
+Let's see what the above accuracy on validation (83.3%) looks like with just two epochs and not doing anything about a learning rate nor any data augmentation. 
+
+
+```python
+log_preds = learn.predict()
+preds = np.argmax(log_preds, axis=1)  # from log probabilities to 0 or 1
+probs = np.exp(log_preds[:,1]) 
+def rand_by_mask(mask): return np.random.choice(np.where(mask)[0], 4, replace=False)
+def rand_by_correct(is_correct): return rand_by_mask((preds == data.val_y)==is_correct)
+def plot_val_with_title(idxs, title):
+    imgs = np.stack([data.val_ds[x][0] for x in idxs])
+    title_probs = [probs[x] for x in idxs]
+    print(title)
+    return plots(data.val_ds.denorm(imgs), rows=1, titles=title_probs)
+def plots(ims, figsize=(12,6), rows=1, titles=None):
+    f = plt.figure(figsize=figsize)
+    for i in range(len(ims)):
+        sp = f.add_subplot(rows, len(ims)//rows, i+1)
+        sp.axis('Off')
+        if titles is not None: sp.set_title(titles[i], fontsize=16)
+        plt.imshow(ims[i])
+def load_img_id(ds, idx): return np.array(PIL.Image.open(PATH+ds.fnames[idx]))
+
+def plot_val_with_title(idxs, title):
+    imgs = [load_img_id(data.val_ds,x) for x in idxs]
+    title_probs = [probs[x] for x in idxs]
+    print(title)
+    return plots(imgs, rows=1, titles=title_probs, figsize=(16,8))
+```
+
+
+```python
+# 1. A few correct labels at random
+plot_val_with_title(rand_by_correct(True), "Correctly classified")
+```
+
+    Correctly classified
+
+
+
+![png](output_21_1.png)
+
+
+Note that the higher the probability, we are saying that it is likely that his is the current Ballon d'Or ;). 
+
+
+```python
+# 2. A few incorrect labels at random
+plot_val_with_title(rand_by_correct(False), "Incorrectly classified")
+```
+
+    Incorrectly classified
+
+
+
+![png](output_23_1.png)
+
+
+
+```python
+def most_by_mask(mask, mult):
+    idxs = np.where(mask)[0]
+    return idxs[np.argsort(mult * probs[idxs])[:4]]
+
+def most_by_correct(y, is_correct): 
+    mult = -1 if (y==1)==is_correct else 1
+    return most_by_mask(((preds == data.val_y)==is_correct) & (data.val_y == y), mult)
+
+plot_val_with_title(most_by_correct(0, True), "Most correct Messi")
+```
+
+    Most correct Messi
+
+
+
+![png](output_24_1.png)
+
+
+Note that we could do a lot better. Let's tinker with the model
+
+### Learning Rate
+
+The learning rate determines how quickly or how slowly you want to update the weights (or parameters). Learning rate is one of the most difficult parameters to set, because it significantly affects model performance.
+
+
+```python
+#lrf=learn.lr_find()
+```
+
+However, due to the the low amount of data we are working with, much tinkering with the learning rate, whether is annealing or any other, won't be much promising. Instead, let's work with the promising feature of data augmentation.
+
+### Data Augmentation
+
+
+```python
+tfms = tfms_from_model(resnet34, sz, aug_tfms=transforms_side_on, max_zoom=1.1)
+def get_augs():
+    data = ImageClassifierData.from_paths(PATH, bs=2, tfms=tfms, num_workers=1)
+    x,_ = next(iter(data.aug_dl))
+    return data.trn_ds.denorm(x)[1]
+ims = np.stack([get_augs() for i in range(6)])
+plots(ims, rows=2)
+```
+
+
+![png](output_29_0.png)
+
+
+
+```python
+data = ImageClassifierData.from_paths(PATH, tfms=tfms)
+learn = ConvLearner.pretrained(arch, data, precompute=True)
+learn.fit(1e-2, 2)
+```
+
+
+    HBox(children=(IntProgress(value=0, description='Epoch', max=2), HTML(value='')))
+
+
+    epoch      trn_loss   val_loss   accuracy                
+        0      0.98536    0.565317   0.75      
+        1      0.806121   0.379524   0.866667                
+    
+
+
+
+
+
+    [0.37952443957328796, 0.8666666746139526]
+
+
+
+Note that by just adding data transformations, we reduced the prediction error by 3 percentual points. 
+
+## Fine tuning pre trained network
+
+The model we are using was trained on ImageNet, and thus creates a lot of features that found useful before and we hope that are useful now. However, let's fine tune those features now that we have useful layers connected to the original network.
+
+
+```python
+learn.unfreeze()
+```
+
+
+```python
+lr=np.array([1e-4,1e-3,1e-2])
+learn.fit(lr, 6)
+```
+
+
+    HBox(children=(IntProgress(value=0, description='Epoch', max=6), HTML(value='')))
+
+
+    epoch      trn_loss   val_loss   accuracy                
+        0      0.816819   0.327147   0.9       
+        1      0.57498    0.277747   0.9                     
+        2      0.543936   0.263295   0.883333                
+        3      0.479198   0.257741   0.9                     
+        4      0.43931    0.233722   0.95                    
+        5      0.414572   0.262532   0.933333                
+    
+
+
+
+
+
+    [0.26253214478492737, 0.9333333373069763]
+
+
+
+Note how accuracy increases, just by fine tuning and using more epochs!! We have a 93-95% accuracy on the validation set!. let's use Test Time augmentation (augmentating our images and then averaging predictions), will it help?
+
+
+```python
+log_preds,y = learn.TTA()
+probs = np.mean(np.exp(log_preds),0)
+```
+
+                                                 
+
+
+```python
+accuracy_np(probs, y)
+```
+
+
+
+
+    0.9333333333333333
+
+
+
+It seems that TTA didn't help much. However, 93% accuracy with almost no data at all is an impressive result. Let's re-visit our results.
+
+## Results
+
+
+```python
+preds = np.argmax(probs, axis=1)
+probs = probs[:,1]
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(y, preds)
+plot_confusion_matrix(cm, data.classes)
+```
+
+    [[26  4]
+     [ 0 30]]
+
+
+
+![png](output_38_1.png)
+
+
+
+```python
+plot_val_with_title(most_by_correct(0, False), "Most incorrect Messi")
+```
+
+    Most incorrect Messi
+
+
+
+![png](output_39_1.png)
+
+
+
+```python
+plot_val_with_title(most_by_correct(1, True), "Most correct CR7")
+```
+
+    Most correct CR7
+
+
+
+![png](output_40_1.png)
+
