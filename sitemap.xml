@@ -3,33 +3,28 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/2018/06/is-it-cr7-or-messi/</loc>
+    <loc>/about/</loc>
+    <lastmod>2018-06-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2018/06/07/the-adam-smith-problem-tidytext-in-r/</loc>
+    <lastmod>2018-06-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2018/06/01/is-it-cr7-or-messi/</loc>
     <lastmod>2018-06-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2018/05/ggsupplydemand/</loc>
+    <loc>/2018/05/20/ggsupplydemand/</loc>
     <lastmod>2018-05-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2018/04/the-adam-smith-problem-tidytext-in-r/</loc>
-    <lastmod>2018-04-09T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/2018/04/tutorial-leaflet-chorophlets/</loc>
-    <lastmod>2018-04-03T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/2018/04/shiny-e-icolcap/</loc>
+    <loc>/2018/04/01/shiny-e-icolcap/</loc>
     <lastmod>2018-04-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/archives/</loc>
-    <priority>0</priority>
   </url>
   
   <url>
@@ -44,20 +39,20 @@
   </url>
   
   <url>
+    <loc>/</loc>
+    <lastmod>2018-06-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/tags/ggplot2/</loc>
     <lastmod>2018-05-20T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/</loc>
-    <lastmod>2018-06-01T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/leaflet/</loc>
-    <lastmod>2018-04-03T00:00:00+00:00</lastmod>
+    <loc>/tags/nlp/</loc>
+    <lastmod>2018-06-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -69,7 +64,7 @@
   
   <url>
     <loc>/post/</loc>
-    <lastmod>2018-06-01T00:00:00+00:00</lastmod>
+    <lastmod>2018-06-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -80,20 +75,14 @@
   </url>
   
   <url>
+    <loc>/categories/r/</loc>
+    <lastmod>2018-06-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/tags/</loc>
     <lastmod>2018-05-20T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/tidytext/</loc>
-    <lastmod>2018-04-09T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/categories/tutorial/</loc>
-    <lastmod>2018-04-09T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

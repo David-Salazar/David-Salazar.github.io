@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Python on Humanistic Musings</title>
+    <title>Python on Dilettanting Data Science</title>
     <link>/tags/python/</link>
-    <description>Recent content in Python on Humanistic Musings</description>
+    <description>Recent content in Python on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 01 Jun 2018 00:00:00 +0000</lastBuildDate>
@@ -13,10 +13,10 @@
     
     <item>
       <title>Is it CR7 or Messi?</title>
-      <link>/2018/06/is-it-cr7-or-messi/</link>
+      <link>/2018/06/01/is-it-cr7-or-messi/</link>
       <pubDate>Fri, 01 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/06/is-it-cr7-or-messi/</guid>
+      <guid>/2018/06/01/is-it-cr7-or-messi/</guid>
       <description>World Cup Mode: CR vs Messi&amp;#182;To try to solidify what I have learned from Deep Learning for coders from fast.ai, I&#39;ll try to train a computer vision algorithm such that it can recognize whether is Messi or Cristiano Ronaldo in the picture. Notebook in github  or nbviewer 
 Imports&amp;#182;    In&amp;nbsp;[1]: # Put these at the top of every notebook, to get automatic reloading and inline plotting %reload_ext autoreload %autoreload 2 %matplotlib inline      In&amp;nbsp;[2]: # This file contains all the main external libs we&amp;#39;ll use from fastai.</description>
     </item>

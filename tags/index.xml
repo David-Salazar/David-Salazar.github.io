@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tags on Humanistic Musings</title>
+    <title>Tags on Dilettanting Data Science</title>
     <link>/tags/</link>
-    <description>Recent content in Tags on Humanistic Musings</description>
+    <description>Recent content in Tags on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 20 May 2018 00:00:00 +0000</lastBuildDate>
@@ -21,11 +21,11 @@
     </item>
     
     <item>
-      <title>Leaflet</title>
-      <link>/tags/leaflet/</link>
-      <pubDate>Tue, 03 Apr 2018 00:00:00 +0000</pubDate>
+      <title>Nlp</title>
+      <link>/tags/nlp/</link>
+      <pubDate>Thu, 07 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/leaflet/</guid>
+      <guid>/tags/nlp/</guid>
       <description></description>
     </item>
     
@@ -35,15 +35,6 @@
       <pubDate>Fri, 01 Jun 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/python/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Tidytext</title>
-      <link>/tags/tidytext/</link>
-      <pubDate>Mon, 09 Apr 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/tidytext/</guid>
       <description></description>
     </item>
     

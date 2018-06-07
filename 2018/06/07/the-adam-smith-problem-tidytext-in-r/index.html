@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.37.1" />
+
+
+<title>The Adam Smith Problem: Tidytext in R - Dilettanting Data Science</title>
+<meta property="og:title" content="The Adam Smith Problem: Tidytext in R - Dilettanting Data Science">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/%3cnil%3e"
+         width=""
+         height=""
+         alt="">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/rstudio/blogdown">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/rstudio">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">7 min read</span>
+    
+
+    <h1 class="article-title">The Adam Smith Problem: Tidytext in R</h1>
+
+    
+    <span class="article-date">2018/06/07</span>
+    
+
+    <div class="article-content">
+      <div id="why" class="section level1">
+<h1>Why?</h1>
+<p>This is a fun (for me) exercise to explore <a href="https://www.tidytextmining.com">Text Mining with R</a> and make sure I can follow along.</p>
+</div>
+<div id="what-is-it" class="section level1">
+<h1>What is it ?</h1>
+<p>Around the XIX century, some german scholars posited that Wealth of Nations’ Adam Smith was too different to Theory of Moral Sentiments’ Adam Smith, thus concluded that he must have had a change of heart somewhere along his life or that he was simply an incoherent man.</p>
+<p>I tend to think that the differences between the books are overstated, and, although they treat very different subjects, they fit within a greater scientific investigation. Let’s use <code>tidytext</code> principles to investigate the books. However, I do not think that any of the similarities can be found with a quantitative bend; quite the opposite, I believe this little experiment will yield the superficial differences between the books. Let’s see what we find.</p>
+<div id="load-packages-and-data" class="section level2">
+<h2>Load packages and Data</h2>
+<pre class="r"><code>library(tidyverse)
+library(tidytext)
+library(gutenbergr)
+library(tidygraph)
+library(igraph)
+library(ggraph)
+library(stringr)
+library(widyr)</code></pre>
+<p>Let’s use the <code>gutenbergr</code> to access the books:</p>
+<pre class="r"><code>gutenberg_works(author == &quot;Smith, Adam&quot;)</code></pre>
+<pre><code>## # A tibble: 1 x 8
+##   gutenberg_id title    author gutenberg_autho… language gutenberg_booksh…
+##          &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;             &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;            
+## 1         3300 An Inqu… Smith…             1158 en       Harvard Classics…
+## # ... with 2 more variables: rights &lt;chr&gt;, has_text &lt;lgl&gt;</code></pre>
+<p>Revealing that project gutenberg has no “Theory of the moral Sentiments” :). Let’s download the text from <a href="http://ota.ox.ac.uk/desc/3189">here</a>.</p>
+<pre class="r"><code>wealth &lt;- gutenberg_download(gutenberg_id = 3300) %&gt;% 
+  select(-gutenberg_id) %&gt;% 
+  mutate(chapter = cumsum(str_detect(text, regex(&quot;^chapter [\\divxlc]&quot;,
+                                                 ignore_case = TRUE))),
+         title = &quot;Wealth of Nations&quot;)</code></pre>
+<pre><code>## Determining mirror for Project Gutenberg from http://www.gutenberg.org/robot/harvest</code></pre>
+<pre><code>## Using mirror http://aleph.gutenberg.org</code></pre>
+<pre class="r"><code>wealth</code></pre>
+<pre><code>## # A tibble: 35,202 x 3
+##    text                                              chapter title        
+##    &lt;chr&gt;                                               &lt;int&gt; &lt;chr&gt;        
+##  1 AN INQUIRY INTO THE NATURE AND CAUSES OF THE WEA…       0 Wealth of Na…
+##  2 &quot;&quot;                                                      0 Wealth of Na…
+##  3 &quot;&quot;                                                      0 Wealth of Na…
+##  4 By Adam Smith                                           0 Wealth of Na…
+##  5 &quot;&quot;                                                      0 Wealth of Na…
+##  6 &quot;&quot;                                                      0 Wealth of Na…
+##  7 &quot;&quot;                                                      0 Wealth of Na…
+##  8 &quot;&quot;                                                      0 Wealth of Na…
+##  9 INTRODUCTION AND PLAN OF THE WORK.                      0 Wealth of Na…
+## 10 &quot;&quot;                                                      0 Wealth of Na…
+## # ... with 35,192 more rows</code></pre>
+<pre class="r"><code>theory &lt;- read_file(&quot;../../data/3189.txt&quot;) %&gt;% 
+  data_frame(text = .) %&gt;% 
+    mutate(text = strsplit(text, &quot;\n&quot;)) %&gt;% 
+    unnest(text) %&gt;% 
+    mutate(title = &quot;The Theory of Moral Sentiments&quot;,
+           chapter = cumsum(str_detect(text, regex(&quot;^Chap. [\\divxlc]&quot;,
+                                                 ignore_case = TRUE))))
+theory</code></pre>
+<pre><code>## # A tibble: 830 x 3
+##    text                                               title        chapter
+##    &lt;chr&gt;                                              &lt;chr&gt;          &lt;int&gt;
+##  1 The Theory of Moral Sentiments                     The Theory …       0
+##  2 by                                                 The Theory …       0
+##  3 Adam Smith                                         The Theory …       0
+##  4 Professor of Moral Philosophy in the University o… The Theory …       0
+##  5 Part I                                             The Theory …       0
+##  6 Of the Propriety of Action Consisting of Three Se… The Theory …       0
+##  7 Section I                                          The Theory …       0
+##  8 Of the Sense of Propriety                          The Theory …       0
+##  9 Chap. I                                            The Theory …       1
+## 10 Of Sympathy                                        The Theory …       1
+## # ... with 820 more rows</code></pre>
+</div>
+</div>
+<div id="tidytext-analysis" class="section level1">
+<h1>TidyText analysis</h1>
+<div id="most-used-words" class="section level2">
+<h2>Most used words</h2>
+<p>Let’s see which are the words that Smith uses the most in each of the books.</p>
+<pre class="r"><code>smith_books &lt;- rbind(theory, wealth)
+smith_books_tidy &lt;- smith_books %&gt;% 
+  unnest_tokens(word, text) %&gt;%
+  anti_join(stop_words)</code></pre>
+<pre><code>## Joining, by = &quot;word&quot;</code></pre>
+<pre class="r"><code>smith_books_tidy %&gt;% 
+  count(word, title) %&gt;% 
+  group_by(title) %&gt;% 
+  arrange(desc(n)) %&gt;% 
+  top_n(10) %&gt;% 
+  ggplot(aes(x = fct_reorder(word, n), y = n, fill = title)) +
+    geom_col() +
+    coord_flip() +
+    hrbrthemes::theme_ipsum() +
+    facet_wrap(~ title, scales = &quot;free&quot;) +
+    ggthemes::scale_fill_gdocs(guide = FALSE) +
+    labs(x = &quot;&quot;)</code></pre>
+<pre><code>## Selecting by n</code></pre>
+<p><img src="/post/2018-06-07-the-adam-smith-problem-tidytext-in-r_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Well, Smith definitely wrote two books with (cf. Adam Smith’s Marketplace of Life) different subjects, as shown by the very different words he uses in both books.</p>
+</div>
+<div id="sentiment-analysis" class="section level2">
+<h2>Sentiment Analysis</h2>
+<p>Economics was famously described as the “dismal science”. Let’s see if the most economics-centered book is indeed much somber than the “Theory of Moral Sentiments”.</p>
+<pre class="r"><code>smith_books_tidy %&gt;% 
+  inner_join(get_sentiments(&quot;afinn&quot;)) %&gt;% 
+  group_by(title, chapter) %&gt;% 
+  summarise(sentiment = sum(score)) %&gt;% 
+  ggplot(aes(x = chapter, y = sentiment, color = title)) +
+    geom_point(alpha = 1/10) +
+    geom_smooth(se = FALSE) +
+    facet_wrap(~ title, scales = &quot;free_x&quot;) +
+    hrbrthemes::theme_ipsum() +
+    ggthemes::scale_color_gdocs(guide = FALSE)</code></pre>
+<p><img src="/post/2018-06-07-the-adam-smith-problem-tidytext-in-r_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Whereas the “Theory” seems to start off neutral and end on a happy note, the “Wealth” seems to progressively get more positive but ends on quite a sad note. My former Adam Smith obsessed self may have told you why this is thus, but I forgot the chapters order and their corresponding subjects. However, there does not seem to be a ground to argue that the “Wealth of Nations” is “much dismal” than the “Theory of Moral Sentiments”.</p>
+</div>
+<div id="tf-idf" class="section level2">
+<h2>TF-IDF</h2>
+<p>TF-IDF adjusts the term frequency within document (in this case book) for the specificity of the term to that specific document. Thus, terms that are used in both books are weighted down, and terms that are used almost exclusively in one of the books are weighted up. The idea is to find the most distinctive terms for each book. My intuition tells me that this won’t be much too different from the original counts (very different vocabularies in the books). Just for the sake of it, let’s use bigrams:</p>
+<pre class="r"><code>smith_bigrams &lt;- smith_books %&gt;% 
+  unnest_tokens(bigram, text, token = &quot;ngrams&quot;, n = 2)
+
+bigrams_separated &lt;- smith_bigrams %&gt;%
+  separate(bigram, c(&quot;word1&quot;, &quot;word2&quot;), sep = &quot; &quot;)
+
+bigrams_filtered &lt;- bigrams_separated %&gt;%
+  filter(!word1 %in% stop_words$word) %&gt;%
+  filter(!word2 %in% stop_words$word) %&gt;% 
+  filter(!str_detect(word1, &quot;\\d&quot;),
+         !str_detect(word2, &quot;\\d&quot;))
+
+bigrams_united &lt;- bigrams_filtered %&gt;%
+  unite(bigram, word1, word2, sep = &quot; &quot;)
+
+bigrams_united %&gt;% 
+  count(title, bigram) %&gt;% 
+  group_by(title) %&gt;% 
+  arrange(desc(n)) %&gt;% 
+  top_n(10) %&gt;% 
+  ggplot(aes(x = fct_reorder(bigram, n), y = n, fill = title)) +
+    geom_col() +
+    coord_flip() +
+    facet_wrap(~ title, scales = &quot;free&quot;) +
+    hrbrthemes::theme_ipsum() +
+    ggthemes::scale_fill_gdocs(guide = FALSE) +
+    labs(x = &quot;&quot;)</code></pre>
+<pre><code>## Selecting by n</code></pre>
+<p><img src="/post/2018-06-07-the-adam-smith-problem-tidytext-in-r_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>With just the counts, the subject difference is even more striking. Human nature vs foreign trade. Surprsingly, one could use the bigram for the “Theory” as the main subject of the book and not be completely wrong. I do not think that the TF-IDF analysis will change much, but let’s go ahead:</p>
+<pre class="r"><code>bigrams_united %&gt;%
+  count(title, bigram) %&gt;%
+  bind_tf_idf(bigram, title, n) %&gt;%
+  group_by(title) %&gt;% 
+  arrange(desc(tf_idf)) %&gt;% 
+  top_n(10) %&gt;% 
+  ggplot(aes(x = fct_reorder(bigram, tf_idf), y = tf_idf, fill = title)) +
+    geom_col() +
+    coord_flip() +
+    facet_wrap(~ title, scales = &quot;free&quot;) +
+    hrbrthemes::theme_ipsum() +
+    ggthemes::scale_fill_gdocs(guide = FALSE) +
+    labs(x = &quot;&quot;)</code></pre>
+<pre><code>## Selecting by tf_idf</code></pre>
+<p><img src="/post/2018-06-07-the-adam-smith-problem-tidytext-in-r_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>As predicted, the TF-IDF adjustment didn’t change much.</p>
+</div>
+<div id="correlating-pairs" class="section level2">
+<h2>Correlating pairs</h2>
+<p>Bigrams are restrictive: words have to appear next to each other. However, words that tend to appear together, even if not immediately to each other within a given subdivision, may also give us some insight. Let’s analyze which pairs of words are more likely to co-appear within a given chapter than appearing by themselves, using the correlation coefficient.</p>
+<pre class="r"><code>pairwise_book &lt;- function(df) {
+  df %&gt;% 
+  group_by(word) %&gt;%
+  filter(n() &gt;= 100) %&gt;%
+  pairwise_cor(word, chapter, sort = TRUE)
+}
+
+smith_correlations &lt;- smith_books_tidy %&gt;% 
+  filter(!str_detect(word, &quot;\\d&quot;)) %&gt;% 
+  group_by(title) %&gt;% 
+  do(pairwise_book(.)) %&gt;% 
+  group_by(title) %&gt;% 
+  arrange(desc(correlation)) %&gt;% 
+  top_n(50, correlation) %&gt;% ungroup
+
+corr_graph &lt;- function(df) {
+  ggraph(df, layout = &quot;fr&quot;) +
+  geom_edge_link(aes(edge_alpha = correlation), show.legend = FALSE) +
+  geom_node_point(color = &quot;lightblue&quot;, size = 3) +
+  geom_node_text(aes(label = name), repel = TRUE) +
+  theme_graph() 
+}
+
+smith_data &lt;- smith_correlations %&gt;%
+  filter(correlation &gt; 0.1) %&gt;% 
+  group_by(title) %&gt;% 
+  nest()
+
+smith_data$data %&gt;% 
+  map(graph_from_data_frame) %&gt;% 
+  map(corr_graph) %&gt;% 
+  reduce(cowplot::plot_grid, labels = c(&quot;Wealth of Nations&quot;, &quot;Theory of Moral Sentiments&quot;))</code></pre>
+<p><img src="/post/2018-06-07-the-adam-smith-problem-tidytext-in-r_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Whereas the words from the “Theory” form a nice little cluster, the words from the “Wealth of Nations” are all over the place.</p>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>Were one to argue that Smith’s two most famous book represent an incongruent body of work, a cursory look at the vocabulary would be one’s best weapon. One talks about human nature and moral sentiments whereas the other takes about trade and produce. If pushed further, one could say the difference it is that whereas in the “Theory” greed is criticised, in the “Wealth” it is celebrated. However, I do believe that saying so would be a mistake.</p>
+</div>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/python.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
