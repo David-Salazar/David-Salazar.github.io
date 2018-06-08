@@ -6,10 +6,19 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 07 Jun 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 10 Jun 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Trees, Ensembles and beyond, XGBoost and LGBM</title>
+      <link>/2018/06/10/trees-ensembles-and-beyond/</link>
+      <pubDate>Sun, 10 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/06/10/trees-ensembles-and-beyond/</guid>
+      <description>Why? Set-up  Trees Fitting them Interpretation  Ensembles Bagging Bootstraping Random Forests Conclusions for Bagging  Boosting Directional Derivative Gradient Boosting: Back to our problem Conclusions for Boosting     Why? lightgbm and xgboost appear in every single competition at Kaggle. Thus, these boosting techniques must be able to learn something that cannot be easily learned from intelligent bagging techniques like Random Forests. This is my attempt to understand why and how they can do that.</description>
+    </item>
     
     <item>
       <title>About</title>
@@ -17,7 +26,7 @@
       <pubDate>Thu, 07 Jun 2018 00:00:00 +0000</pubDate>
       
       <guid>/about/</guid>
-      <description>I am trying to dilettante my way into understanding Machine Learning and Data Science in general.</description>
+      <description>Hi! My names is David Salazar an I am dilettant&amp;rsquo;n my way into understanding Machine Learning and Data Science in general. Unemployed until I find a good reason not to be.</description>
     </item>
     
     <item>
@@ -31,11 +40,11 @@
     </item>
     
     <item>
-      <title>Is it CR7 or Messi?</title>
-      <link>/2018/06/01/is-it-cr7-or-messi/</link>
+      <title>Is it CR7 or Messi?: Using the fastai toolkit</title>
+      <link>/2018/06/01/is-it-cr7-or-messi-using-the-fastai-toolkit/</link>
       <pubDate>Fri, 01 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/06/01/is-it-cr7-or-messi/</guid>
+      <guid>/2018/06/01/is-it-cr7-or-messi-using-the-fastai-toolkit/</guid>
       <description>World Cup Mode: CR vs Messi&amp;#182;To try to solidify what I have learned from Deep Learning for coders from fast.ai, I&#39;ll try to train a computer vision algorithm such that it can recognize whether is Messi or Cristiano Ronaldo in the picture. Notebook in github  or nbviewer 
 Imports&amp;#182;    In&amp;nbsp;[1]: # Put these at the top of every notebook, to get automatic reloading and inline plotting %reload_ext autoreload %autoreload 2 %matplotlib inline      In&amp;nbsp;[2]: # This file contains all the main external libs we&amp;#39;ll use from fastai.</description>
     </item>
