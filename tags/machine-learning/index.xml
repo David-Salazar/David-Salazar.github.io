@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Machine Learning on Dilettanting Data Science</title>
-    <link>/tags/machine-learning/</link>
+    <link>https://david-salazar.github.io/tags/machine-learning/</link>
     <description>Recent content in Machine Learning on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 10 Jun 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/machine-learning/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://david-salazar.github.io/tags/machine-learning/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Trees, Ensembles and beyond, XGBoost and LGBM</title>
-      <link>/2018/06/10/trees-ensembles-and-beyond/</link>
+      <link>https://david-salazar.github.io/2018/06/10/trees-ensembles-and-beyond/</link>
       <pubDate>Sun, 10 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/06/10/trees-ensembles-and-beyond/</guid>
+      <guid>https://david-salazar.github.io/2018/06/10/trees-ensembles-and-beyond/</guid>
       <description>Why? Set-up  Trees Fitting them Interpretation  Ensembles Bagging Bootstraping Random Forests Conclusions for Bagging  Boosting Directional Derivative Gradient Boosting: Back to our problem Conclusions for Boosting     Why? lightgbm and xgboost appear in every single competition at Kaggle. Thus, these boosting techniques must be able to learn something that cannot be easily learned from intelligent bagging techniques like Random Forests. This is my attempt to understand why and how they can do that.</description>
     </item>
     

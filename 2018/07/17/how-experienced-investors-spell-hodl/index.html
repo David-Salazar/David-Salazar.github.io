@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.37.1" />
+
+
+<title>How Experienced Investors spell HODL? - Dilettanting Data Science</title>
+<meta property="og:title" content="How Experienced Investors spell HODL? - Dilettanting Data Science">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/turner.jpg"
+         width="200"
+         height="200"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/David-Salazar">GitHub</a></li>
+    
+    <li><a href="https://david-salazar.github.io/">Posts</a></li>
+    
+    <li><a href="">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">2 min read</span>
+    
+
+    <h1 class="article-title">How Experienced Investors spell HODL?</h1>
+
+    
+    <span class="article-date">2018/07/17</span>
+    
+    
+
+    <div class="article-content">
+      <div id="the-moody-mr.market" class="section level1">
+<h1>The moody Mr. Market</h1>
+<p>Anybody who has even a dime on the stock market will eventually get dragged on following the daily (or even hourly) moves in the market. However, this is not only a stressful idea, but also a very ineffective one. Most days in the market won’t even bulge your final total return. In fact, total market return is mostly determined by a handful of days alone.</p>
+<p><strong>Let’s prove this by comparing the annualized return one would get from investing the last 30 years and being invested 100% of the time, and missing the best days of the market due to bad timing.</strong></p>
+</div>
+<div id="r" class="section level1">
+<h1>R!</h1>
+<p>Let’s try to do so in <code>R</code> using <code>tidy</code> tools: <code>tidyverse</code> and <code>tidyquant</code>.</p>
+<div id="load-packages" class="section level2">
+<h2>Load Packages</h2>
+<pre class="r"><code>library(tidyverse)
+library(tidyquant)</code></pre>
+</div>
+<div id="get-data" class="section level2">
+<h2>Get Data</h2>
+<p>We will be working with the S&amp;P500:</p>
+<pre class="r"><code>sp_500 &lt;- tq_get(&quot;^GSPC&quot;, get = &quot;stock.prices&quot;, from = &quot;1987-12-31&quot;, to = &quot;2017-12-29&quot;)
+
+total_returns &lt;- sp_500 %&gt;% 
+  tq_transmute(select = adjusted, mutate_fun = periodReturn, col_rename = &#39;total_returns&#39;,
+               period = &quot;daily&quot;) 
+
+lines &lt;- total_returns %&gt;% 
+  summarise(mean = mean(total_returns),
+            median = median(total_returns),
+            perc_99 = quantile(total_returns, probs = 0.99)) %&gt;% 
+  gather(key = &quot;statistic&quot;, value = &quot;total_returns&quot;)
+
+total_returns %&gt;% 
+  ggplot(aes(x = total_returns)) +
+    geom_histogram(fill = &quot;dodgerblue3&quot;, binwidth = 0.01, color = &quot;black&quot;, alpha = 0.8) +
+    geom_vline(data = lines, aes(xintercept = total_returns, color = statistic), linetype = 4) +
+    hrbrthemes::theme_ipsum_rc() +
+    labs(x = &quot;Total Return for the S&amp;P&quot;) +
+    ggthemes::scale_color_gdocs()</code></pre>
+<p><img src="/post/2018-07-17-how-experienced-investors-spell-hodl_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>Even in the histogram we can note that there are a couple of observations with a dominating effect on the overall returns, at both sides of the distribution.</p>
+</div>
+<div id="custom-function" class="section level2">
+<h2>Custom Function</h2>
+<p>We need a function that, for a given number of best/worst days, returns the total return of the S&amp;P without using those day in the calculation.</p>
+<pre class="r"><code>take_days_out &lt;- function(total_returns, number_days, initial = 1) {
+  
+  # Define days to take from time series
+  anti_days &lt;- total_returns %&gt;% 
+  arrange(desc(total_returns)) %&gt;% 
+  slice(initial:number_days)
+  
+  # Take those days out
+  new_returns &lt;- total_returns %&gt;% anti_join(anti_days, by = &quot;date&quot;)
+  
+  # Calculate annualized return without those days
+  ret &lt;- new_returns %&gt;% 
+    tq_transmute(select = total_returns, Return.annualized) %&gt;% 
+    as_tibble() %&gt;% 
+    mutate(days_taken = number_days)
+  
+  ret 
+}</code></pre>
+<pre class="r"><code>take_days_out(total_returns, 50)</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   total_returns days_taken
+##           &lt;dbl&gt;      &lt;dbl&gt;
+## 1       0.00195         50</code></pre>
+</div>
+</div>
+
+    </div>
+  
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//https-david-salazar-github-io.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+  
+  </article>
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/python.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+
+    
+  </body>
+</html>
+

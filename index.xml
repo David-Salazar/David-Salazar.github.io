@@ -2,69 +2,79 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Dilettanting Data Science</title>
-    <link>/</link>
+    <link>https://david-salazar.github.io/</link>
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 10 Jun 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 17 Jul 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://david-salazar.github.io/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>How to spell HODL?</title>
+      <link>https://david-salazar.github.io/2018/07/17/how-spell-hodl/</link>
+      <pubDate>Tue, 17 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://david-salazar.github.io/2018/07/17/how-spell-hodl/</guid>
+      <description>The moody Mr. Market Anybody who has even a dime on the stock market will eventually get dragged on following the daily (or even hourly) moves in the market. However, this is not only a stressful idea, but also a very ineffective one. Most days in the market won’t even bulge your final total return. In fact, final market return is mostly determined by a handful of days alone.
+Let’s prove this by comparing the annualized return one would get from investing the last 20 years and being invested 100% of the time, and missing the best days of the market due to bad timing.</description>
+    </item>
+    
+    <item>
       <title>Trees, Ensembles and beyond, XGBoost and LGBM</title>
-      <link>/2018/06/10/trees-ensembles-and-beyond/</link>
+      <link>https://david-salazar.github.io/2018/06/10/trees-ensembles-and-beyond/</link>
       <pubDate>Sun, 10 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/06/10/trees-ensembles-and-beyond/</guid>
+      <guid>https://david-salazar.github.io/2018/06/10/trees-ensembles-and-beyond/</guid>
       <description>Why? Set-up  Trees Fitting them Interpretation  Ensembles Bagging Bootstraping Random Forests Conclusions for Bagging  Boosting Directional Derivative Gradient Boosting: Back to our problem Conclusions for Boosting     Why? lightgbm and xgboost appear in every single competition at Kaggle. Thus, these boosting techniques must be able to learn something that cannot be easily learned from intelligent bagging techniques like Random Forests. This is my attempt to understand why and how they can do that.</description>
     </item>
     
     <item>
       <title>About</title>
-      <link>/about/</link>
+      <link>https://david-salazar.github.io/about/</link>
       <pubDate>Thu, 07 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>/about/</guid>
+      <guid>https://david-salazar.github.io/about/</guid>
       <description>Hi! My names is David Salazar an I am dilettant&amp;rsquo;n my way into understanding Machine Learning and Data Science in general. Unemployed until I find a good reason not to be.</description>
     </item>
     
     <item>
       <title>The Adam Smith Problem: Tidytext in R</title>
-      <link>/2018/06/07/the-adam-smith-problem-tidytext-in-r/</link>
+      <link>https://david-salazar.github.io/2018/06/07/the-adam-smith-problem-tidytext-in-r/</link>
       <pubDate>Thu, 07 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/06/07/the-adam-smith-problem-tidytext-in-r/</guid>
+      <guid>https://david-salazar.github.io/2018/06/07/the-adam-smith-problem-tidytext-in-r/</guid>
       <description>Why? This is a fun (for me) exercise to explore Text Mining with R and make sure I can follow along.
  What is it ? Around the XIX century, some german scholars posited that Wealth of Nations’ Adam Smith was too different to Theory of Moral Sentiments’ Adam Smith, thus concluded that he must have had a change of heart somewhere along his life or that he was simply an incoherent man.</description>
     </item>
     
     <item>
       <title>Is it CR7 or Messi?: Using the fastai toolkit</title>
-      <link>/2018/06/01/is-it-cr7-or-messi-using-the-fastai-toolkit/</link>
+      <link>https://david-salazar.github.io/2018/06/01/is-it-cr7-or-messi-using-the-fastai-toolkit/</link>
       <pubDate>Fri, 01 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/06/01/is-it-cr7-or-messi-using-the-fastai-toolkit/</guid>
+      <guid>https://david-salazar.github.io/2018/06/01/is-it-cr7-or-messi-using-the-fastai-toolkit/</guid>
       <description>World Cup Mode: CR vs Messi&amp;#182;To try to solidify what I have learned from Deep Learning for coders from fast.ai, I&#39;ll try to train a computer vision algorithm such that it can recognize whether is Messi or Cristiano Ronaldo in the picture. Notebook in github  or nbviewer 
 Imports&amp;#182;    In&amp;nbsp;[1]: # Put these at the top of every notebook, to get automatic reloading and inline plotting %reload_ext autoreload %autoreload 2 %matplotlib inline      In&amp;nbsp;[2]: # This file contains all the main external libs we&amp;#39;ll use from fastai.</description>
     </item>
     
     <item>
       <title>Plotting Supply and Demand Curves with ggplot2</title>
-      <link>/2018/05/20/ggsupplydemand/</link>
+      <link>https://david-salazar.github.io/2018/05/20/ggsupplydemand/</link>
       <pubDate>Sun, 20 May 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/05/20/ggsupplydemand/</guid>
+      <guid>https://david-salazar.github.io/2018/05/20/ggsupplydemand/</guid>
       <description>What is it? ggsupplyDemand is an R package that makes it extremely easy to plot basic supply and demands using ggplot2
 library(ggsupplyDemand) create_supply_and_demand() %&amp;gt;% shift_demand(outwards = TRUE) %&amp;gt;% plot_supply_and_demand(consumer_surplus = TRUE)  Why? I needed to plot some basic supply and demand curves in R. Obviously, I thought of ggplot2. However, it is not that straightforward. The best resource I could find was this blogpost from Andrew Heiss. I recopilated most of his functions, created a simple API and put all the functions on an package.</description>
     </item>
     
     <item>
       <title>Shiny e iCOLCAP</title>
-      <link>/2018/04/01/shiny-e-icolcap/</link>
+      <link>https://david-salazar.github.io/2018/04/01/shiny-e-icolcap/</link>
       <pubDate>Sun, 01 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/2018/04/01/shiny-e-icolcap/</guid>
+      <guid>https://david-salazar.github.io/2018/04/01/shiny-e-icolcap/</guid>
       <description>Siguiendo una inversión decepecionante El mercado colombiano ha sido una decepción en los últimos cinco años. Para ver qué tan decepcionado debería estar, cree esta Shiny app. Para no ovlidarme de cómo se construyen en el futuro, acá un tutorial breve comentando selecciones del código:
 ui: User Interface En la ui especificamos la organización de los inputs y outputs, aún cuando no hayamos creado estos últimos.
 ui &amp;lt;- fluidPage( # Application title titlePanel(&amp;quot;Comparación de Mercado&amp;quot;), # Sidebar with a date input sidebarLayout( dateInput(&amp;quot;fecha_inicial&amp;quot;, &amp;quot;Fecha de inicio de comparación:&amp;quot;, value = &amp;quot;2013-01-01&amp;quot;) # primer argumento input$fecha_inicial, como nos referiremos a esto en server.</description>

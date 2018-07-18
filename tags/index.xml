@@ -2,48 +2,66 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Dilettanting Data Science</title>
-    <link>/tags/</link>
+    <link>https://david-salazar.github.io/tags/</link>
     <description>Recent content in Tags on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 20 May 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 17 Jul 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://david-salazar.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Ggplot2</title>
-      <link>/tags/ggplot2/</link>
-      <pubDate>Sun, 20 May 2018 00:00:00 +0000</pubDate>
+      <title>Finance</title>
+      <link>https://david-salazar.github.io/tags/finance/</link>
+      <pubDate>Tue, 17 Jul 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/ggplot2/</guid>
+      <guid>https://david-salazar.github.io/tags/finance/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Ggplot2</title>
+      <link>https://david-salazar.github.io/tags/ggplot2/</link>
+      <pubDate>Tue, 17 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://david-salazar.github.io/tags/ggplot2/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Machine Learning</title>
-      <link>/tags/machine-learning/</link>
+      <link>https://david-salazar.github.io/tags/machine-learning/</link>
       <pubDate>Sun, 10 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/machine-learning/</guid>
+      <guid>https://david-salazar.github.io/tags/machine-learning/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Nlp</title>
-      <link>/tags/nlp/</link>
+      <link>https://david-salazar.github.io/tags/nlp/</link>
       <pubDate>Thu, 07 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/nlp/</guid>
+      <guid>https://david-salazar.github.io/tags/nlp/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Python</title>
-      <link>/tags/python/</link>
+      <link>https://david-salazar.github.io/tags/python/</link>
       <pubDate>Fri, 01 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/python/</guid>
+      <guid>https://david-salazar.github.io/tags/python/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Tidyverse</title>
+      <link>https://david-salazar.github.io/tags/tidyverse/</link>
+      <pubDate>Tue, 17 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://david-salazar.github.io/tags/tidyverse/</guid>
       <description></description>
     </item>
     
