@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Latin on Dilettanting Data Science</title>
+    <link>/tags/latin/</link>
+    <description>Recent content in Latin on Dilettanting Data Science</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 19 Jul 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/latin/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Qui mensis anni calidissimus est?</title>
+      <link>/2018/07/19/qui-mensis-anni-calidissimus-est/</link>
+      <pubDate>Thu, 19 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/07/19/qui-mensis-anni-calidissimus-est/</guid>
+      <description>In capitulo XIII Linguae Latinae, cui nomen ‘Annus et Menses’ est, Quintus Aemiliam interrogat hoc:
+ Qui mensis anni calidissimus est?
+ Respondeo notitiae Nova Yorkae:
+library(tidyverse) data &amp;lt;- read_csv(&amp;quot;https://raw.githubusercontent.com/fivethirtyeight/data/master/us-weather-history/KNYC.csv&amp;quot;) data &amp;lt;- data %&amp;gt;% mutate(date = lubridate::ymd(date), month = lubridate::month(date), mensis = case_when( month == 1 ~ &amp;quot;Ianuarius&amp;quot;, month == 2 ~ &amp;quot;Februarius&amp;quot;, month == 3 ~ &amp;quot;Martius&amp;quot;, month == 4 ~ &amp;quot;Aprilis&amp;quot;, month == 5 ~ &amp;quot;Maius&amp;quot;, month == 6 ~ &amp;quot;Iunius&amp;quot;, month == 7 ~ &amp;quot;Iulius&amp;quot;, month == 8 ~ &amp;quot;Augustus&amp;quot;, month == 9 ~ &amp;quot;Septiembre&amp;quot;, month == 10 ~ &amp;quot;October&amp;quot;, month == 11 ~ &amp;quot;November&amp;quot;, month == 12 ~ &amp;quot;December&amp;quot; ), mensis = forcats::as_factor(mensis), mensis = forcats::fct_reorder(mensis, month, .</description>
+    </item>
+    
+  </channel>
+</rss>
