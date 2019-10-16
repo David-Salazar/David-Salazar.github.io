@@ -6,10 +6,21 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 19 Jul 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 15 Oct 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Netflix Habits through data</title>
+      <link>/2019/10/15/netflix-habits-through-data/</link>
+      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/10/15/netflix-habits-through-data/</guid>
+      <description>Netflix HabitsIn the past, I believe I have spent an inordinate amount of time watching series and movies on Netflix. To try to gauge how my habits have changed through time, I downloaded the data that Netflix makes available and, of course, used ´R´ to analyze it.
+Tidy Toolslibrary(tidyverse)library(tsibble)Let’s have a first look:
+Sadly, there’s not that much information. However, let’s try to gauge how many shows have I watched:</description>
+    </item>
     
     <item>
       <title>Qui mensis anni calidissimus est?</title>
@@ -18,9 +29,9 @@
       
       <guid>/2018/07/19/qui-mensis-anni-calidissimus-est/</guid>
       <description>In capitulo XIII Linguae Latinae, cui nomen ‘Annus et Menses’ est, Quintus Aemiliam interrogat hoc:
- Qui mensis anni calidissimus est?
- Respondeo notitiae Nova Yorkae:
-library(tidyverse) data &amp;lt;- read_csv(&amp;quot;https://raw.githubusercontent.com/fivethirtyeight/data/master/us-weather-history/KNYC.csv&amp;quot;) data &amp;lt;- data %&amp;gt;% mutate(date = lubridate::ymd(date), month = lubridate::month(date), mensis = case_when( month == 1 ~ &amp;quot;Ianuarius&amp;quot;, month == 2 ~ &amp;quot;Februarius&amp;quot;, month == 3 ~ &amp;quot;Martius&amp;quot;, month == 4 ~ &amp;quot;Aprilis&amp;quot;, month == 5 ~ &amp;quot;Maius&amp;quot;, month == 6 ~ &amp;quot;Iunius&amp;quot;, month == 7 ~ &amp;quot;Iulius&amp;quot;, month == 8 ~ &amp;quot;Augustus&amp;quot;, month == 9 ~ &amp;quot;Septiembre&amp;quot;, month == 10 ~ &amp;quot;October&amp;quot;, month == 11 ~ &amp;quot;November&amp;quot;, month == 12 ~ &amp;quot;December&amp;quot; ), mensis = forcats::as_factor(mensis), mensis = forcats::fct_reorder(mensis, month, .</description>
+Qui mensis anni calidissimus est?
+Respondeo notitiae Nova Yorkae:
+library(tidyverse)data &amp;lt;- read_csv(&amp;quot;https://raw.githubusercontent.com/fivethirtyeight/data/master/us-weather-history/KNYC.csv&amp;quot;)data &amp;lt;- data %&amp;gt;% mutate(date = lubridate::ymd(date),month = lubridate::month(date),mensis = case_when(month == 1 ~ &amp;quot;Ianuarius&amp;quot;,month == 2 ~ &amp;quot;Februarius&amp;quot;,month == 3 ~ &amp;quot;Martius&amp;quot;,month == 4 ~ &amp;quot;Aprilis&amp;quot;,month == 5 ~ &amp;quot;Maius&amp;quot;,month == 6 ~ &amp;quot;Iunius&amp;quot;,month == 7 ~ &amp;quot;Iulius&amp;quot;,month == 8 ~ &amp;quot;Augustus&amp;quot;,month == 9 ~ &amp;quot;Septiembre&amp;quot;,month == 10 ~ &amp;quot;October&amp;quot;,month == 11 ~ &amp;quot;November&amp;quot;, month == 12 ~ &amp;quot;December&amp;quot;),mensis = forcats::as_factor(mensis),mensis = forcats::fct_reorder(mensis, month, .</description>
     </item>
     
     <item>
@@ -29,8 +40,7 @@ library(tidyverse) data &amp;lt;- read_csv(&amp;quot;https://raw.githubuserconte
       <pubDate>Tue, 17 Jul 2018 00:00:00 +0000</pubDate>
       
       <guid>/2018/07/17/how-spell-hodl/</guid>
-      <description>The moody Mr. Market Anybody who has even a dime on the stock market will eventually get dragged on following the daily (or even hourly) moves in the market. However, this is not only a stressful idea, but also a very ineffective one. Most days in the market won’t even bulge your final total return. In fact, final market return is mostly determined by a handful of days alone.
-Let’s prove this by comparing the annualized return one would get from investing the last 20 years and being invested 100% of the time, and missing the best days of the market due to bad timing.</description>
+      <description>The moody Mr. MarketAnybody who has even a dime on the stock market will eventually get dragged on following the daily (or even hourly) moves in the market. However, this is not only a stressful idea, but also a very ineffective one. Most days in the market won’t even bulge your final total return. In fact, final market return is mostly determined by a handful of days alone.</description>
     </item>
     
     <item>
@@ -39,7 +49,7 @@ Let’s prove this by comparing the annualized return one would get from investi
       <pubDate>Sun, 10 Jun 2018 00:00:00 +0000</pubDate>
       
       <guid>/2018/06/10/trees-ensembles-and-beyond/</guid>
-      <description>Why? Set-up  Trees Fitting them Interpretation  Ensembles Bagging Bootstraping Random Forests Conclusions for Bagging  Boosting Directional Derivative Gradient Boosting: Back to our problem Conclusions for Boosting     Why? lightgbm and xgboost appear in every single competition at Kaggle. Thus, these boosting techniques must be able to learn something that cannot be easily learned from intelligent bagging techniques like Random Forests. This is my attempt to understand why and how they can do that.</description>
+      <description>Why?Set-upTreesFitting themInterpretationEnsemblesBaggingBootstrapingRandom ForestsConclusions for BaggingBoostingDirectional DerivativeGradient Boosting: Back to our problemConclusions for BoostingWhy?lightgbm and xgboost appear in every single competition at Kaggle. Thus, these boosting techniques must be able to learn something that cannot be easily learned from intelligent bagging techniques like Random Forests. This is my attempt to understand why and how they can do that.</description>
     </item>
     
     <item>
@@ -48,8 +58,8 @@ Let’s prove this by comparing the annualized return one would get from investi
       <pubDate>Thu, 07 Jun 2018 00:00:00 +0000</pubDate>
       
       <guid>/2018/06/07/the-adam-smith-problem-tidytext-in-r/</guid>
-      <description>Why? This is a fun (for me) exercise to explore Text Mining with R and make sure I can follow along.
- What is it ? Around the XIX century, some german scholars posited that Wealth of Nations’ Adam Smith was too different to Theory of Moral Sentiments’ Adam Smith, thus concluded that he must have had a change of heart somewhere along his life or that he was simply an incoherent man.</description>
+      <description>Why?This is a fun (for me) exercise to explore Text Mining with R and make sure I can follow along.
+What is it ?Around the XIX century, some german scholars posited that Wealth of Nations’ Adam Smith was too different to Theory of Moral Sentiments’ Adam Smith, thus concluded that he must have had a change of heart somewhere along his life or that he was simply an incoherent man.</description>
     </item>
     
     <item>
@@ -59,7 +69,7 @@ Let’s prove this by comparing the annualized return one would get from investi
       
       <guid>/2018/06/01/is-it-cr7-or-messi-using-the-fastai-toolkit/</guid>
       <description>World Cup Mode: CR vs Messi&amp;#182;To try to solidify what I have learned from Deep Learning for coders from fast.ai, I&#39;ll try to train a computer vision algorithm such that it can recognize whether is Messi or Cristiano Ronaldo in the picture. Notebook in github  or nbviewer 
-Imports&amp;#182;    In&amp;nbsp;[1]: # Put these at the top of every notebook, to get automatic reloading and inline plotting %reload_ext autoreload %autoreload 2 %matplotlib inline      In&amp;nbsp;[2]: # This file contains all the main external libs we&amp;#39;ll use from fastai.</description>
+Imports&amp;#182;In&amp;nbsp;[1]:# Put these at the top of every notebook, to get automatic reloading and inline plotting%reload_ext autoreload%autoreload 2%matplotlib inlineIn&amp;nbsp;[2]:# This file contains all the main external libs we&amp;#39;ll usefrom fastai.</description>
     </item>
     
     <item>
@@ -68,8 +78,8 @@ Imports&amp;#182;    In&amp;nbsp;[1]: # Put these at the top of every notebook, 
       <pubDate>Sun, 20 May 2018 00:00:00 +0000</pubDate>
       
       <guid>/2018/05/20/ggsupplydemand/</guid>
-      <description>What is it? ggsupplyDemand is an R package that makes it extremely easy to plot basic supply and demands using ggplot2
-library(ggsupplyDemand) create_supply_and_demand() %&amp;gt;% shift_demand(outwards = TRUE) %&amp;gt;% plot_supply_and_demand(consumer_surplus = TRUE)  Why? I needed to plot some basic supply and demand curves in R. Obviously, I thought of ggplot2. However, it is not that straightforward. The best resource I could find was this blogpost from Andrew Heiss. I recopilated most of his functions, created a simple API and put all the functions on an package.</description>
+      <description>What is it?ggsupplyDemand is an R package that makes it extremely easy to plot basic supply and demands using ggplot2
+library(ggsupplyDemand)create_supply_and_demand() %&amp;gt;% shift_demand(outwards = TRUE) %&amp;gt;% plot_supply_and_demand(consumer_surplus = TRUE)Why?I needed to plot some basic supply and demand curves in R. Obviously, I thought of ggplot2. However, it is not that straightforward. The best resource I could find was this blogpost from Andrew Heiss. I recopilated most of his functions, created a simple API and put all the functions on an package.</description>
     </item>
     
     <item>
@@ -78,9 +88,9 @@ library(ggsupplyDemand) create_supply_and_demand() %&amp;gt;% shift_demand(outwa
       <pubDate>Sun, 01 Apr 2018 00:00:00 +0000</pubDate>
       
       <guid>/2018/04/01/shiny-e-icolcap/</guid>
-      <description>Siguiendo una inversión decepecionante El mercado colombiano ha sido una decepción en los últimos cinco años. Para ver qué tan decepcionado debería estar, cree esta Shiny app. Para no ovlidarme de cómo se construyen en el futuro, acá un tutorial breve comentando selecciones del código:
-ui: User Interface En la ui especificamos la organización de los inputs y outputs, aún cuando no hayamos creado estos últimos.
-ui &amp;lt;- fluidPage( # Application title titlePanel(&amp;quot;Comparación de Mercado&amp;quot;), # Sidebar with a date input sidebarLayout( dateInput(&amp;quot;fecha_inicial&amp;quot;, &amp;quot;Fecha de inicio de comparación:&amp;quot;, value = &amp;quot;2013-01-01&amp;quot;) # primer argumento input$fecha_inicial, como nos referiremos a esto en server.</description>
+      <description>Siguiendo una inversión decepecionanteEl mercado colombiano ha sido una decepción en los últimos cinco años. Para ver qué tan decepcionado debería estar, cree esta Shiny app. Para no ovlidarme de cómo se construyen en el futuro, acá un tutorial breve comentando selecciones del código:
+ui: User InterfaceEn la ui especificamos la organización de los inputs y outputs, aún cuando no hayamos creado estos últimos.
+ui &amp;lt;- fluidPage(# Application titletitlePanel(&amp;quot;Comparación de Mercado&amp;quot;),# Sidebar with a date inputsidebarLayout( dateInput(&amp;quot;fecha_inicial&amp;quot;, &amp;quot;Fecha de inicio de comparación:&amp;quot;, value = &amp;quot;2013-01-01&amp;quot;)# primer argumento input$fecha_inicial, como nos referiremos a esto en server.</description>
     </item>
     
   </channel>

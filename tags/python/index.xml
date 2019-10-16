@@ -18,7 +18,7 @@
       
       <guid>/2018/06/01/is-it-cr7-or-messi-using-the-fastai-toolkit/</guid>
       <description>World Cup Mode: CR vs Messi&amp;#182;To try to solidify what I have learned from Deep Learning for coders from fast.ai, I&#39;ll try to train a computer vision algorithm such that it can recognize whether is Messi or Cristiano Ronaldo in the picture. Notebook in github  or nbviewer 
-Imports&amp;#182;    In&amp;nbsp;[1]: # Put these at the top of every notebook, to get automatic reloading and inline plotting %reload_ext autoreload %autoreload 2 %matplotlib inline      In&amp;nbsp;[2]: # This file contains all the main external libs we&amp;#39;ll use from fastai.</description>
+Imports&amp;#182;In&amp;nbsp;[1]:# Put these at the top of every notebook, to get automatic reloading and inline plotting%reload_ext autoreload%autoreload 2%matplotlib inlineIn&amp;nbsp;[2]:# This file contains all the main external libs we&amp;#39;ll usefrom fastai.</description>
     </item>
     
   </channel>

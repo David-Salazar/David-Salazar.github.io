@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Nlp on Dilettanting Data Science</title>
+    <title>nlp on Dilettanting Data Science</title>
     <link>/tags/nlp/</link>
-    <description>Recent content in Nlp on Dilettanting Data Science</description>
+    <description>Recent content in nlp on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 07 Jun 2018 00:00:00 +0000</lastBuildDate>
@@ -17,8 +17,8 @@
       <pubDate>Thu, 07 Jun 2018 00:00:00 +0000</pubDate>
       
       <guid>/2018/06/07/the-adam-smith-problem-tidytext-in-r/</guid>
-      <description>Why? This is a fun (for me) exercise to explore Text Mining with R and make sure I can follow along.
- What is it ? Around the XIX century, some german scholars posited that Wealth of Nations’ Adam Smith was too different to Theory of Moral Sentiments’ Adam Smith, thus concluded that he must have had a change of heart somewhere along his life or that he was simply an incoherent man.</description>
+      <description>Why?This is a fun (for me) exercise to explore Text Mining with R and make sure I can follow along.
+What is it ?Around the XIX century, some german scholars posited that Wealth of Nations’ Adam Smith was too different to Theory of Moral Sentiments’ Adam Smith, thus concluded that he must have had a change of heart somewhere along his life or that he was simply an incoherent man.</description>
     </item>
     
   </channel>
