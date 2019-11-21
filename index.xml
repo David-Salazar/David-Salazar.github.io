@@ -58,7 +58,7 @@ library(tidyverse)data &amp;lt;- read_csv(&amp;quot;https://raw.githubuserconte
       <pubDate>Thu, 07 Jun 2018 00:00:00 +0000</pubDate>
       
       <guid>/about/</guid>
-      <description>Hi! My names is David Salazar an I am dilettant&amp;rsquo;n my way into understanding Machine Learning and Data Science in general. Unemployed until I find a good reason not to be.</description>
+      <description>Hi! My name is David Salazar an I am dilettant&amp;rsquo;n my way into understanding Machine Learning and Data Science in general.</description>
     </item>
     
     <item>
