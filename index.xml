@@ -6,10 +6,21 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 15 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 12 Dec 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Understanding Backtracking</title>
+      <link>/2019/12/12/understanding-backtracking/</link>
+      <pubDate>Thu, 12 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/12/12/understanding-backtracking/</guid>
+      <description>Recursion black magicWhile working through some HackerRank’s problems, I came across the following exercise:
+Find the number of ways that a given integer, \(X\), can be expressed as the sum of the \(N^{th}\) powers of unique, natural numbers.
+However, I could not inmediately come up with a compelling way to programatically enumerate and examine all the possible sequences of numbers to find the required solution. Thus, it’s good time as ever to refresh my knowledge about recursion and specically, backtracking.</description>
+    </item>
     
     <item>
       <title>Netflix Habits through data</title>
