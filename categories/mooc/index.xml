@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>mooc on Dilettanting Data Science</title>
+    <link>/categories/mooc/</link>
+    <description>Recent content in mooc on Dilettanting Data Science</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 18 Dec 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/mooc/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>deeplearning.ai Specialization</title>
+      <link>/2019/12/18/deeplearning-ai-specialization/</link>
+      <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/12/18/deeplearning-ai-specialization/</guid>
+      <description>deeplearning.aiOver the next few days, I’ll go over (this time I am paying and thus have access to the exams :)) the deeplearning.ai Coursera Specialization. Here, I’ll gather my notes of the course for easy access:
+Neural Networks and Deep LearningImproving Deep Neural Networks: Hyperparameter tuning, Regularization and Optimization.Structuring Machine Learning Projects.Convolutional Neural Networks.Sequence Models.Why?I have already used DL in a couple of personal projects.</description>
+    </item>
+    
+    <item>
+      <title>Neural Networks and Deep Learning </title>
+      <link>/2019/12/18/neural-networks-and-deep-learning/</link>
+      <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/12/18/neural-networks-and-deep-learning/</guid>
+      <description>Week 1Why Neural Networks?Economic value from Neural NetworksStructured vs UnstructuredWhy now? Scale, scale and scaleWeek 1Why Neural Networks?A single neuron can be thought as any function: it takes an input and outputs the input transformed. The magic of neural networks resides on stacking many of these together.
+So if this is a single neuron, neural network, really a tiny little neural network, a larger neural network is then formed by taking many of the single neurons and stacking them together.</description>
+    </item>
+    
+  </channel>
+</rss>

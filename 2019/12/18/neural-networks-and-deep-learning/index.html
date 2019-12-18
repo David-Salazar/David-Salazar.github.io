@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.58.3" />
+
+
+<title>Neural Networks and Deep Learning  - Dilettanting Data Science</title>
+<meta property="og:title" content="Neural Networks and Deep Learning  - Dilettanting Data Science">
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/turner.jpg"
+         width="200"
+         height="200"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/David-Salazar">GitHub</a></li>
+    
+    <li><a href="https://www.kaggle.com/davidsalazarv95">Kaggle</a></li>
+    
+    <li><a href="https://david-salazar.github.io/">Posts</a></li>
+    
+    <li><a href="https://twitter.com/DavidSalazarVir?lang=en">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">4 min read</span>
+    
+
+    <h1 class="article-title">Neural Networks and Deep Learning </h1>
+
+    
+    <span class="article-date">2019/12/18</span>
+    
+    
+
+    <div class="article-content">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#week-1">Week 1</a><ul>
+<li><a href="#why-neural-networks">Why Neural Networks?</a></li>
+<li><a href="#economic-value-from-neural-networks">Economic value from Neural Networks</a><ul>
+<li><a href="#structured-vs-unstructured">Structured vs Unstructured</a></li>
+</ul></li>
+<li><a href="#why-now-scale-scale-and-scale">Why now? Scale, scale and scale</a></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="week-1" class="section level1">
+<h1>Week 1</h1>
+<div id="why-neural-networks" class="section level2">
+<h2>Why Neural Networks?</h2>
+<p>A single neuron can be thought as any function: it takes an input and outputs the input transformed. The magic of neural networks resides on stacking many of these together.</p>
+<blockquote>
+<p>So if this is a single neuron, neural network, really a tiny little neural network, a larger neural network is then formed by taking many of the single neurons and stacking them together. So, if you think of this neuron that’s being like a single Lego brick, you then get a bigger neural network by stacking together many of these Lego bricks.</p>
+</blockquote>
+<p>By stacking them up, we can create hidden neural networks. These will eventually compute the optimal input transformation to finally output the last value.</p>
+<blockquote>
+<p>How you manage neural network is that when you implement it, you need to give it just the input x and the output y for a number of examples in your training set and all this things in the middle, they will figure out by itself.</p>
+</blockquote>
+<blockquote>
+<p>So for example, rather than saying these first nodes represent family size and family size depends only on the features X1 and X2. Instead, we’re going to say, well neural network, you decide whatever you want this known to be. And we’ll give you all four of the features to complete whatever you want.</p>
+</blockquote>
+</div>
+<div id="economic-value-from-neural-networks" class="section level2">
+<h2>Economic value from Neural Networks</h2>
+<p>Most of the economic value has come from supervised learning using neural networks. That is:</p>
+<blockquote>
+<p>So a lot of the value creation through neural networks has been through cleverly selecting what should be x and what should be y</p>
+</blockquote>
+<p>And then letting the network figure out the latent structure of the data to predict <span class="math inline">\(y\)</span>.</p>
+<div id="structured-vs-unstructured" class="section level3">
+<h3>Structured vs Unstructured</h3>
+<blockquote>
+<p>Structured Data means basically databases of data.</p>
+</blockquote>
+<blockquote>
+<p>In contrast, unstructured data refers to things like audio, raw audio, or images where you might want to recognize what’s in the image or text. Here the features might be the pixel values in an image or the individual words in a piece of text.</p>
+</blockquote>
+<p>Up until a few years ago, unstructured data was not accessible to computers:</p>
+<blockquote>
+<p>And so one of the most exciting things about the rise of neural networks is that, thanks to deep learning, thanks to neural networks, computers are now much better at interpreting unstructured data as well compared to just a few years ago. And this creates opportunities for many new exciting applications that use speech recognition, image recognition, natural language processing on text…</p>
+</blockquote>
+<p>If they are so useful, but we have known about them for so long, why only now have they started to flourish?</p>
+</div>
+</div>
+<div id="why-now-scale-scale-and-scale" class="section level2">
+<h2>Why now? Scale, scale and scale</h2>
+<p>Let’s imagine two different regimes. In one regime, equality is king and ingenuity rules: when we have few labeled data. Then, hand-engineered features can make any machine learning algorithm the best at hand.</p>
+<blockquote>
+<p>In this regime of smaller training sets the relative ordering of the algorithms is actually not very well defined so if you don’t have a lot of training data is often up to your skill at hand engineering features that determines the foreman so it’s quite possible that if someone training an SVM is more motivated to hand engineer features and someone training even large their own that may be in this small training set regime the SVM could do better so you know in this region to the left of the figure the relative ordering between gene algorithms is not that well defined and performance depends much more on your skill at engine features and other mobile details of the algorithms.</p>
+</blockquote>
+<p>Whereas in the second regime, when we have lots and lots of labeled data, large neural networks dominate every other machine learning algorithm out there.</p>
+<p>With the Digital Society that we have now and the new computation resources we can have access to, we have entered the second regime:</p>
+<blockquote>
+<p>Well you know was it they didn’t know what to do with huge amounts of data and what happened in our society over the last 10 years maybe is that for a lot of problems we went from having a relatively small amount of data to having you know often a fairly large amount of data and all of this was thanks to the digitization of a society</p>
+</blockquote>
+<blockquote>
+<p>we also just have been collecting one more and more data so over the last 20 years for a lot of applications we just accumulate a lot more data more than traditional learning algorithms were able to effectively take advantage of</p>
+</blockquote>
+<p>Thus, the answer to the former question: Neural networks have taken a leading role in the stage as soon as we entered into the regime of scale, both in computing power and in the size of labeled data availabe to us.</p>
+</div>
+</div>
+
+    </div>
+  
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//https-david-salazar-github-io.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+  
+  </article>
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

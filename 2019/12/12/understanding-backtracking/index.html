@@ -63,7 +63,7 @@
 
   <article class="article">
     
-    <span class="article-duration">3 min read</span>
+    <span class="article-duration">4 min read</span>
     
 
     <h1 class="article-title">Understanding Backtracking</h1>
@@ -144,6 +144,54 @@ print(count_expressions(29, 2, []))</code></pre>
 ## The current expression looks like: 5^2
 ## 2</code></pre>
 <p>The key step, and what was hardest for me to apprehend, was the separation between the creation of the next integer and the moment where it was added to the array. This allowed for the creation of an array, at different branches, which had, for example, 2 as its first element.</p>
+</div>
+<div id="password-cracker" class="section level2">
+<h2>Password Cracker</h2>
+<p>We are given an array with some passwords.</p>
+<pre class="python"><code>passwords = [&quot;because&quot;, &quot;can&quot;, &quot;do&quot;, &quot;must&quot;, &quot;we&quot;, &quot;what&quot;]
+print(passwords)</code></pre>
+<pre><code>## [&#39;because&#39;, &#39;can&#39;, &#39;do&#39;, &#39;must&#39;, &#39;we&#39;, &#39;what&#39;]</code></pre>
+<p>We know that any concatenation of themm is also a password. Is the following string also a password?</p>
+<pre class="python"><code>loginAttempt = &quot;wedowhatwemustbecausewecan&quot;</code></pre>
+<p>If so, we must print, in order, the passwords that compose the <code>loginAttempt</code>.</p>
+<pre class="python"><code>result = &quot;we do what we must because we can&quot;</code></pre>
+<div id="solution" class="section level3">
+<h3>Solution</h3>
+<p>The problem lends itself perfectly for some backtracking recursion. We start with any of the passwords, and we check whether it fits with the first part of the <code>loginAttempt</code>. If successful, we add the password to our solution and call our function yet again, but this time with the initial part of the <code>loginAttempt</code> chopped. If it is not successful, we try with other of the passwords. If none of the passwords fit, then we say that the <code>loginAttempt</code> cannot be reproduced with the given passwords.</p>
+<pre class="python"><code>def passwordCracker(passwords, loginAttempt):
+
+    passwords_in_order = &quot;&quot;
+    
+    # Recursion must stop
+    
+    if loginAttempt == &quot;&quot;:
+        
+        return passwords_in_order.strip(&#39; &#39;)
+        
+    
+    # Check each password for beginning of concatenaed word.    
+    
+    for password in passwords:
+    
+        len_password = len(password)
+        
+        compare_loginAttempt = loginAttempt[:len_password]
+        
+        if password == compare_loginAttempt:
+            
+            passwords_in_order += password 
+            
+            new_loginAttempt = loginAttempt[len_password:]
+        
+            return passwords_in_order.strip(&#39; &#39;) + &quot; &quot; + passwordCracker(passwords, new_loginAttempt).strip(&#39; &#39;)
+        
+    if loginAttempt != &quot;&quot;:
+        return &quot;WRONG PASSWORD&quot;
+        </code></pre>
+<pre class="python"><code>assert passwordCracker(passwords, loginAttempt) == result, &quot;Failed Test&quot;</code></pre>
+<pre class="python"><code>passwordCracker(([&quot;ozkxyhkcst&quot;, &quot;xvglh&quot;, &quot;hpdnb&quot;, &quot;zfzahm&quot;]), &quot;zfzahm&quot;)</code></pre>
+<pre><code>## &#39;zfzahm &#39;</code></pre>
+</div>
 </div>
 </div>
 
