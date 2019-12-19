@@ -6,10 +6,19 @@
     <description>Recent content in Categories on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 18 Dec 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 19 Dec 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>algorithms</title>
+      <link>/categories/algorithms/</link>
+      <pubDate>Thu, 19 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/algorithms/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>mooc</title>
@@ -17,15 +26,6 @@
       <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
       
       <guid>/categories/mooc/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>algorithms</title>
-      <link>/categories/algorithms/</link>
-      <pubDate>Thu, 12 Dec 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/algorithms/</guid>
       <description></description>
     </item>
     

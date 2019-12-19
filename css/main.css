@@ -246,6 +246,13 @@ code {
   margin-left: 2px;
 }
 
+img {
+  display: block;
+  margin: 0 0 1rem;
+  border-radius: 5px;
+  max-width: 100%;
+}
+
 @media (min-width: 600px) {
   .header {
     padding: 25px 0;

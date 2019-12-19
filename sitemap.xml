@@ -3,17 +3,32 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/categories/</loc>
-    <lastmod>2019-12-18T00:00:00+00:00</lastmod>
+    <loc>/categories/algorithms/</loc>
+    <lastmod>2019-12-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/2019/12/18/deeplearning-ai-specialization/</loc>
-    <lastmod>2019-12-18T00:00:00+00:00</lastmod>
+    <loc>/categories/</loc>
+    <lastmod>2019-12-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/</loc>
+    <lastmod>2019-12-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/</loc>
+    <lastmod>2019-12-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2019/12/19/refresher-big-oh-notation/</loc>
+    <lastmod>2019-12-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2019/12/18/deeplearning-ai-specialization/</loc>
     <lastmod>2019-12-18T00:00:00+00:00</lastmod>
   </url>
   
@@ -25,16 +40,6 @@
   <url>
     <loc>/2019/12/18/neural-networks-and-deep-learning/</loc>
     <lastmod>2019-12-18T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/post/</loc>
-    <lastmod>2019-12-18T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/algorithms/</loc>
-    <lastmod>2019-12-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>

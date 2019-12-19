@@ -6,10 +6,20 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 18 Dec 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 19 Dec 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Refresher Big Oh Notation </title>
+      <link>/2019/12/19/refresher-big-oh-notation/</link>
+      <pubDate>Thu, 19 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/12/19/refresher-big-oh-notation/</guid>
+      <description>Big Oh NotationFirst, let’s try to remember what problem we are actually trying to solve: compare the different runtime of different algorithms. We are not comparing them across time, but across number of some basic operations. And we care not about the time itself, but about the runtime growth as the input size also growths. Thus, we use asymptotic analysis.
+\(O(n)\) can thus be described as: the runtime grows linearly as the input size increases.</description>
+    </item>
     
     <item>
       <title>deeplearning.ai Specialization</title>
@@ -27,8 +37,7 @@ Neural Networks and Deep LearningImproving Deep Neural Networks: Hyperparameter
       <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
       
       <guid>/2019/12/18/neural-networks-and-deep-learning/</guid>
-      <description>Week 1Why Neural Networks?Economic value from Neural NetworksStructured vs UnstructuredWhy now? Scale, scale and scaleWeek 2NotationLogistic RegressionWeek 1Why Neural Networks?A single neuron can be thought as any function: it takes an input and outputs the input transformed. The magic of neural networks resides on stacking many of these together.
-So if this is a single neuron, neural network, really a tiny little neural network, a larger neural network is then formed by taking many of the single neurons and stacking them together.</description>
+      <description>Week 1Why Neural Networks?Economic value from Neural NetworksStructured vs UnstructuredWhy now? Scale, scale and scaleWeek 2NotationLogistic RegressionA rational loss functionArriving at cost function: Maximum LikelihoodGradient DescentMinimizing directional derivativeWeek 1Why Neural Networks?A single neuron can be thought as any function: it takes an input and outputs the input transformed.</description>
     </item>
     
     <item>

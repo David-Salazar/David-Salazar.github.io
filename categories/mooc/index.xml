@@ -27,8 +27,7 @@ Neural Networks and Deep LearningImproving Deep Neural Networks: Hyperparameter
       <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
       
       <guid>/2019/12/18/neural-networks-and-deep-learning/</guid>
-      <description>Week 1Why Neural Networks?Economic value from Neural NetworksStructured vs UnstructuredWhy now? Scale, scale and scaleWeek 2NotationLogistic RegressionWeek 1Why Neural Networks?A single neuron can be thought as any function: it takes an input and outputs the input transformed. The magic of neural networks resides on stacking many of these together.
-So if this is a single neuron, neural network, really a tiny little neural network, a larger neural network is then formed by taking many of the single neurons and stacking them together.</description>
+      <description>Week 1Why Neural Networks?Economic value from Neural NetworksStructured vs UnstructuredWhy now? Scale, scale and scaleWeek 2NotationLogistic RegressionA rational loss functionArriving at cost function: Maximum LikelihoodGradient DescentMinimizing directional derivativeWeek 1Why Neural Networks?A single neuron can be thought as any function: it takes an input and outputs the input transformed.</description>
     </item>
     
   </channel>
