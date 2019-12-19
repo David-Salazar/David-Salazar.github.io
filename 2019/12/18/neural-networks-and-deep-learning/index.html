@@ -58,7 +58,7 @@
 
   <article class="article">
     
-    <span class="article-duration">4 min read</span>
+    <span class="article-duration">5 min read</span>
     
 
     <h1 class="article-title">Neural Networks and Deep Learning </h1>
@@ -79,6 +79,10 @@
 <li><a href="#structured-vs-unstructured">Structured vs Unstructured</a></li>
 </ul></li>
 <li><a href="#why-now-scale-scale-and-scale">Why now? Scale, scale and scale</a></li>
+</ul></li>
+<li><a href="#week-2">Week 2</a><ul>
+<li><a href="#notation">Notation</a></li>
+<li><a href="#logistic-regression">Logistic Regression</a></li>
 </ul></li>
 </ul>
 </div>
@@ -136,6 +140,28 @@
 <p>we also just have been collecting one more and more data so over the last 20 years for a lot of applications we just accumulate a lot more data more than traditional learning algorithms were able to effectively take advantage of</p>
 </blockquote>
 <p>Thus, the answer to the former question: Neural networks have taken a leading role in the stage as soon as we entered into the regime of scale, both in computing power and in the size of labeled data availabe to us.</p>
+</div>
+</div>
+<div id="week-2" class="section level1">
+<h1>Week 2</h1>
+<p>Objectives:</p>
+<ul>
+<li><p><strong>Learn vectorization in Python: avoiding explicit for-loops</strong></p></li>
+<li><p><strong>Learn what a forward and backward pass mean in the context of logistic regression implemented as a one neural network.</strong></p></li>
+</ul>
+<div id="notation" class="section level2">
+<h2>Notation</h2>
+<div class="figure">
+<img src="/images/notation.PNG" alt="Notation" />
+<p class="caption">Notation</p>
+</div>
+<p>Notice the importance of the following variables:</p>
+<p><span class="math inline">\(m\)</span>, the number of training examples. <span class="math inline">\(n_X\)</span>, the number of input variables. Also, notice that in this course we will stack as columns each observation, both in <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>.</p>
+</div>
+<div id="logistic-regression" class="section level2">
+<h2>Logistic Regression</h2>
+<p>We want a function of parameters <span class="math inline">\(w, b\)</span> such that it is going to output something we can call <span class="math inline">\(P(Y = 1| x)\)</span>. $ Xw + b$, which we would use in linear regression, seems wrong. Enter the sigmoid function defined thus:</p>
+<p><span class="math display">\[ \sigma (z) = \frac{1}{1 - e ^{-z}}  \]</span></p>
 </div>
 </div>
 
