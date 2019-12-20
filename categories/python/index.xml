@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>python on Dilettanting Data Science</title>
+    <link>/categories/python/</link>
+    <description>Recent content in python on Dilettanting Data Science</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 19 Dec 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/python/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Referential Arrays in Python</title>
+      <link>/2019/12/19/referential-arrays-in-python/</link>
+      <pubDate>Thu, 19 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/12/19/referential-arrays-in-python/</guid>
+      <description>Referential ArrayArrays in pythons do not hold he objects themselves, but pointers to that objects. This can create problems with shallowcopying. For example:
+Each index of each list contains a pointer to an object.
+first_list = [1, 2, 3]second_list = [4, 5, 6]third_list = [7, 8, 9]print(first_list)## [1, 2, 3]What if we want to combine these lists?
+first_list.extend(second_list)third_list.append(second_list)print(first_list)## [1, 2, 3, 4, 5, 6]print(third_list)## [7, 8, 9, [4, 5, 6]]Now, first_list points to the same object as second list.</description>
+    </item>
+    
+  </channel>
+</rss>

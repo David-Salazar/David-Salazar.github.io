@@ -19,6 +19,11 @@
 
 
 
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
 <link rel="stylesheet" href="/css/fonts.css" media="all">
 <link rel="stylesheet" href="/css/main.css" media="all">
 
@@ -58,7 +63,7 @@
 
   <article class="article">
     
-    <span class="article-duration">9 min read</span>
+    <span class="article-duration">13 min read</span>
     
 
     <h1 class="article-title">Neural Networks and Deep Learning </h1>
@@ -78,7 +83,9 @@
 <li><a href="#economic-value-from-neural-networks">Economic value from Neural Networks</a><ul>
 <li><a href="#structured-vs-unstructured">Structured vs Unstructured</a></li>
 </ul></li>
-<li><a href="#why-now-scale-scale-and-scale">Why now? Scale, scale and scale</a></li>
+<li><a href="#why-now-scale-scale-and-scale">Why now? Scale, scale and scale</a><ul>
+<li><a href="#universal-approximators">Universal Approximators</a></li>
+</ul></li>
 </ul></li>
 <li><a href="#week-2">Week 2</a><ul>
 <li><a href="#notation">Notation</a></li>
@@ -89,6 +96,12 @@
 <li><a href="#gradient-descent">Gradient Descent</a><ul>
 <li><a href="#minimizing-directional-derivative">Minimizing directional derivative</a></li>
 </ul></li>
+<li><a href="#computational-graphs-and-backprop">Computational Graphs and backprop</a><ul>
+<li><a href="#example-with-logistic-regression">Example with logistic regression</a></li>
+</ul></li>
+<li><a href="#vectorisation">Vectorisation</a></li>
+<li><a href="#broadcasting">Broadcasting</a></li>
+<li><a href="#assingments-need-to-remember">Assingments’ need to remember:</a></li>
 </ul></li>
 </ul>
 </div>
@@ -138,6 +151,9 @@
 <p>In this regime of smaller training sets the relative ordering of the algorithms is actually not very well defined so if you don’t have a lot of training data is often up to your skill at hand engineering features that determines the foreman so it’s quite possible that if someone training an SVM is more motivated to hand engineer features and someone training even large their own that may be in this small training set regime the SVM could do better so you know in this region to the left of the figure the relative ordering between gene algorithms is not that well defined and performance depends much more on your skill at engine features and other mobile details of the algorithms.</p>
 </blockquote>
 <p>Whereas in the second regime, when we have lots and lots of labeled data, large neural networks dominate every other machine learning algorithm out there.</p>
+<div id="universal-approximators" class="section level3">
+<h3>Universal Approximators</h3>
+<p>The real reason why neural network seem to dominate every other machine learning algorithm out there when we are in the scale regime, is their capacity: they can fit almost any function out there. That is, they are universal approximators. Thus, if we have enough data, no matter how crazy the function must look like to approximate our data, the neural networks can find a way to get us towards that crazy function. I found a <a href="http://neuralnetworksanddeeplearning.com/chap4.html">visual proof</a> of the theorem very illuminating.</p>
 <p>With the Digital Society that we have now and the new computation resources we can have access to, we have entered the second regime:</p>
 <blockquote>
 <p>Well you know was it they didn’t know what to do with huge amounts of data and what happened in our society over the last 10 years maybe is that for a lot of problems we went from having a relatively small amount of data to having you know often a fairly large amount of data and all of this was thanks to the digitization of a society</p>
@@ -146,6 +162,7 @@
 <p>we also just have been collecting one more and more data so over the last 20 years for a lot of applications we just accumulate a lot more data more than traditional learning algorithms were able to effectively take advantage of</p>
 </blockquote>
 <p>Thus, the answer to the former question: Neural networks have taken a leading role in the stage as soon as we entered into the regime of scale, both in computing power and in the size of labeled data availabe to us.</p>
+</div>
 </div>
 </div>
 <div id="week-2" class="section level1">
@@ -177,10 +194,7 @@
 <div id="a-rational-loss-function" class="section level2">
 <h2>A rational loss function</h2>
 <p>We must tell our algorithm when it commits mistakes and when it is not. To do so, we create a loss function. For logistic regression, we are going to use the following:</p>
-<div class="figure">
-<img src="/images/cost_logistic.PNG" alt="cost_and_loss" />
-<p class="caption">cost_and_loss</p>
-</div>
+<p><img src="/images/cost_logistic.PNG" /></p>
 <p>Note that, <em>the cost function is different to the loss function</em>.</p>
 <p>Although Andrew gave a great intuitive explanation, mainly that the loss function will tell the algorithm (in order to minimize the loss function) to make <span class="math inline">\(\hat{y}\)</span> large when <span class="math inline">\(y=1\)</span> and small when <span class="math inline">\(y=0\)</span>, I think it is worth the trouble to go over the derivation of this cost function from a maximum likelihood perspective.</p>
 <div id="arriving-at-cost-function-maximum-likelihood" class="section level3">
@@ -189,7 +203,7 @@
 <p>Thus, the PMF is as follows:</p>
 <p><span class="math display">\[ p(y) =  (p)^y (1 - p)^{(1 - y)} \]</span></p>
 <p>If the data comes from an <span class="math inline">\(i.i.d\)</span>, the joint probability is simply a multiplication of the respective PMFs of the <span class="math inline">\(x^{i}\)</span>. The log of that expression, then, will be the following sum:</p>
-<p><span class="math display">\[ \sum_M log((p)^y (1 - p)^{(1 - y)) \]</span>
+<p><span class="math display">\[ \sum_M log((p)^y (1 - p)^{(1 - y))} \]</span>
 Applying simple logarithm rules:</p>
 <p><span class="math display">\[ \sum_M y log(p) + (1 - y) log (1 - p)  \]</span></p>
 <p>Then, as we switch the function to treat <span class="math inline">\(y, x\)</span> as given, and <span class="math inline">\(w, b\)</span> as parameters, we arrive at:</p>
@@ -221,6 +235,120 @@ However, <span class="math inline">\(\vec{v}\)</span> is a unit vector. Thus:</p
 Thus, we must choose <span class="math inline">\(\theta\)</span> such that the expression is maximized. Cosine has a maximum of <span class="math inline">\(1\)</span> at <span class="math inline">\(\theta = 0\)</span>, which thus says that the two vectors, the gradient and the direction, must be aligned. That is, <strong>the direction must be equal to the gradient evaluated at the initial point</strong>.</p>
 <p>Equivalently, to minimize the expresion, we must have cosine equal to <span class="math inline">\(-1\)</span>, which happens at <span class="math inline">\(\theta = \pi\)</span>. Which thus says that <strong>the direction we must take is parallel to the negative (opposite) of the gradient vector evaluated at the initial point</strong>.</p>
 </div>
+</div>
+<div id="computational-graphs-and-backprop" class="section level2">
+<h2>Computational Graphs and backprop</h2>
+<p>A computational graph is a way to order and compute the required mathematical steps to arrive at a certain value. Specially, to compute multiple function compositions into sequential steps- For a given neural network implementation, and for one training example, we can conceive of it as a computational graph. Setting up in this way, allows us to optimize the final value more easily than if we were to analytically derive the gradient of the final value through the original function compositions.</p>
+<blockquote>
+<p>So, the computation graph comes in handy when there is some distinguished or some special output variable, such as J in this case, that you want to optimize</p>
+</blockquote>
+<p>In order words, a neural network can be conceived, as an abstract:</p>
+<p><span class="math display">\[ f(g(h(i(....)))\]</span>
+Whereas the derivatives may get unwieldy by looking at the neural network this way, we may instead switch our perspective to that of a computational graph. There, the chain rule looks much easier to calculate for any given initialization.</p>
+<p>Notice that if we may use backprop in this way, we must be able to combine the derivatives of the loss functions of each training example into the derivative of the overall cost function.</p>
+<div id="example-with-logistic-regression" class="section level3">
+<h3>Example with logistic regression</h3>
+<p>So, thanks to conceiving our neural network, for some value of the parameters, and for one training example, as a computational graph, we can use backpropagation to find out the gradient of our loss function with respect to the parameters. We, then, can compute the gradient of the cost function by combining these individual gradients and, finally, move into these direction to take a gradient step. Which can be seen in Andrew’s pseudocode:</p>
+<p><img src="/images/1_deeplearning.ai/one_step_gradient.PNG" /></p>
+<p>However, notice that in the pseudocode there are three for loops, two implicit and one explicit.</p>
+<ol style="list-style-type: decimal">
+<li>The code only performs one step of gradient descent. We must loop over many steps.</li>
+<li>For each step, we must loop over each training observation to calculate the cost gradient and take a step in that direction.</li>
+<li>For each training observation, we must loop over the parameters to start acumulating the value of their respective partial derivatives.</li>
+</ol>
+<p>Let’s see if the wonders of vectorisation can help us.</p>
+</div>
+</div>
+<div id="vectorisation" class="section level2">
+<h2>Vectorisation</h2>
+<blockquote>
+<p>Vectorization is basically the art of getting rid of explicit folders in your code. In the deep learning era safety in deep learning in practice,</p>
+</blockquote>
+<blockquote>
+<p>Whenever possible avoid explicit for-loops.</p>
+</blockquote>
+<p>Before, we defined 3 possible for-loops that were present in our training. With vectorisation, we can get rid of two of them.</p>
+<ul>
+<li><strong>For each step, we must loop over each training observation to calculate the cost gradient and take a step in that direction.</strong></li>
+<li><strong>For each training observation, we must loop over the parameters to start acumulating the value of their respective partial derivatives.</strong></li>
+</ul>
+<p><img src="/images/1_deeplearning.ai/vectorisation_1.PNG" /></p>
+<p>Notice how we can do a forward pass for all of the observations by stacking the individual observations vectors into columns of a matrix.</p>
+<p>We can also perform the backprop algorithm, all at once:</p>
+<p><img src="/images/1_deeplearning.ai/vectorisation_2.PNG" /></p>
+<p>In code:</p>
+<pre class="python"><code>import numpy as np
+
+Z = np.dot(w.T, X) + b
+
+A = sigmoid(Z)
+
+dZ = A - Y
+
+dw = 1/m * np.dot(X, dZ.T)
+
+db = 1/m * np.sum(dZ)</code></pre>
+</div>
+<div id="broadcasting" class="section level2">
+<h2>Broadcasting</h2>
+<blockquote>
+<p>If you take a 4 by 1 vector and add it to a number, what Python will do is take this number and auto-expand it into a four by one vector as well, as follows.</p>
+</blockquote>
+<pre class="python"><code>import numpy as np
+np.array([1, 2, 3, 4]) + 5</code></pre>
+<pre><code>## array([6, 7, 8, 9])</code></pre>
+<blockquote>
+<p>If you have an (m,n) matrix and you add or subtract or multiply or divide with a (1,n) matrix, then this will copy it n times into an (m,n) matrix.</p>
+</blockquote>
+<pre class="python"><code>matrix = np.array([[1, 2, 3, 4],[5, 6, 7, 8],[9, 10, 11, 12]])
+col_avg = np.mean(matrix, axis = 0)
+print(matrix)</code></pre>
+<pre><code>## [[ 1  2  3  4]
+##  [ 5  6  7  8]
+##  [ 9 10 11 12]]</code></pre>
+<pre class="python"><code>print(col_avg)</code></pre>
+<pre><code>## [5. 6. 7. 8.]</code></pre>
+<pre class="python"><code>matrix/col_avg</code></pre>
+<pre><code>## array([[0.2       , 0.33333333, 0.42857143, 0.5       ],
+##        [1.        , 1.        , 1.        , 1.        ],
+##        [1.8       , 1.66666667, 1.57142857, 1.5       ]])</code></pre>
+<blockquote>
+<p>If conversely, you were to take the (m,n) matrix and add, subtract, multiply, divide by an (m,1) matrix, then also this would copy it now n times. And turn that into an (m,n) matrix and then apply the operation element wise</p>
+</blockquote>
+<pre class="python"><code>matrix = np.array([[1, 2, 3, 4],[5, 6, 7, 8],[9, 10, 11, 12]])
+row_avg = np.mean(matrix, axis = 1)
+row_avg = row_avg.reshape(3, 1)
+print(matrix)</code></pre>
+<pre><code>## [[ 1  2  3  4]
+##  [ 5  6  7  8]
+##  [ 9 10 11 12]]</code></pre>
+<pre class="python"><code>print(row_avg)</code></pre>
+<pre><code>## [[ 2.5]
+##  [ 6.5]
+##  [10.5]]</code></pre>
+<pre class="python"><code>matrix/row_avg</code></pre>
+<pre><code>## array([[0.4       , 0.8       , 1.2       , 1.6       ],
+##        [0.76923077, 0.92307692, 1.07692308, 1.23076923],
+##        [0.85714286, 0.95238095, 1.04761905, 1.14285714]])</code></pre>
+</div>
+<div id="assingments-need-to-remember" class="section level2">
+<h2>Assingments’ need to remember:</h2>
+<p><strong>What you need to remember:</strong></p>
+<p>Common steps for pre-processing a new dataset are:
+- Figure out the dimensions and shapes of the problem (m_train, m_test, num_px, …)
+- Reshape the datasets such that each example is now a vector of size (num_px * num_px * 3, 1)
+- “Standardize” the data</p>
+<p>You’ve implemented several functions that:
+- Initialize (w,b)
+- Optimize the loss iteratively to learn parameters (w,b):
+- computing the cost and its gradient
+- updating the parameters using gradient descent
+- Use the learned (w,b) to predict the labels for a given set of examples</p>
+<ol style="list-style-type: decimal">
+<li>Preprocessing the dataset is important.</li>
+<li>You implemented each function separately: initialize(), propagate(), optimize(). Then you built a model().</li>
+<li>Tuning the learning rate (which is an example of a “hyperparameter”) can make a big difference to the algorithm. You will see more examples of this later in this course!</li>
+</ol>
 </div>
 </div>
 
@@ -269,6 +397,19 @@ Thus, we must choose <span class="math inline">\(\theta\)</span> such that the e
 
     </div>
     
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/python.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
 
     
 <script src="/js/math-code.js"></script>

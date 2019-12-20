@@ -12,6 +12,18 @@
     
     
     <item>
+      <title>Referential Arrays in Python</title>
+      <link>/2019/12/19/referential-arrays-in-python/</link>
+      <pubDate>Thu, 19 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/12/19/referential-arrays-in-python/</guid>
+      <description>Referential ArrayArrays in pythons do not hold he objects themselves, but pointers to that objects. This can create problems with shallowcopying. For example:
+Each index of each list contains a pointer to an object.
+first_list = [1, 2, 3]second_list = [4, 5, 6]third_list = [7, 8, 9]print(first_list)## [1, 2, 3]What if we want to combine these lists?
+first_list.extend(second_list)third_list.append(second_list)print(first_list)## [1, 2, 3, 4, 5, 6]print(third_list)## [7, 8, 9, [4, 5, 6]]Now, first_list points to the same object as second list.</description>
+    </item>
+    
+    <item>
       <title>Refresher Big Oh Notation </title>
       <link>/2019/12/19/refresher-big-oh-notation/</link>
       <pubDate>Thu, 19 Dec 2019 00:00:00 +0000</pubDate>
@@ -37,7 +49,7 @@ Neural Networks and Deep LearningImproving Deep Neural Networks: Hyperparameter
       <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
       
       <guid>/2019/12/18/neural-networks-and-deep-learning/</guid>
-      <description>Week 1Why Neural Networks?Economic value from Neural NetworksStructured vs UnstructuredWhy now? Scale, scale and scaleWeek 2NotationLogistic RegressionA rational loss functionArriving at cost function: Maximum LikelihoodGradient DescentMinimizing directional derivativeWeek 1Why Neural Networks?A single neuron can be thought as any function: it takes an input and outputs the input transformed.</description>
+      <description>Week 1Why Neural Networks?Economic value from Neural NetworksStructured vs UnstructuredWhy now? Scale, scale and scaleUniversal ApproximatorsWeek 2NotationLogistic RegressionA rational loss functionArriving at cost function: Maximum LikelihoodGradient DescentMinimizing directional derivativeComputational Graphs and backpropExample with logistic regressionVectorisationBroadcastingAssingments’ need to remember:Week 1Why Neural Networks?</description>
     </item>
     
     <item>
