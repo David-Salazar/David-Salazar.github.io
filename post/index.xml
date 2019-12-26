@@ -6,10 +6,21 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 19 Dec 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 26 Dec 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Coursera Machine Learning: Week 1</title>
+      <link>/2019/12/26/coursera-machine-learning-week-1/</link>
+      <pubDate>Thu, 26 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/12/26/coursera-machine-learning-week-1/</guid>
+      <description>Why?As part of my preparation for an upcoming interview, I’ll be studying from the ground up the basics of machine learning. I’ll use Andrew Ng’s course as the bcakbone of my study. For each topic, I’ll try to delve a bit deeper into the topic.
+Week 1Why Machine Learning?Let the machines program themselves
+But for the most part we just did not know how to write AI programs to do the more interesting things such as web search or photo tagging or email anti-spam.</description>
+    </item>
     
     <item>
       <title>Referential Arrays in Python</title>
@@ -49,7 +60,7 @@ Neural Networks and Deep LearningImproving Deep Neural Networks: Hyperparameter
       <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
       
       <guid>/2019/12/18/neural-networks-and-deep-learning/</guid>
-      <description>Week 1Why Neural Networks?Economic value from Neural NetworksStructured vs UnstructuredWhy now? Scale, scale and scaleUniversal ApproximatorsWeek 2NotationLogistic RegressionA rational loss functionArriving at cost function: Maximum LikelihoodGradient DescentMinimizing directional derivativeComputational Graphs and backpropExample with logistic regressionVectorisationBroadcastingAssingments’ need to remember:Week 1Why Neural Networks?</description>
+      <description>Week 1Why Neural Networks?Economic value from Neural NetworksStructured vs UnstructuredWhy now? Scale, scale and scaleUniversal ApproximatorsWeek 2NotationLogistic RegressionA rational loss functionArriving at cost function: Maximum LikelihoodGradient DescentMinimizing directional derivativeComputational Graphs and backpropExample with logistic regressionVectorisationBroadcastingAssingments’ need to remember:Week 3Hidden LayerNotationActivation functionWhy bother with any activation function at all?</description>
     </item>
     
     <item>

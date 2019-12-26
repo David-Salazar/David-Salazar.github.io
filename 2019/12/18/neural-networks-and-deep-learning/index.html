@@ -63,7 +63,7 @@
 
   <article class="article">
     
-    <span class="article-duration">13 min read</span>
+    <span class="article-duration">21 min read</span>
     
 
     <h1 class="article-title">Neural Networks and Deep Learning </h1>
@@ -102,6 +102,21 @@
 <li><a href="#vectorisation">Vectorisation</a></li>
 <li><a href="#broadcasting">Broadcasting</a></li>
 <li><a href="#assingments-need-to-remember">Assingments’ need to remember:</a></li>
+</ul></li>
+<li><a href="#week-3">Week 3</a><ul>
+<li><a href="#hidden-layer">Hidden Layer</a></li>
+<li><a href="#notation-1">Notation</a></li>
+<li><a href="#activation-function">Activation function</a></li>
+<li><a href="#why-bother-with-any-activation-function-at-all">Why bother with any activation function at all?</a></li>
+<li><a href="#backprop">Backprop</a></li>
+<li><a href="#random-initialization">Random Initialization</a></li>
+<li><a href="#conclusions">Conclusions</a></li>
+</ul></li>
+<li><a href="#week-4">Week 4</a><ul>
+<li><a href="#l-layer-neural-network">L-layer Neural Network</a><ul>
+<li><a href="#deep-neural-networks">Deep Neural Networks</a></li>
+<li><a href="#notation-2">Notation</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </div>
@@ -349,6 +364,119 @@ print(matrix)</code></pre>
 <li>You implemented each function separately: initialize(), propagate(), optimize(). Then you built a model().</li>
 <li>Tuning the learning rate (which is an example of a “hyperparameter”) can make a big difference to the algorithm. You will see more examples of this later in this course!</li>
 </ol>
+</div>
+</div>
+<div id="week-3" class="section level1">
+<h1>Week 3</h1>
+<p>We already know how to fit a logistic regression. Can we expand it to fit a neural network? The answer is a resounding yes!</p>
+<blockquote>
+<p>As I’d already previously alluded, you can form a neural network by stacking together a lot of little sigmoid units.</p>
+</blockquote>
+<blockquote>
+<p>the key intuition to take away is that whereas for logistic regression, we had this z followed by a calculation. In this neural network, here we just do it multiple times, as a z followed by a calculation, and a z followed by a calculation, and then you finally compute the loss at the end.</p>
+</blockquote>
+<blockquote>
+<p>So, that gives you a quick overview of what a neural network looks like. It’s basically taken logistic regression and repeating it twice.</p>
+</blockquote>
+<div id="hidden-layer" class="section level2">
+<h2>Hidden Layer</h2>
+<p>So, in what sense is a neural network repeating logistic regression multiple times? In the sense that we compute a hidden layer: a layer which takes inputs and outputs a different representation of these inputs. Then, this different representation is used in the final logistic regression that will output the final value.</p>
+<p>Why do we call these different representation a hidden layer? Because we can never compare these computed values with anything in the training set. They are hidden in the structure of the data and it is the responsability of the neural network to find it; it is its biggest advantage to be able to do so in a data-intensive way.</p>
+</div>
+<div id="notation-1" class="section level2">
+<h2>Notation</h2>
+<p>The fact that we have multiple layers, creates the necessity of multiple matrices and multiple parameter vectors. The output of the first logistic regression, then, becomes the input that will be multiplied by the second parameter vector ….</p>
+<p><img src="/images/1_deeplearning.ai/multiple_layer.PNG" /></p>
+<p>Then, to create a neural network, will create multiple logistic regressions to grow the size of the hidden layer and thus the size of the different representation of the data. This, in turn, will be handled by stacking up the multiple parameter vectors for each layer into one matrix.</p>
+<p><img src="/images/1_deeplearning.ai/stacking.PNG" /></p>
+<p>The squared superscript will refer to the neural network’s layer where we will use the matrix in question.</p>
+<p>Finally, the vectorised version will be to stack up the activation vectors into one matrix. We can traverse the matrix row by row, which will give us the different results from the different hidden units, or by column, which will traverse the different training observations.</p>
+<p><img src="/images/1_deeplearning.ai/vectorisation_nnm.PNG" /></p>
+</div>
+<div id="activation-function" class="section level2">
+<h2>Activation function</h2>
+<p>So far, we have been doing thus: a linear combination of inputs, and then applying a sigmoid function. However, we can use any function after the linear combination; we don’t necessarily have to use the sigmoid. Other alternatives are:</p>
+<ul>
+<li>Hyperbolic tangent function:</li>
+</ul>
+<blockquote>
+<p>And it turns out for hidden units, if you let the function g of z be equal to tanh(z), this almost always works better than the sigmoid function because the values between plus 1 and minus 1, the mean of the activations that come out of your head, and they are closer to having a 0 mean.</p>
+</blockquote>
+<p>Why?</p>
+<blockquote>
+<p>And so just as sometimes when you train a learning algorithm, you might center the data and have your data have 0 mean using a tanh instead of a sigmoid function. It kind of has the effect of centering your data so that the mean of your data is closer to 0 rather than, maybe 0.5.</p>
+</blockquote>
+<p>However, both the sigmoid and the hyperbolic tangent suffer from the same problem: for large other small values, the derivatives go to zero. Then, large or small values will slow down learning.</p>
+<blockquote>
+<p>Now, one of the downsides of both the sigmoid function and the tanh function is that if z is either very large or very small, then the gradient or the derivative or the slope of this function becomes very small.</p>
+</blockquote>
+<p>We can solve this problem by using A <span class="math inline">\(ReLu(z) = max(0, z)\)</span>:</p>
+<blockquote>
+<p>And the main reason is that there is less of these effects of the slope of the function going to 0, which slows down learning. And I know that for half of the range of z, the slope of ReLU is 0, but in practice, enough of your hidden units will have z greater than 0.</p>
+</blockquote>
+</div>
+<div id="why-bother-with-any-activation-function-at-all" class="section level2">
+<h2>Why bother with any activation function at all?</h2>
+<p>Let’s suppose we get rid of our activation function. Then, we will be doing linear combinations of linear combinations, which is itself a linear combination. Then, the hidden layers will be useless: that is, this neural network will be equivalent to a single layer neural network that we explored (logistic regression).</p>
+<blockquote>
+<p>And we’ll talk about deep networks later, neural networks with many, many layers, many hidden layers. And it turns out that if you use a linear activation function or alternatively, if you don’t have an activation function, then no matter how many layers your neural network has, all it’s doing is just computing a linear activation function.</p>
+</blockquote>
+<p>Interestingly, the Universal Approximator characteristic of neural networks only holds for activation function. That is, the non-linearity that these functions introduce is what allows neural networks to create internal representations of the data to best approach any learning problem.</p>
+</div>
+<div id="backprop" class="section level2">
+<h2>Backprop</h2>
+<p>As before, we create a computational graph for a given initialization of our network, and then compute the gradient by going backwards. We can do so as follows:</p>
+<p><img src="/images/1_deeplearning.ai/backprop_nn.PNG" /></p>
+<p>Notice that the only new thing is the chain rule, which is simply an elementary-wise matrix multiplication</p>
+</div>
+<div id="random-initialization" class="section level2">
+<h2>Random Initialization</h2>
+<p>So far, we have talked about initializiang the parameters in our neural network. But how to do it? A reasonable proposable may be to start all the values to zero? Is this a good idea?</p>
+<p>Let’s create a computational graph with these values. All the hidden units will have the same linear combination. And thus the same value, as will go over the same activation function. Thus, once we run the backward pass to do backprop, all the parameters will have the same gradient and will be updated in exactly the same way.</p>
+<p>Thus, a neural network with more than one hidden unit, initialized this way, would be redundant.</p>
+<blockquote>
+<p>Sometimes you say they’re completely symmetric, which just means that they’re completing exactly the same function. And by kind of a proof by induction, it turns out that after every single iteration of training your two hidden units are still computing exactly the same function.</p>
+</blockquote>
+<blockquote>
+<p>So it’s possible to construct a proof by induction that if you initialize all the ways, all the values of w to 0, then because both hidden units start off computing the same function. And both hidden the units have the same influence on the output unit, then after one iteration, that same statement is still true, the two hidden units are still symmetric. And therefore, by induction, after two iterations, three iterations and so on, no matter how long you train your neural network, both hidden units are still computing exactly the same function. And so in this case, there’s really no point to having more than one hidden unit.</p>
+</blockquote>
+<p>Thus, random initialization of the parameters seem much more appealing. However, we must be careful that the parameters won’t be too large. If they are, our linear combination result will be too big, and when computing gradient, will slow down. This holds when we have ANY activation function in the network that is a sigmoid or a hyperbolic tangent.</p>
+</div>
+<div id="conclusions" class="section level2">
+<h2>Conclusions</h2>
+<p><strong>Reminder</strong>: The general methodology to build a Neural Network is to:
+1. Define the neural network structure ( # of input units, # of hidden units, etc).
+2. Initialize the model’s parameters
+3. Loop:
+- Implement forward propagation
+- Compute loss
+- Implement backward propagation to get the gradients
+- Update parameters (gradient descent)</p>
+<p>You often build helper functions to compute steps 1-3 and then merge them into one function we call <code>nn_model()</code>. Once you’ve built <code>nn_model()</code> and learnt the right parameters, you can make predictions on new data.</p>
+</div>
+</div>
+<div id="week-4" class="section level1">
+<h1>Week 4</h1>
+<div id="l-layer-neural-network" class="section level2">
+<h2>L-layer Neural Network</h2>
+<blockquote>
+<p>We say that logistic regression is a very “shallow” model, whereas this model here is a much deeper model, and shallow versus depth is a matter of degree</p>
+</blockquote>
+<blockquote>
+<p>but over the last several years the AI, on the machine learning community, has realized that there are functions that very deep neural networks can learn that shallower models are often unable to.</p>
+</blockquote>
+<p>Why can deep neural network capture structure in the data that shallower nets cannot?</p>
+<div id="deep-neural-networks" class="section level3">
+<h3>Deep Neural Networks</h3>
+<p>A Neural Network performs multiple transformation to the original inputs; data-driven transformations that allows us to represent the data to the best of our ability to then predict our quantity of interest. Then, the 1st layer transform the inputs; the 2nd layer transforms the former transformation; the 3rd, again, transform the former transformation; and so on… This type of multiple transformation allows us to start from simple features and then progressively join them together to capture more complex and important features. That is, deep neural networks allow us to capture the hierarchical structure in the data.</p>
+</div>
+<div id="notation-2" class="section level3">
+<h3>Notation</h3>
+<p><img src="/images/1_deeplearning.ai/final_notation.PNG" /></p>
+<blockquote>
+<p>If the pieces we’ve seen so far looks a little bit familiar to you, that’s because what we’re seeing is taking a piece very similar to what you’ve seen in the neural network with a single hidden layer and just repeating that more times. Now, it turns out that we implement a deep neural network</p>
+</blockquote>
+</div>
 </div>
 </div>
 

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.58.3" />
+
+
+<title>Coursera Machine Learning: Week 1 - Dilettanting Data Science</title>
+<meta property="og:title" content="Coursera Machine Learning: Week 1 - Dilettanting Data Science">
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/turner.jpg"
+         width="200"
+         height="200"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/David-Salazar">GitHub</a></li>
+    
+    <li><a href="https://www.kaggle.com/davidsalazarv95">Kaggle</a></li>
+    
+    <li><a href="https://david-salazar.github.io/">Posts</a></li>
+    
+    <li><a href="https://twitter.com/DavidSalazarVir?lang=en">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">4 min read</span>
+    
+
+    <h1 class="article-title">Coursera Machine Learning: Week 1</h1>
+
+    
+    <span class="article-date">2019/12/26</span>
+    
+    
+
+    <div class="article-content">
+      
+
+
+<div id="why" class="section level1">
+<h1>Why?</h1>
+<p>As part of my preparation for an upcoming interview, I’ll be studying from the ground up the basics of machine learning. I’ll use Andrew Ng’s course as the bcakbone of my study. For each topic, I’ll try to delve a bit deeper into the topic.</p>
+</div>
+<div id="week-1" class="section level1">
+<h1>Week 1</h1>
+<div id="why-machine-learning" class="section level2">
+<h2>Why Machine Learning?</h2>
+<p><em>Let the machines program themselves</em></p>
+<blockquote>
+<p>But for the most part we just did not know how to write AI programs to do the more interesting things such as web search or photo tagging or email anti-spam. There was a realization that the only way to do these things was to have a machine learn to do it by itself. So, machine learning was developed as a new capability for computers and today it touches many segments of industry and basic science.</p>
+</blockquote>
+</div>
+<div id="what-is-machine-learning" class="section level2">
+<h2>What is Machine Learning</h2>
+<p>Arthur Samuel’s definition:</p>
+<blockquote>
+<p>He defined machine learning as the field of study that gives computers the ability to learn without being explicitly learned.</p>
+</blockquote>
+<p>Tom Mitchell’s definition:</p>
+<blockquote>
+<p>He defines machine learning by saying that a well-posed learning problem is defined as follows. He says, a computer program is said to learn from experience E with respect to some task T and some performance measure P, if its performance on T, as measured by P, improves with experience E.</p>
+</blockquote>
+</div>
+<div id="supervised-learning" class="section level2">
+<h2>Supervised Learning</h2>
+<blockquote>
+<p>The term Supervised Learning refers to the fact that we gave the algorithm a data set in which the, called, “right answers” were given.</p>
+</blockquote>
+</div>
+<div id="regression-problems-and-classification-problems" class="section level2">
+<h2>Regression Problems and Classification Problems</h2>
+<blockquote>
+<p>The term classification refers to the fact, that here, we’re trying to predict a discrete value output zero or one, malignant or benign.</p>
+</blockquote>
+</div>
+<div id="math-setting" class="section level2">
+<h2>Math Setting</h2>
+<p>In general, we work in two types of spaces: <span class="math inline">\(X\)</span>, the learning space, and <span class="math inline">\(Y\)</span> , the output space. Such that a classification problem is reduced to the question of finding a function <span class="math inline">\(f\)</span> such that: <span class="math inline">\(f: X \to Y\)</span>. The machine learning algorithm, then, will be one that given some training examples, we derive a function that performs the classification from the learning space into the output space:</p>
+<p><span class="math display">\[ML:\{(X_n, Y_n)\} \subset X \times Y \to f\]</span></p>
+<p>Thus, we want our algorithm to be able to find a function given some training examples, but it is remarked from the beginning that the training examples belong to a wider space of all the possible learning space.</p>
+<p>However, we just don’t want a function that performs such a task; we want a function that performs the task well. Thus, we first need a definition of what is to do well. <em>Enter the loss function</em>: given a function that performs the task, for a given training observation and our prediction, we can come up with a measure of how good the function did:</p>
+<p><span class="math display">\[ \ell (x, y, f(x)) \]</span></p>
+<p>Then, we want to find the function that performs the best, according to our loss function, across all the learning space:</p>
+<p><span class="math display">\[ \min_f  E_{(X, Y)}[\ell (x, y, f(x))] \]</span></p>
+<p>That is, we want to find the function <span class="math inline">\(f\)</span> that minimizes the expected loss function across the learning space.</p>
+</div>
+<div id="example-of-ml-algorithm-and-a-loss-function" class="section level2">
+<h2>Example of ML algorithm and a loss function</h2>
+<p>Let’s say we work in a supervised regression problem. We then, can define how well our algorithm performs thus:</p>
+<p><span class="math display">\[ \ell (x, y, f(x)) = (y - f(x))^2 \]</span>
+We can use the linear regression algorithm, that posits that <span class="math inline">\(f(x)\)</span> is linear. Thus, of all the possible linear functions, we then find the linear function <span class="math inline">\(f(x) = x \cdot \beta\)</span> that minimizes the loss function in our training data.</p>
+</div>
+<div id="which-ml-algorithm-for-which-loss-function" class="section level2">
+<h2>Which ML Algorithm for which Loss Function?</h2>
+<p>As we’ve seen, the problem thus reduces to that of defining a loss function, and, according to our learning algorithm, find the function that best performs the given task. A logical question, then, may be: which learning algorithm is best?</p>
+<p>The answer, it depends. The <em>mo free lunch</em> theorem states that we cannot stablish a ranking of all the possible learning algorithms. Sometimes, one learning algorithm may perform better than others. In particular, on average over all probability distributions, no classifier can be better than random guessing on the test set!</p>
+</div>
+<div id="unsupervised-learning" class="section level2">
+<h2>Unsupervised Learning</h2>
+<blockquote>
+<p>In Unsupervised Learning, we’re given data that looks different than data that looks like this that doesn’t have any labels or that all has the same label or really no labels.</p>
+</blockquote>
+<p>The most common problem in unsupervised leraning is clustering: find the latent structure in the data to group different observations into different clusters of similar looking observations. For example, market segmentation.</p>
+<blockquote>
+<p>Unsupervised learning allows us to approach problems with little or no idea what our results should look like. We can derive structure from data where we don’t necessarily know the effect of the variables.</p>
+</blockquote>
+<blockquote>
+<p>We can derive this structure by clustering the data based on relationships among the variables in the data.</p>
+</blockquote>
+<blockquote>
+<p>With unsupervised learning there is no feedback based on the prediction results.</p>
+</blockquote>
+</div>
+</div>
+
+    </div>
+  
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//https-david-salazar-github-io.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+  
+  </article>
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

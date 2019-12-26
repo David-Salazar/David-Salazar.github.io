@@ -6,10 +6,21 @@
     <description>Recent content in machine learning on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 10 Jun 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 26 Dec 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/machine-learning/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Coursera Machine Learning: Week 1</title>
+      <link>/2019/12/26/coursera-machine-learning-week-1/</link>
+      <pubDate>Thu, 26 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/12/26/coursera-machine-learning-week-1/</guid>
+      <description>Why?As part of my preparation for an upcoming interview, I’ll be studying from the ground up the basics of machine learning. I’ll use Andrew Ng’s course as the bcakbone of my study. For each topic, I’ll try to delve a bit deeper into the topic.
+Week 1Why Machine Learning?Let the machines program themselves
+But for the most part we just did not know how to write AI programs to do the more interesting things such as web search or photo tagging or email anti-spam.</description>
+    </item>
     
     <item>
       <title>Trees, Ensembles and beyond, XGBoost and LGBM</title>
