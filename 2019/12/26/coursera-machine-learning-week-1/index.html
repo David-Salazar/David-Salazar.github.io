@@ -6,8 +6,8 @@
 <meta name="generator" content="Hugo 0.58.3" />
 
 
-<title>Coursera Machine Learning: Week 1 - Dilettanting Data Science</title>
-<meta property="og:title" content="Coursera Machine Learning: Week 1 - Dilettanting Data Science">
+<title>Coursera Machine Learning: Introduction and Linear Regression - Dilettanting Data Science</title>
+<meta property="og:title" content="Coursera Machine Learning: Introduction and Linear Regression - Dilettanting Data Science">
 
 
 
@@ -16,6 +16,11 @@
 
 
 
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
 
 
 
@@ -58,10 +63,10 @@
 
   <article class="article">
     
-    <span class="article-duration">4 min read</span>
+    <span class="article-duration">12 min read</span>
     
 
-    <h1 class="article-title">Coursera Machine Learning: Week 1</h1>
+    <h1 class="article-title">Coursera Machine Learning: Introduction and Linear Regression</h1>
 
     
     <span class="article-date">2019/12/26</span>
@@ -71,6 +76,29 @@
     <div class="article-content">
       
 
+<div id="TOC">
+<ul>
+<li><a href="#why">Why?</a></li>
+<li><a href="#week-1">Week 1</a><ul>
+<li><a href="#why-machine-learning">Why Machine Learning?</a></li>
+<li><a href="#what-is-machine-learning">What is Machine Learning</a></li>
+<li><a href="#supervised-learning">Supervised Learning</a></li>
+<li><a href="#regression-problems-and-classification-problems">Regression Problems and Classification Problems</a></li>
+<li><a href="#math-setting">Math Setting</a></li>
+<li><a href="#example-of-ml-algorithm-and-a-loss-function">Example of ML algorithm and a loss function</a></li>
+<li><a href="#which-ml-algorithm-for-which-loss-function">Which ML Algorithm for which Loss Function?</a></li>
+<li><a href="#unsupervised-learning">Unsupervised Learning</a></li>
+<li><a href="#linear-regression">Linear Regression</a><ul>
+<li><a href="#loss-function">Loss Function</a></li>
+</ul></li>
+<li><a href="#gradient-descent">Gradient Descent</a><ul>
+<li><a href="#gradient-descent-justification">Gradient Descent Justification</a></li>
+</ul></li>
+<li><a href="#gradient-descent-in-linear-regression">Gradient Descent in Linear Regression</a></li>
+<li><a href="#implementing-linear-regression-with-gradient-descent">Implementing Linear Regression with Gradient Descent</a></li>
+</ul></li>
+</ul>
+</div>
 
 <div id="why" class="section level1">
 <h1>Why?</h1>
@@ -145,6 +173,169 @@ We can use the linear regression algorithm, that posits that <span class="math i
 <blockquote>
 <p>With unsupervised learning there is no feedback based on the prediction results.</p>
 </blockquote>
+<p>we address unsupervised learning or “learning without a
+teacher.” In this case one has a set of <span class="math inline">\(N\)</span> observations <span class="math inline">\((x_1,x_2,... ,x_N )\)</span> of a
+random p-vector <span class="math inline">\(X\)</span> having joint density <span class="math inline">\(Pr(X)\)</span>. The goal is to directly infer
+the properties of this probability density without the help of a supervisor or
+teacher providing correct answers or degree-of-error for each observation.</p>
+<p>For example, Cluster analysis attempts to find multiple convex regions of the <span class="math inline">\(X-space\)</span> that contain
+modes of <span class="math inline">\(Pr(X)\)</span>.</p>
+<p>It is difficult to ascertain the validity of inferences
+drawn from the output of most unsupervised learning algorithms. One must
+resort to heuristic arguments not only for motivating the algorithms, as is
+often the case in supervised learning as well, but also for judgments as to
+the quality of the results.</p>
+</div>
+<div id="linear-regression" class="section level2">
+<h2>Linear Regression</h2>
+<blockquote>
+<p>We saw that with the training set like our training set of housing prices and we feed that to our learning algorithm. Is the job of a learning algorithm to then output a function which by convention is usually denoted lowercase h and h stands for hypothesis And what the job of the hypothesis is, is, is a function that takes as input the size of a house like maybe the size of the new house your friend’s trying to sell so it takes in the value of x and it tries to output the estimated value of y for the corresponding house.</p>
+</blockquote>
+<p>Thus, our ML algorithm will output a function that will try to predict the target variable, <span class="math inline">\(y\)</span>, given some information about the observations; information that will be encoded in a matrix X. That is: <span class="math inline">\(ML:\{(X_n, Y_n)\} \subset X \times Y \to h(X)\)</span> . However, <span class="math inline">\(h(X)\)</span> could take many forms. Each ML algorithm will posit different assumptions about the hypothesis space where we will search for the best <span class="math inline">\(h^*(x)\)</span>.</p>
+<p>In our linear regression model, we will posit that <span class="math inline">\(Y\)</span> can be modeled as a linear combination of the inputs: <span class="math inline">\(h(x, \beta) = x \cdot \beta\)</span>. But first, let’s review how we will compare among all the possible linear combination which will be the better for our purposes.</p>
+<div id="loss-function" class="section level3">
+<h3>Loss Function</h3>
+<p>Our prediction for a given <span class="math inline">\(x\)</span> will be evaluated according to how far it is from the observed value. Thus, we could use the following loss function.</p>
+<p><span class="math display">\[ \ell (x, y, \beta) = (h(x, \beta) - y)^2\]</span></p>
+<p>Notice the importance of the squared: it ensures that both overshooting and undershooting will be considered mistakes. Thus, our cost function will be the expected loss over the learning space:</p>
+<p><span class="math display">\[ E_{(X, Y)} (\ell (x, y, \beta)) \]</span></p>
+<p>However, not observing the joint probability of <span class="math inline">\((X, Y)\)</span>, we will treat our training cost function as:</p>
+<p><span class="math display">\[ \sum_i^N  \ell (x_i, y_i, \beta) = (x_i \cdot \beta - y_i)^2\]</span></p>
+<p>Thus, our problem will be equivalent to find the best parameters <span class="math inline">\(\beta\)</span> such that they minimize our training set cost function. But how can we find such <span class="math inline">\(\beta\)</span>? The answer? Gradient Descent!</p>
+</div>
+</div>
+<div id="gradient-descent" class="section level2">
+<h2>Gradient Descent</h2>
+<blockquote>
+<p>So we have our hypothesis function and we have a way of measuring how well it fits into the data. Now we need to estimate the parameters in the hypothesis function. That’s where gradient descent comes in.</p>
+</blockquote>
+<blockquote>
+<p>The slope of the tangent is the derivative at that point and it will give us a direction to move towards. We make steps down the cost function in the direction with the steepest descent. The size of each step is determined by the parameter α, which is called the learning rate.</p>
+</blockquote>
+<p>That is, we will start at some possible vector <span class="math inline">\(\beta\)</span>, and we will move this vector into the direction of the steepest descent of the training cost function. Which direction is this? The negative gradient? WHy</p>
+<div id="gradient-descent-justification" class="section level3">
+<h3>Gradient Descent Justification</h3>
+<p>Let’s take an analysis into what happens when we move the function <span class="math inline">\(h(x)\)</span> in the direction <span class="math inline">\(\vec{v}\)</span> just a little bit (<span class="math inline">\(\vec{v}\)</span> being an unit vector, or just a direction within a unit ball around the starting point):</p>
+<blockquote>
+<p>In gradient descent, what we’re going to do is we’re going to spin 360 degrees around, just look all around us, and ask, if I were to take a little baby step in some direction, and I want to go downhill as quickly as possible, what direction do I take that little baby step in? If I wanna go down, so I wanna physically walk down this hill as rapidly as possible.</p>
+</blockquote>
+<p><span class="math display">\[ D_{\hat{\vec{v}}} h = \lim_{t \to 0} \frac{h(\vec{x} + t \vec{v} ) - h(\vec{x})}{t} \]</span>
+That is called, the directional derivative. And for a function in two variables, like our cost function, is the following:</p>
+<p><span class="math display">\[ D_{\hat{\vec{v}}} C(w, b; x_0) = C(w, b; x_0)_{w} v_w + C(w, b; x_0)_{b} v_b = \nabla C(w, b; x_0) \vec{v} \]</span></p>
+<p>Thus, if we want to maximize this growth, we must choose <span class="math inline">\(\vec{v}\)</span> such that it maximizes: $ C(w, b; x_0)  $. We must remember the equivalent formulation of the dot product:</p>
+<p><span class="math display">\[  \nabla C(w, b; x_0) \vec{v} = || \nabla C(w, b; x_0) || \cdot || \vec{v} || \cos \theta \]</span>
+However, <span class="math inline">\(\vec{v}\)</span> is a unit vector. Thus:</p>
+<p><span class="math display">\[ \nabla C(w, b; x_0) \vec{v} =  || \nabla C(w, b; x_0) || \cos \theta\]</span></p>
+<p>Thus, we must choose <span class="math inline">\(\theta\)</span> such that the expression is maximized. Cosine has a maximum of <span class="math inline">\(1\)</span> at <span class="math inline">\(\theta = 0\)</span>, which thus says that the two vectors, the gradient and the direction, must be aligned. That is, <strong>the direction must be equal to the gradient evaluated at the initial point</strong>.</p>
+<p>Equivalently, to minimize the expresion, we must have cosine equal to <span class="math inline">\(-1\)</span>, which happens at <span class="math inline">\(\theta = \pi\)</span>. Which thus says that <strong>the direction we must take is parallel to the negative (opposite) of the gradient vector evaluated at the initial point</strong>.</p>
+<div id="learning-rate" class="section level4">
+<h4>Learning rate</h4>
+<ul>
+<li><p>Too small: the algorithm may take many steps and take a long time to converge.</p></li>
+<li><p>Too large: the algorithm may not converge, and take many many steps, or even diverge.</p></li>
+<li><p>As it reaches a global minimum, it will take smaller steps: even for a constant learning rate. The gradient will slowly get to zero as it reaches the minimum, and thus the gradient times the learning rate will go smaller with each step.</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="gradient-descent-in-linear-regression" class="section level2">
+<h2>Gradient Descent in Linear Regression</h2>
+<p>Gradient Descent will find at least a local minimum if this exists. However, in the case of linear regression, for our cost function, we will find a global minimum:</p>
+<blockquote>
+<p>So, this is simply gradient descent on the original cost function J. This method looks at every example in the entire training set on every step, and is called batch gradient descent. Note that, while gradient descent can be susceptible to local minima in general, the optimization problem we have posed here for linear regression has only one global, and no other local, optima; thus gradient descent always converges (assuming the learning rate <span class="math inline">\(\alpha\)</span> is not too large) to the global minimum. Indeed, J is a convex quadratic function.</p>
+</blockquote>
+</div>
+<div id="implementing-linear-regression-with-gradient-descent" class="section level2">
+<h2>Implementing Linear Regression with Gradient Descent</h2>
+<p>Putting everything together, we have some training data <span class="math inline">\((X, Y)\)</span>. We will use the loss function of the squared errors; which has its training equivalent as:</p>
+<p><span class="math display">\[ \sum_i^N  \ell (x_i, y_i, \beta) = (x_i \cdot \beta - y_i)^2 \]</span>
+We will choose our parameters such that they minimize this loss function. To do so, we will use gradient descent. However, before we calculate the gradient for gradient descent, let’s put everything into matrix form:</p>
+<p>The error:</p>
+<p><span class="math display">\[ Y - X\beta \]</span></p>
+<p>The training loss function:</p>
+<p><span class="math display">\[ (Y - X\beta)&#39; (Y - X \beta) \]</span>
+And thus, the gradient is:</p>
+<p><span class="math display">\[ 2 X&#39;X \beta - 2X&#39;Y = X&#39;(X \beta - Y) \]</span></p>
+<pre class="python"><code>from sklearn.datasets import make_regression
+import numpy as np
+# Create Simulated Data
+# Generate fetures, outputs, and true coefficient of 100 samples,
+X, Y, coef = make_regression(n_samples = 100, n_features = 8,
+                                n_informative = 3, n_targets = 1,
+                                noise = 0.0, coef = True)
+                                
+print(X.mean(axis = 0), Y.mean())</code></pre>
+<pre><code>## [ 0.00416131  0.01590107  0.02438054  0.09630001 -0.01963073  0.03783134
+##   0.07303629 -0.02221294] 5.975209825891702</code></pre>
+<pre class="python"><code>print(X.std(axis = 0), Y.mean())</code></pre>
+<pre><code>## [1.07099451 0.90773316 1.05376303 0.97102426 0.98894779 1.04841762
+##  0.98283435 0.99479624] 5.975209825891702</code></pre>
+<pre class="python"><code>print(coef)</code></pre>
+<pre><code>## [28.12009835 80.75394213  0.          0.          0.          0.
+##  62.62803245  0.        ]</code></pre>
+<p>The features seem to already be scaled; thus, gradient descent will advance uniformily across all the dimensions.</p>
+<pre class="python"><code>
+def compute_cost(X, beta, Y):
+
+  m = X.shape[0]
+
+  return np.sum(np.square(np.dot(X, beta) - Y))/m
+  
+def compute_gradient(X, beta, Y):
+
+  return np.dot(X.T, (np.dot(X, beta) -  Y))
+  
+def update_parameters(beta, gradient, alpha):
+
+  return beta - alpha * gradient
+  
+  
+def model_linear_regression(X, coef, Y, alpha = 0.01, num_iterations = 100):
+
+  beta = np.squeeze(np.zeros_like(coef))
+
+  cost_across_iterations = []
+  
+  for i in range(0, num_iterations):
+  
+    gradient = compute_gradient(X, beta, Y)
+    beta = update_parameters(beta, gradient, alpha)
+    cost = compute_cost(X, beta, Y)
+    
+    cost_across_iterations.append(cost)
+    if i  % 10 == 0:
+        print (f&quot;Cost after iteration {i}: {cost}&quot;)
+    
+  if np.allclose(beta, coef): 
+    print( &quot;\n Regression did capture true coefficients!!&quot;)
+  
+model_linear_regression(X, coef, Y)</code></pre>
+<pre><code>## Cost after iteration 0: 871.7009347216174
+## Cost after iteration 10: 6.51961321054969e-05
+## Cost after iteration 20: 9.612437792269822e-12
+## Cost after iteration 30: 1.5386475812204368e-18
+## Cost after iteration 40: 2.502089218771284e-25
+## Cost after iteration 50: 6.626431603856499e-31
+## Cost after iteration 60: 0.0
+## Cost after iteration 70: 0.0
+## Cost after iteration 80: 0.0
+## Cost after iteration 90: 0.0
+## 
+##  Regression did capture true coefficients!!</code></pre>
+<p>One of the benefits of working with simulated data: we can compare our estimated coefficients with the true ones! And indeed, our model did capture all of them correctly. Also, the training cost function did decrease across gradient descent steps.</p>
+<p>Let’s try what would happen if we used a learning step, alpha, that was too big for the problem at hand:</p>
+<pre class="python"><code>model_linear_regression(X, coef, Y, alpha = 0.1)</code></pre>
+<pre><code>## Cost after iteration 0: 965461.1472315316
+## Cost after iteration 10: 1.4716105353052289e+28
+## Cost after iteration 20: 6.4450187014988e+50
+## Cost after iteration 30: 2.913289044663987e+73
+## Cost after iteration 40: 1.319180999297496e+96
+## Cost after iteration 50: 5.974050041620235e+118
+## Cost after iteration 60: 2.7054272178997346e+141
+## Cost after iteration 70: 1.225188751632466e+164
+## Cost after iteration 80: 5.548430565257045e+186
+## Cost after iteration 90: 2.5126807385339993e+209</code></pre>
+<p>We can see that the model diverges and does not capture the true coefficients in the simulated data. Moral of the study: be careful when choosing a learning rate!</p>
 </div>
 </div>
 
@@ -193,6 +384,19 @@ We can use the linear regression algorithm, that posits that <span class="math i
 
     </div>
     
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/python.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
 
     
 <script src="/js/math-code.js"></script>

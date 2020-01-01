@@ -12,14 +12,12 @@
     
     
     <item>
-      <title>Coursera Machine Learning: Week 1</title>
+      <title>Coursera Machine Learning: Introduction and Linear Regression</title>
       <link>/2019/12/26/coursera-machine-learning-week-1/</link>
       <pubDate>Thu, 26 Dec 2019 00:00:00 +0000</pubDate>
       
       <guid>/2019/12/26/coursera-machine-learning-week-1/</guid>
-      <description>Why?As part of my preparation for an upcoming interview, I’ll be studying from the ground up the basics of machine learning. I’ll use Andrew Ng’s course as the bcakbone of my study. For each topic, I’ll try to delve a bit deeper into the topic.
-Week 1Why Machine Learning?Let the machines program themselves
-But for the most part we just did not know how to write AI programs to do the more interesting things such as web search or photo tagging or email anti-spam.</description>
+      <description>Why?Week 1Why Machine Learning?What is Machine LearningSupervised LearningRegression Problems and Classification ProblemsMath SettingExample of ML algorithm and a loss functionWhich ML Algorithm for which Loss Function?Unsupervised LearningLinear RegressionLoss FunctionGradient DescentGradient Descent JustificationGradient Descent in Linear RegressionImplementing Linear Regression with Gradient DescentWhy?As part of my preparation for an upcoming interview, I’ll be studying from the ground up the basics of machine learning.</description>
     </item>
     
     <item>
