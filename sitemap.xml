@@ -4,7 +4,27 @@
   
   <url>
     <loc>/categories/</loc>
-    <lastmod>2019-12-26T00:00:00+00:00</lastmod>
+    <lastmod>2020-01-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2020/01/01/coursera-machine-learning-logistic-regression/</loc>
+    <lastmod>2020-01-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/</loc>
+    <lastmod>2020-01-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/mooc/</loc>
+    <lastmod>2020-01-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/</loc>
+    <lastmod>2020-01-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -13,22 +33,7 @@
   </url>
   
   <url>
-    <loc>/</loc>
-    <lastmod>2019-12-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/tags/machine-learning/</loc>
-    <lastmod>2019-12-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/mooc/</loc>
-    <lastmod>2019-12-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/post/</loc>
     <lastmod>2019-12-26T00:00:00+00:00</lastmod>
   </url>
   

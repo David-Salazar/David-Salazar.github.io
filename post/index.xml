@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 26 Dec 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 01 Jan 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Coursera Machine Learning Logistic Regression and Regularization</title>
+      <link>/2020/01/01/coursera-machine-learning-logistic-regression/</link>
+      <pubDate>Wed, 01 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/01/01/coursera-machine-learning-logistic-regression/</guid>
+      <description>Classification ProblemsLinear Regression?Logistic RegressionDecision BoundariesCost FunctionCross EntropyA maximum likelihood derivationVectorised implementationMulti Classification ProblemRegularizationSolutions to overfitting:Cost functionMoving towards neural networksClassification ProblemsIn all of these problems the variable that we’re trying to predict is a variable \(y\) that we can think of as taking on two values either zero or one, either spam or not spam, fraudulent or not fraudulent, related malignant or benign.</description>
+    </item>
     
     <item>
       <title>Coursera Machine Learning: Introduction and Linear Regression</title>
@@ -17,7 +26,7 @@
       <pubDate>Thu, 26 Dec 2019 00:00:00 +0000</pubDate>
       
       <guid>/2019/12/26/coursera-machine-learning-week-1/</guid>
-      <description>Why?Week 1Why Machine Learning?What is Machine LearningSupervised LearningRegression Problems and Classification ProblemsMath SettingExample of ML algorithm and a loss functionWhich ML Algorithm for which Loss Function?Unsupervised LearningLinear RegressionLoss FunctionGradient DescentGradient Descent JustificationGradient Descent in Linear RegressionImplementing Linear Regression with Gradient DescentWhy?As part of my preparation for an upcoming interview, I’ll be studying from the ground up the basics of machine learning.</description>
+      <description>Why?Week 1Why Machine Learning?What is Machine LearningSupervised LearningRegression Problems and Classification ProblemsMath SettingExample of ML algorithm and a loss functionWhich ML Algorithm for which Loss Function?Unsupervised LearningLinear RegressionLoss FunctionGradient DescentGradient Descent JustificationGradient Descent in Linear RegressionImplementing Linear Regression with Gradient DescentProblems with linear regressionSensibility to OutliersMulticollinearityHeteroscedasticityWhy?</description>
     </item>
     
     <item>

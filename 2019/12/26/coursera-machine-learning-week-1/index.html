@@ -63,7 +63,7 @@
 
   <article class="article">
     
-    <span class="article-duration">12 min read</span>
+    <span class="article-duration">13 min read</span>
     
 
     <h1 class="article-title">Coursera Machine Learning: Introduction and Linear Regression</h1>
@@ -96,6 +96,11 @@
 </ul></li>
 <li><a href="#gradient-descent-in-linear-regression">Gradient Descent in Linear Regression</a></li>
 <li><a href="#implementing-linear-regression-with-gradient-descent">Implementing Linear Regression with Gradient Descent</a></li>
+<li><a href="#problems-with-linear-regression">Problems with linear regression</a><ul>
+<li><a href="#sensibility-to-outliers">Sensibility to Outliers</a></li>
+<li><a href="#multicollinearity">Multicollinearity</a></li>
+<li><a href="#heteroscedasticity">Heteroscedasticity</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </div>
@@ -265,14 +270,14 @@ X, Y, coef = make_regression(n_samples = 100, n_features = 8,
                                 noise = 0.0, coef = True)
                                 
 print(X.mean(axis = 0), Y.mean())</code></pre>
-<pre><code>## [ 0.00416131  0.01590107  0.02438054  0.09630001 -0.01963073  0.03783134
-##   0.07303629 -0.02221294] 5.975209825891702</code></pre>
+<pre><code>## [ 0.00640595  0.05232619  0.02196721 -0.038745   -0.09559779  0.02135769
+##  -0.08131299 -0.15692486] 0.6208683475639484</code></pre>
 <pre class="python"><code>print(X.std(axis = 0), Y.mean())</code></pre>
-<pre><code>## [1.07099451 0.90773316 1.05376303 0.97102426 0.98894779 1.04841762
-##  0.98283435 0.99479624] 5.975209825891702</code></pre>
+<pre><code>## [1.02331364 1.02554663 0.90459012 0.84303569 1.08321749 1.03636755
+##  1.11454578 0.89618242] 0.6208683475639484</code></pre>
 <pre class="python"><code>print(coef)</code></pre>
-<pre><code>## [28.12009835 80.75394213  0.          0.          0.          0.
-##  62.62803245  0.        ]</code></pre>
+<pre><code>## [66.72676832  0.         49.80835061 23.24765471  0.          0.
+##   0.          0.        ]</code></pre>
 <p>The features seem to already be scaled; thus, gradient descent will advance uniformily across all the dimensions.</p>
 <pre class="python"><code>
 def compute_cost(X, beta, Y):
@@ -310,32 +315,48 @@ def model_linear_regression(X, coef, Y, alpha = 0.01, num_iterations = 100):
     print( &quot;\n Regression did capture true coefficients!!&quot;)
   
 model_linear_regression(X, coef, Y)</code></pre>
-<pre><code>## Cost after iteration 0: 871.7009347216174
-## Cost after iteration 10: 6.51961321054969e-05
-## Cost after iteration 20: 9.612437792269822e-12
-## Cost after iteration 30: 1.5386475812204368e-18
-## Cost after iteration 40: 2.502089218771284e-25
-## Cost after iteration 50: 6.626431603856499e-31
-## Cost after iteration 60: 0.0
-## Cost after iteration 70: 0.0
-## Cost after iteration 80: 0.0
-## Cost after iteration 90: 0.0
+<pre><code>## Cost after iteration 0: 439.79706662185606
+## Cost after iteration 10: 1.800427699118192e-05
+## Cost after iteration 20: 2.066386679279255e-12
+## Cost after iteration 30: 2.3720240750315067e-19
+## Cost after iteration 40: 2.696233488458602e-26
+## Cost after iteration 50: 6.228056846719888e-29
+## Cost after iteration 60: 6.963275210385871e-29
+## Cost after iteration 70: 6.120771763609831e-29
+## Cost after iteration 80: 6.003231488731899e-29
+## Cost after iteration 90: 7.315896035019663e-29
 ## 
 ##  Regression did capture true coefficients!!</code></pre>
 <p>One of the benefits of working with simulated data: we can compare our estimated coefficients with the true ones! And indeed, our model did capture all of them correctly. Also, the training cost function did decrease across gradient descent steps.</p>
 <p>Let’s try what would happen if we used a learning step, alpha, that was too big for the problem at hand:</p>
 <pre class="python"><code>model_linear_regression(X, coef, Y, alpha = 0.1)</code></pre>
-<pre><code>## Cost after iteration 0: 965461.1472315316
-## Cost after iteration 10: 1.4716105353052289e+28
-## Cost after iteration 20: 6.4450187014988e+50
-## Cost after iteration 30: 2.913289044663987e+73
-## Cost after iteration 40: 1.319180999297496e+96
-## Cost after iteration 50: 5.974050041620235e+118
-## Cost after iteration 60: 2.7054272178997346e+141
-## Cost after iteration 70: 1.225188751632466e+164
-## Cost after iteration 80: 5.548430565257045e+186
-## Cost after iteration 90: 2.5126807385339993e+209</code></pre>
+<pre><code>## Cost after iteration 0: 480405.0521051552
+## Cost after iteration 10: 3.4035463632528126e+26
+## Cost after iteration 20: 8.490331984138401e+47
+## Cost after iteration 30: 4.2261966279837604e+69
+## Cost after iteration 40: 2.4845770435749403e+91
+## Cost after iteration 50: 1.4988469151719587e+113
+## Cost after iteration 60: 9.080063746635608e+134
+## Cost after iteration 70: 5.505253421402377e+156
+## Cost after iteration 80: 3.338473328917955e+178
+## Cost after iteration 90: 2.0246011900743318e+200</code></pre>
 <p>We can see that the model diverges and does not capture the true coefficients in the simulated data. Moral of the study: be careful when choosing a learning rate!</p>
+</div>
+<div id="problems-with-linear-regression" class="section level2">
+<h2>Problems with linear regression</h2>
+<div id="sensibility-to-outliers" class="section level3">
+<h3>Sensibility to Outliers</h3>
+<p>Outliers are another confounding factor when using linear regression. These are elements of a data set that are far removed from the rest of the data.</p>
+<p>Outliers are problematic because they are often far enough from the rest of the data that the best-fit line will be strongly skewed by them, even when they are present because of a mistake in recording or an unlikely fluke.</p>
+</div>
+<div id="multicollinearity" class="section level3">
+<h3>Multicollinearity</h3>
+<p>Another major setback to linear regression is that there may be multicollinearity between predictor variables. This is the term for when several of the input variables appear to be strongly related. the major concern is that multicollinearity allows many different best-fit equations to appear almost equivalent to a regression algorithm. That is, there won’t exist a unique solution. Mathematically, the constraint is that <span class="math inline">\((X&#39;X)\)</span> be <strong>nonsingular</strong>, which is equivalent to ask that the rank of <span class="math inline">\(X\)</span> equals the # of columns.</p>
+</div>
+<div id="heteroscedasticity" class="section level3">
+<h3>Heteroscedasticity</h3>
+<p>The property of heteroscedasticity has also been known to create issues in linear regression problems. Heteroscedastic data sets have widely different standard deviations in different areas of the data set, which can cause problems when some points end up with a disproportionate amount of weight in regression calculations.</p>
+</div>
 </div>
 </div>
 

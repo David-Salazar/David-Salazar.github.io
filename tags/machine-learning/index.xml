@@ -17,7 +17,7 @@
       <pubDate>Thu, 26 Dec 2019 00:00:00 +0000</pubDate>
       
       <guid>/2019/12/26/coursera-machine-learning-week-1/</guid>
-      <description>Why?Week 1Why Machine Learning?What is Machine LearningSupervised LearningRegression Problems and Classification ProblemsMath SettingExample of ML algorithm and a loss functionWhich ML Algorithm for which Loss Function?Unsupervised LearningLinear RegressionLoss FunctionGradient DescentGradient Descent JustificationGradient Descent in Linear RegressionImplementing Linear Regression with Gradient DescentWhy?As part of my preparation for an upcoming interview, I’ll be studying from the ground up the basics of machine learning.</description>
+      <description>Why?Week 1Why Machine Learning?What is Machine LearningSupervised LearningRegression Problems and Classification ProblemsMath SettingExample of ML algorithm and a loss functionWhich ML Algorithm for which Loss Function?Unsupervised LearningLinear RegressionLoss FunctionGradient DescentGradient Descent JustificationGradient Descent in Linear RegressionImplementing Linear Regression with Gradient DescentProblems with linear regressionSensibility to OutliersMulticollinearityHeteroscedasticityWhy?</description>
     </item>
     
     <item>
