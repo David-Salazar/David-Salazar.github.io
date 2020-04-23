@@ -6,10 +6,19 @@
     <description>Recent content in mooc on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 01 Jan 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 08 Jan 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/mooc/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Coursera Machine Learning: Neural Networks, Representation</title>
+      <link>/2020/01/08/coursera-machine-learning-neural-networks-representation/</link>
+      <pubDate>Wed, 08 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/01/08/coursera-machine-learning-neural-networks-representation/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Coursera Machine Learning Logistic Regression and Regularization</title>

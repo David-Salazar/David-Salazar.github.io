@@ -6,10 +6,40 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 01 Jan 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 19 Apr 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Statistical Rethinking: Week 1</title>
+      <link>/2020/04/19/statistical-rethinking-week-1/</link>
+      <pubDate>Sun, 19 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/04/19/statistical-rethinking-week-1/</guid>
+      <description>Week 1Week 1 tries to go as deep as possible in the intuition and the mechanics of a very simple model. As always with McElreath, he goes on with both clarity and erudition.
+Suppose the globe tossing data had turned out to be 8 water in 15 tosses.Construct the posterior distribution, using grid approximation. Use thesame flat prior as before.
+# define gridp_grid &amp;lt;- seq(from = 0, to = 1, length.</description>
+    </item>
+    
+    <item>
+      <title>Fat vs Thin: does LLN work?</title>
+      <link>/2020/04/17/fat-vs-thin-does-lln-work/</link>
+      <pubDate>Fri, 17 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/04/17/fat-vs-thin-does-lln-work/</guid>
+      <description>Fat tails are a different beastStatistical estimation is based on the LLN and CLT. The CLT states that the sampling distribution will look like a normal. The LLN that the variance of the normal will decrease as our sampling size increases.
+Or so does Nassim Nicholas Taleb says in his recently published technical book, wherein he explains how common practice statistical methodology breaks down under the Extremistan regime.</description>
+    </item>
+    
+    <item>
+      <title>Coursera Machine Learning: Neural Networks, Representation</title>
+      <link>/2020/01/08/coursera-machine-learning-neural-networks-representation/</link>
+      <pubDate>Wed, 08 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/01/08/coursera-machine-learning-neural-networks-representation/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Coursera Machine Learning Logistic Regression and Regularization</title>

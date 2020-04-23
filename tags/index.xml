@@ -6,7 +6,7 @@
     <description>Recent content in Tags on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 26 Dec 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 08 Jan 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>machine learning</title>
       <link>/tags/machine-learning/</link>
-      <pubDate>Thu, 26 Dec 2019 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 08 Jan 2020 00:00:00 +0000</pubDate>
       
       <guid>/tags/machine-learning/</guid>
       <description></description>
@@ -39,7 +39,7 @@
     </item>
     
     <item>
-      <title>Ggplot2</title>
+      <title>ggplot2</title>
       <link>/tags/ggplot2/</link>
       <pubDate>Tue, 17 Jul 2018 00:00:00 +0000</pubDate>
       
