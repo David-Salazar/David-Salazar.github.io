@@ -6,10 +6,29 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 19 Apr 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 27 Apr 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Spurious PCA under Thick Tails</title>
+      <link>/2020/04/27/spurious-pca-under-thick-tails/</link>
+      <pubDate>Mon, 27 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/04/27/spurious-pca-under-thick-tails/</guid>
+      <description>Spurious PCA under Thick TailsPCA is a dimensionality reduction technique. It seeks to project the data onto a lower dimensional hyperplane such that as much of the original data variance is preserved. The underlying idea is that the vectors creating these lower dimensional hyperplanes reflect a latent structure in the data. However, what happens when there is no structure at all?
+In his most recently published technical book,Taleb examines this question under two different regimes: Mediocristan and Extremistan.</description>
+    </item>
+    
+    <item>
+      <title>Pareto 80/20 and Maximum Likelihood</title>
+      <link>/2020/04/23/pareto-80-20-and-maximum-likelihood/</link>
+      <pubDate>Thu, 23 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/04/23/pareto-80-20-and-maximum-likelihood/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Statistical Rethinking: Week 1</title>
