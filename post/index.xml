@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 27 Apr 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 28 Apr 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Statistical Rethinking: Week 2</title>
+      <link>/2020/04/28/statistical-rethinking-week-2/</link>
+      <pubDate>Tue, 28 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/04/28/statistical-rethinking-week-2/</guid>
+      <description>library(rethinking)library(tidyverse)library(ggridges)extrafont::loadfonts(device=&amp;quot;win&amp;quot;) set.seed(24)data(&amp;quot;Howell1&amp;quot;)precis(Howell1)## mean sd 5.5% 94.5%## height 138.2635963 27.6024476 81.108550 165.73500## weight 35.6106176 14.7191782 9.360721 54.50289## age 29.3443934 20.7468882 1.000000 66.13500## male 0.4724265 0.4996986 0.000000 1.00000## histogram## height &amp;lt;U+2581&amp;gt;&amp;lt;U+2581&amp;gt;&amp;lt;U+2581&amp;gt;&amp;lt;U+2581&amp;gt;&amp;lt;U+2581&amp;gt;&amp;lt;U+2581&amp;gt;&amp;lt;U+2581&amp;gt;&amp;lt;U+2582&amp;gt;&amp;lt;U+2581&amp;gt;&amp;lt;U+2587&amp;gt;&amp;lt;U+2587&amp;gt;&amp;lt;U+2585&amp;gt;&amp;lt;U+2581&amp;gt;## weight &amp;lt;U+2581&amp;gt;&amp;lt;U+2582&amp;gt;&amp;lt;U+2583&amp;gt;&amp;lt;U+2582&amp;gt;&amp;lt;U+2582&amp;gt;&amp;lt;U+2582&amp;gt;&amp;lt;U+2582&amp;gt;&amp;lt;U+2585&amp;gt;&amp;lt;U+2587&amp;gt;&amp;lt;U+2587&amp;gt;&amp;lt;U+2583&amp;gt;&amp;lt;U+2582&amp;gt;&amp;lt;U+2581&amp;gt;## age &amp;lt;U+2587&amp;gt;&amp;lt;U+2585&amp;gt;&amp;lt;U+2585&amp;gt;&amp;lt;U+2583&amp;gt;&amp;lt;U+2585&amp;gt;&amp;lt;U+2582&amp;gt;&amp;lt;U+2582&amp;gt;&amp;lt;U+2581&amp;gt;&amp;lt;U+2581&amp;gt;## male &amp;lt;U+2587&amp;gt;&amp;lt;U+2581&amp;gt;&amp;lt;U+2581&amp;gt;&amp;lt;U+2581&amp;gt;&amp;lt;U+2581&amp;gt;&amp;lt;U+2581&amp;gt;&amp;lt;U+2581&amp;gt;&amp;lt;U+2581&amp;gt;&amp;lt;U+2581&amp;gt;&amp;lt;U+2587&amp;gt;Week 2Week 2 has gotten us to start exploring linear regression from a bayesian perspective. I found it the most interesting to propagate uncertainty through the model.</description>
+    </item>
     
     <item>
       <title>Spurious PCA under Thick Tails</title>
