@@ -6,10 +6,21 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 03 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 09 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>What does it mean to fatten the tails?</title>
+      <link>/2020/05/09/what-does-it-mean-to-fatten-the-tails/</link>
+      <pubDate>Sat, 09 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/05/09/what-does-it-mean-to-fatten-the-tails/</guid>
+      <description>What does it mean to fatten the tails?First, let’s define what we mean by fatter tails.
+What are fatter tails?Intuitively, fat tails distribution are distributions for which their PDFs decay to zero very slowly. So slowly, that extreme values start gaining traction in the determination of the whole distribution. Thus, a distribution is fatter than another one if its PDF takes longer to decay to zero.
+Fattening the tailsThus, if we wanted to fatten the tails, the intuitive response is to add more mass at the tails such that the PDF takes more time to decay.</description>
+    </item>
     
     <item>
       <title>Statistical Rethinking: Week 3</title>
