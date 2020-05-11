@@ -6,10 +6,20 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 09 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 11 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Statistical Rethinking: Week 4</title>
+      <link>/2020/05/11/statistical-rethinking-week-4/</link>
+      <pubDate>Mon, 11 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/05/11/statistical-rethinking-week-4/</guid>
+      <description>Statistical Rethinking: Week 4This week was a marathon of content. Richard introduced beautifully the trade-off between overfitting and underfitting and prescribed two complimentary methods to help us navigate this trade-off:
+Regularizing priorsInformation criteria and Cross-Validation estimates of the risk of overfitting.Regularizing priors reduces the risk of overfitting of any model by introducing skepticisim into the priors. Whereas information criteria and Cross-Validation help us to estimate whether we have overfitted or not.</description>
+    </item>
     
     <item>
       <title>What does it mean to fatten the tails?</title>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.58.3" />
+
+
+<title>Statistical Rethinking: Week 4 - Dilettanting Data Science</title>
+<meta property="og:title" content="Statistical Rethinking: Week 4 - Dilettanting Data Science">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/turner.jpg"
+         width="200"
+         height="200"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/David-Salazar">GitHub</a></li>
+    
+    <li><a href="https://www.kaggle.com/davidsalazarv95">Kaggle</a></li>
+    
+    <li><a href="https://david-salazar.github.io/">Posts</a></li>
+    
+    <li><a href="https://twitter.com/DavidSalazarVir?lang=en">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">7 min read</span>
+    
+
+    <h1 class="article-title">Statistical Rethinking: Week 4</h1>
+
+    
+    <span class="article-date">2020/05/11</span>
+    
+    
+
+    <div class="article-content">
+      
+
+
+<div id="statistical-rethinking-week-4" class="section level1">
+<h1>Statistical Rethinking: Week 4</h1>
+<p>This week was a marathon of content. Richard introduced beautifully the trade-off between overfitting and underfitting and prescribed two complimentary methods to help us navigate this trade-off:</p>
+<ol style="list-style-type: decimal">
+<li>Regularizing priors</li>
+<li>Information criteria and Cross-Validation estimates of the risk of overfitting.</li>
+</ol>
+<p>Regularizing priors reduces the risk of overfitting of any model by introducing skepticisim into the priors. Whereas information criteria and Cross-Validation help us to estimate whether we have overfitted or not.</p>
+<div id="homework" class="section level2">
+<h2>Homework</h2>
+<div id="consider-3-fictional-polynesian-islands" class="section level3">
+<h3>Consider 3 fictional Polynesian Islands…</h3>
+<pre class="r"><code># Read the data
+islands &lt;- list()
+islands[[1]] &lt;- c(0.2, 0.2, 0.2, 0.2, 0.2)
+islands[[2]] &lt;- c(0.8, 0.1, 0.05, 0.025, 0.025)
+islands[[3]] &lt;- c(0.05, 0.15, 0.7, 0.05, 0.05)
+names(islands) &lt;- c(&quot;Island 1&quot;, &quot;Island 2&quot;, &quot;Island 3&quot;)</code></pre>
+<blockquote>
+<p>First, compute the entropy of each island’s bird distribution:</p>
+</blockquote>
+<pre class="r"><code>information_entropy &lt;- function(distribution) {
+  # -expected value of log (p)
+  return(-sum(distribution * log(distribution)))
+}
+
+islands %&gt;% 
+  map_df(information_entropy) %&gt;%
+  mutate(x = &quot;o&quot;) %&gt;% 
+  pivot_longer(cols = -x, names_to = &quot;island&quot;, values_to = &quot;information_entropy&quot;) %&gt;% 
+  ggplot(aes(y = fct_reorder(island, information_entropy), x = information_entropy)) +
+  geom_col(aes(fill = island),alpha = 0.8) +
+  scale_fill_viridis_d() +
+  labs(y = &quot;&quot;, 
+       subtitle = &quot;Island 1 has the highest entropy&quot;,
+       title = &quot;Information Entropy by Island&quot;) +
+  hrbrthemes::theme_ipsum_rc(grid = &quot;x&quot;) +
+  theme(legend.position = &quot;none&quot;)</code></pre>
+<p><img src="/post/2020-05-11-statistical-rethinking-week-4_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Island 1, having an uniform probability of each bird, encodes the highest amount of uncertainity of all the three islands. Both island 2 and 3, having 0.8 and 0.7, respectively, in only one type of bird, enconde much lower levels of uncertainty in their distributions.</p>
+<blockquote>
+<p>Second, use each island’s bird distribution to predict the other two.</p>
+</blockquote>
+<pre class="r"><code>divergence &lt;- function(p, q) {
+  return(sum(p*log(p/q)))
+}
+
+divergece_wrt_one &lt;- map_df(islands[c(2, 3)], ~ divergence(p = islands[[1]], q = .x)) %&gt;% mutate(used = &quot;Island 1&quot;) %&gt;% pivot_longer(-used)
+divergence_wrt_two &lt;- map_df(islands[c(1, 3)], ~ divergence(p = islands[[2]], q = .x)) %&gt;% mutate(used = &quot;Island 2&quot;) %&gt;% pivot_longer(-used)
+divergece_wrt_three &lt;- map_df(islands[c(1, 2)], ~ divergence(p = islands[[3]], q = .x)) %&gt;% mutate(used = &quot;Island 3&quot;)  %&gt;% pivot_longer(-used)
+
+rbind(divergece_wrt_one, divergence_wrt_two, divergece_wrt_three) %&gt;% 
+  rename(predicted = name,
+         divergence = value) %&gt;% 
+  ggplot(aes(x = predicted, y = divergence,
+             fill = used)) +
+  geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;,
+           alpha = 0.8) +
+  hrbrthemes::theme_ipsum_rc(grid = &quot;Y&quot;) +
+  scale_fill_viridis_d() +
+  labs(subtitle = &quot;Island 1, which has the highest entropy, is the best predictor&quot;,
+       title = &quot;Divergence by predicted island&quot;,
+       fill = &quot;Island used to predict&quot;) +
+  theme(legend.position = &quot;bottom&quot;)</code></pre>
+<p><img src="/post/2020-05-11-statistical-rethinking-week-4_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Two facts arise:</p>
+<ol style="list-style-type: decimal">
+<li><p>Predicting “Island 1” is relatively easy. It already encodes so much uncertainty that the extra uncertainty induced by using any other distribution is relatively low. Nevertheless, it is better to use “Island 3”, which encodes the highest uncertainty.</p></li>
+<li><p>To predict either “Island 2” or “Island 3”, it is markedly better to use the distribution with the highest entropy: “Island 1”. It encodes so much uncertainty in itself, that, when we see the true distribution, it is hardly surprised: it expects almost anything.</p></li>
+</ol>
+</div>
+</div>
+<div id="recall-the-marriage" class="section level2">
+<h2>Recall the marriage…</h2>
+<blockquote>
+<p>Recall the marriage age, and happiness collider bias example from Chapter 6. Run models m6.9 and m6.10 again. Compare these two models using WAIC (or LOO, they will produce identical results). Which model is expected to make better predictions? Which model provides the correct causal inference about the influence of age on happiness? Can you explain why the answers to these two questions disagree?</p>
+</blockquote>
+<p>Let’s load the data:</p>
+<pre class="r"><code># reproduce textbook
+data &lt;- sim_happiness(seed = 1977, N_years = 1000)</code></pre>
+<p>Before fitting the model, let’s remember our assumed DAG.</p>
+<pre class="r"><code>dag &lt;- dagitty(&quot;dag {
+              Happiness -&gt; Marriage
+              Age -&gt; Marriage
+               }&quot;)
+drawdag(dag)</code></pre>
+<p><img src="/post/2020-05-11-statistical-rethinking-week-4_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Thus, Age and Happiness are independent. However, if we condition on Marriage, we open a collider which will make our statistical model to identify and information flow between age and happiness.</p>
+<pre class="r"><code>data %&gt;% 
+  filter(age &gt; 17) %&gt;% 
+  mutate(A = (age - 18)/ (65-18),
+         mid = married + 1) -&gt; data_for_model
+
+m6.9 &lt;- quap(
+  alist(
+    happiness ~ dnorm(mu, sigma),
+    mu &lt;- a[mid] + bA*A,
+    a[mid] ~ dnorm(0, 1),
+    bA ~ dnorm(0, 2),
+    sigma ~ dexp(1)
+  ),
+  data = data_for_model
+)
+
+m6.10 &lt;- quap(
+  alist(
+    happiness ~ dnorm(mu, sigma),
+    mu &lt;- a + bA*A,
+    a ~ dnorm(0, 1),
+    bA ~ dnorm(0, 2),
+    sigma ~ dexp(1)
+  ),
+  data = data_for_model
+)
+
+compare(m6.10, m6.9)</code></pre>
+<pre><code>##           WAIC       SE    dWAIC      dSE    pWAIC     weight
+## m6.9  2713.797 37.55914   0.0000       NA 3.647937 1.0000e+00
+## m6.10 3102.072 27.75233 388.2746 35.46971 2.423316 4.8667e-85</code></pre>
+<p>Considering our DAG, the model that correctly identifies the causal relationship between happiness and age is m6.10. Whereas m6.9 opens a collider and thus its coefficient estimates are confounded.</p>
+<p>Nevertheless, by examing the difference in WAIC (the smaller the better), we estimate that the model that will predict happiness better out of sample is m6.9: the confounded model. This only highlights the difference between the different goals of prediction and causal inference. Why? Because the information that flows once we open the collider, although causally incorrectly attributed to age, is valuable information that can be used to predict happiness.</p>
+<blockquote>
+<p>Reconsider the urban fox analysis from last week’s homework. Use WAIC or LOO based model comparison on five different models, each using weight as the outcome, and containing these sets of predictor variables:</p>
+</blockquote>
+<ol style="list-style-type: decimal">
+<li>avgfood + groupsize + area</li>
+<li>avgfood + groupsize</li>
+<li>groupsize + area</li>
+<li>avgfood</li>
+<li>area</li>
+</ol>
+<p>Let’s draw the data and remember our DAG:</p>
+<pre class="r"><code>data(&quot;foxes&quot;)
+
+foxes %&gt;% 
+  mutate(avgfood = (avgfood - mean(avgfood))/ sd(avgfood),
+         groupsize = (groupsize - mean(groupsize)) / sd(groupsize),
+         area = (area - mean(area)) / sd(area),
+         weight = (weight - mean(weight)) / sd(weight)) -&gt; foxes_scaled
+
+dag_foxes &lt;- dagitty(&quot;dag {
+                     area -&gt; avgfood
+                     avgfood -&gt; groupsize
+                     avgfood -&gt; weight
+                     groupsize -&gt; weight
+}&quot;)
+
+drawdag(dag_foxes)</code></pre>
+<p><img src="/post/2020-05-11-statistical-rethinking-week-4_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<ol style="list-style-type: decimal">
+<li>avgfood + groupsize + area</li>
+</ol>
+<p>Given our DAG, using area and avgfood simultaneously blocks the pipe that goes from area to weight. However, it correctly estimates the effect of groupsize on weight.</p>
+<pre class="r"><code>model_1 &lt;- quap(
+  alist(
+    weight ~ dnorm(mu, sigma),
+    mu &lt;- alpha + beta_area * area + beta_groupsize *groupsize + beta_avgfood * avgfood ,
+    alpha ~ dnorm(0, 0.2),
+    beta_area ~ dnorm(0, 0.5),
+    beta_groupsize ~ dnorm(0, 0.5),
+    beta_avgfood ~ dnorm(0, 0.5),
+    sigma ~ dexp(1)
+  ),
+  data = foxes_scaled
+)</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>avgfood + groupsize</li>
+</ol>
+<p>Given this model, we will estimate the effect of groupsize on weight correctly.</p>
+<pre class="r"><code>model_2 &lt;- quap(
+  alist(
+    weight ~ dnorm(mu, sigma),
+    mu &lt;- alpha + beta_groupsize *groupsize + beta_avgfood * avgfood ,
+    alpha ~ dnorm(0, 0.2),
+    beta_groupsize ~ dnorm(0, 0.5),
+    beta_avgfood ~ dnorm(0, 0.5),
+    sigma ~ dexp(1)
+  ),
+  data = foxes_scaled
+)</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>groupsize + area</li>
+</ol>
+<p>Given our DAG, controlling by groupsize and including avgfood should be equivalent as including avgfood.</p>
+<pre class="r"><code>model_3 &lt;- quap(
+  alist(
+    weight ~ dnorm(mu, sigma),
+    mu &lt;- alpha + beta_area * area + beta_groupsize *groupsize ,
+    alpha ~ dnorm(0, 0.2),
+    beta_area ~ dnorm(0, 0.5),
+    beta_groupsize ~ dnorm(0, 0.5),
+    sigma ~ dexp(1)
+  ),
+  data = foxes_scaled
+)</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>avgfood</li>
+</ol>
+<p>Given our DAG, this model estimates correctly the total effect of avgfood on weight.</p>
+<pre class="r"><code>model_4 &lt;- quap(
+  alist(
+    weight ~ dnorm(mu, sigma),
+    mu &lt;- alpha + beta_avgfood * avgfood ,
+    alpha ~ dnorm(0, 0.2),
+    beta_avgfood ~ dnorm(0, 0.5),
+    sigma ~ dexp(1)
+  ),
+  data = foxes_scaled
+)</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>area</li>
+</ol>
+<pre class="r"><code>model_5 &lt;- quap(
+  alist(
+    weight ~ dnorm(mu, sigma),
+    mu &lt;- alpha + beta_area * area,
+    alpha ~ dnorm(0, 0.2),
+    beta_area ~ dnorm(0, 0.5),
+    sigma ~ dexp(1)
+  ),
+  data = foxes_scaled
+)</code></pre>
+<p>This model correctly estimates the total effect of area on weight.</p>
+<p>Now, it’s time to compare the out-of-sample prediction accuracy of the different models:</p>
+<pre class="r"><code>compare(model_1, model_2, model_3, model_4, model_5)</code></pre>
+<pre><code>##             WAIC       SE    dWAIC      dSE    pWAIC      weight
+## model_1 322.8945 16.27362  0.00000       NA 4.655545 0.457482115
+## model_2 323.8989 16.08777  1.00444 3.570389 3.730356 0.276861647
+## model_3 324.0148 15.85169  1.12030 2.962192 3.790548 0.261278688
+## model_4 333.4444 13.78855 10.54991 7.181399 2.426279 0.002341478
+## model_5 333.7239 13.79447 10.82943 7.230715 2.650636 0.002036072</code></pre>
+<p>Given our DAG, if we include groupsize, the information flowing from either area or avgfood should be the same in the 3 models. Thus, it makes sense that we get equivalent predictions with either way.</p>
+<p>Finally, given that the total effect of avgfood and area are the same, the information flows from either of those in the models 4 and 5 should also be the same. Thus, we get equivalent predictions for both models.</p>
+</div>
+</div>
+
+    </div>
+  
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//https-david-salazar-github-io.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+  
+  </article>
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/python.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+
+    
+  </body>
+</html>
+
