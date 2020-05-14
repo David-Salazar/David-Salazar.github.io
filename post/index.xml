@@ -6,10 +6,29 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 11 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 13 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Standard Deviation and Fat Tails</title>
+      <link>/2020/05/13/standard-deviation-and-fat-tails/</link>
+      <pubDate>Wed, 13 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/05/13/standard-deviation-and-fat-tails/</guid>
+      <description>Statistical Consequences of Fat TailsIn this post, I’ll continue to explore with Monte-Carlo simulations the ideas in Nassim Taleb’s latest book: Statistical Consequences of Fat Tails. In other posts, I have look at the persistent small sample effect that plagues the mean estimates under fat tails as a consequence of the loooong pre-asymptotics of the law of large numbers. Also, how this in turn plagues other statistical techniques such as PCA.</description>
+    </item>
+    
+    <item>
+      <title>Statistical Rethinking: Week 5 -&gt; Interactions</title>
+      <link>/2020/05/12/statistical-rethinking-week-5-interactions/</link>
+      <pubDate>Tue, 12 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/05/12/statistical-rethinking-week-5-interactions/</guid>
+      <description>Statisical Rethinking: Week 5 -&amp;gt; InteractionsAs Richard says in class, interactions are easy to code but incredibly difficult to interpret. By going through the problems in Chapter 8, I hope to gain a bit of practice working with them.
+Chapter 8 ProblemsProblem 1Let’s run the tulips model but this time with the bed variable. Given that this is a categorical variable, it will create a different intercept for each of the beds in the sample.</description>
+    </item>
     
     <item>
       <title>Statistical Rethinking: Week 4</title>

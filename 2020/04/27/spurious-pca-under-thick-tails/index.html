@@ -110,7 +110,7 @@ Taleb examines this question under two different regimes: <em>Mediocristan and E
 <pre class="r"><code>gaussian_small &lt;- rerun(30, rnorm(100)) %&gt;% 
   bind_cols()
 
-gaussian_large &lt;- rerun(30, rnorm(1000)) %&gt;% 
+gaussian_large &lt;- rerun(30, rnorm(10^6)) %&gt;% 
   bind_cols()
 
 pca(gaussian_small) %&gt;% 
@@ -146,7 +146,7 @@ pca(gaussian_small) %&gt;%
 <pre class="r"><code>stable_small &lt;- rerun(30, rstable(100, alpha = 3/2, beta = 1, gamma = 1, delta = 0)) %&gt;% 
   bind_cols()
 
-stable_large &lt;- rerun(30, rstable(1000, alpha = 3/2, beta = 1, gamma = 1, delta = 0)) %&gt;% 
+stable_large &lt;- rerun(30, rstable(10^6, alpha = 3/2, beta = 1, gamma = 1, delta = 0)) %&gt;% 
   bind_cols() 
 
 pca(stable_small) %&gt;% 
