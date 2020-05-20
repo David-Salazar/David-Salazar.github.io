@@ -6,10 +6,19 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 15 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 19 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Understanding the tail exponent</title>
+      <link>/2020/05/19/understanding-the-tail-exponent/</link>
+      <pubDate>Tue, 19 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/05/19/understanding-the-tail-exponent/</guid>
+      <description>Understanding the tail exponentPower Laws are ubiquitous to describe fat tails, a topic that I’ve been trying to wrap my head around for the last couple of weeks. However, up until now, I haven’t had a visceral understanding of what exactly is the function of their main parameter: the tail exponent \(\alpha\). This blogpost is my attempt at gaining understanding. To do so, I will be replicating some of the plots and derivations from two sources:</description>
+    </item>
     
     <item>
       <title>Statistical Rethinking Week 5 -&gt; HMC samples</title>
