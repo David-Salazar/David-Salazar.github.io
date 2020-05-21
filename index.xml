@@ -6,10 +6,20 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 19 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 20 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Statistical Rethinking: Week 6</title>
+      <link>/2020/05/20/statistical-rethinking-week-6/</link>
+      <pubDate>Wed, 20 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/05/20/statistical-rethinking-week-6/</guid>
+      <description>Statistical Rethinking: Week 6Quick summary of the weekThe week was a whirlwind tour of:
+Maximum entropy and introduction to GLMs.The problems that come when using link functions.The perils of relative effects when studying binomial regression and how complicated it is to directly calculate probabilities with GLMs: all the parameters interact among themselves.This week was an introduction to GLMs and the principle of Maximum Entropy.</description>
+    </item>
     
     <item>
       <title>Understanding the tail exponent</title>
