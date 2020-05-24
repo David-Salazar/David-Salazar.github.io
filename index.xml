@@ -6,10 +6,19 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 20 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 22 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Correlation is not Correlation</title>
+      <link>/2020/05/22/correlation-is-not-correlation/</link>
+      <pubDate>Fri, 22 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/05/22/correlation-is-not-correlation/</guid>
+      <description>Correlation is not correlationSmall sample effects with Sample CorrelationSample Correlation in MediocristanSample correlations from ExtremistanMisused CorrelationQuadrant’s CorrelationBerkson’s paradoxSimpson’s ParadoxCorrelation under non linearitiesMisunderstanding of Correlation: its signal is non linearEntropy and Mutual InformationConclusionCorrelation is not correlationTo the usual phrase of correlation is not causation, Nassim Taleb often answers: correlation is not correlation.</description>
+    </item>
     
     <item>
       <title>Statistical Rethinking: Week 6</title>
