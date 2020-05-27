@@ -6,10 +6,19 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 24 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 26 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>R-squared and fat tails</title>
+      <link>/2020/05/26/r-squared-and-fat-tails/</link>
+      <pubDate>Tue, 26 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/05/26/r-squared-and-fat-tails/</guid>
+      <description>R-squared and Fat-tailsThis post continues to explore how common statistical methods are unreliable and dangerous when we are dealing with fat-tails. So far, we have seen how the distribution of the sample mean, PCA and sample correlation turn into pure noise when we are dealing with fat-tails. In this post, I’ll show the same for \(R^2\) (i.e., coefficient of determination). Remember, it is a random variable that we are estimating and thefore has its own distribution.</description>
+    </item>
     
     <item>
       <title>Statistical Rethinking: Week 7</title>
