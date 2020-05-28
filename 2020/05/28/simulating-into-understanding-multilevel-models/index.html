@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.58.3" />
+
+
+<title>Simulating into understanding Multilevel Models - Dilettanting Data Science</title>
+<meta property="og:title" content="Simulating into understanding Multilevel Models - Dilettanting Data Science">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/turner.jpg"
+         width="200"
+         height="200"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/David-Salazar">GitHub</a></li>
+    
+    <li><a href="https://www.kaggle.com/davidsalazarv95">Kaggle</a></li>
+    
+    <li><a href="https://david-salazar.github.io/">Posts</a></li>
+    
+    <li><a href="https://twitter.com/DavidSalazarVir?lang=en">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">11 min read</span>
+    
+
+    <h1 class="article-title">Simulating into understanding Multilevel Models</h1>
+
+    
+    <span class="article-date">2020/05/28</span>
+    
+    
+
+    <div class="article-content">
+      
+
+<h1 id="simulating-into-understanding-multilevel-models">Simulating into Understanding Multilevel Models</h1>
+
+<blockquote>
+<p>Pooling is the process and shrinkning is the result</p>
+</blockquote>
+
+<p>Pooling and Shrinking are not easy concepts to understand. In the lectures, Richard, as always, does an excellent job of creating metaphors and examples to help us gain intuition around what Multilevel models do. <strong>Multilevel models are models mnesic models.</strong></p>
+
+<p>Imagine a cluster of observations: it can be different classrooms in a school. Pooling means using the information from other classrooms to inform our estimates for each classroom. A model with no pooling means that each classroom is the first classroom that we have ever seen, as other classrooms have no effect on our estimates. <strong>No pooling models are amnesic models.</strong></p>
+
+<p>Finally, <strong>shrinking is the result of this pooling: our estimates for each classroom will be pulled towards the global mean across classrooms</strong>. But how do multilevel models do this?</p>
+
+<h2 id="parameters-come-from-a-common-distribution">Parameters come from a common distribution</h2>
+
+<p>Multilevel models propose to model a family of parameters (the parameters for each classroom) as coming from a common statistical population parameters. For example, the family of varying intercepts for each classroom in the school. Then, <strong>as we learn each parameter for each classroom, we learn simultaneously the family of the parameters for all classrooms; both processes complement each other</strong>. Therefore, this distribution of the family of parameters will become an adaptive <em>regularizer</em> for our estimates: <strong>they will shrink the varying intercepts for each classroom to the estimated mean of the common distribution; the amount of shrinkage will be determined by the variation that we estimate for the distribution of the family of parameters</strong>. The more influenced parameters are going to be those that come from classrooms with small sample sizes.</p>
+
+<p>However, it is one thing to have some intuition and another one is to really <em>understand</em> something. When it comes to statistics, I am a big fan of simulation. Thankfully, Richard does precisely this in chapter 12. Let&rsquo;s simulate a model to visualize both <strong>pooling and shrinking</strong>.</p>
+
+<h2 id="the-model-a-multilevel-binomial">The Model: A multilevel binomial</h2>
+
+<p>We simulate the number of students who passed some exam at different classrooms at one school. That is, each classroom has <code>\(S_i\)</code> students who passed the test, from a maximum of <code>\(N_i\)</code>. The model then is the following:</p>
+
+<p>$$ S_i \sim Binomial(N_i, p_i) $$</p>
+
+<p>$$ logit(p<em>i) = \alpha</em>{classroom_{[i]}} $$</p>
+
+<p>$$ \alpha_j \sim Normal(\bar{\alpha}, \sigma)$$</p>
+
+<p>$$ \bar{\alpha} \sim Normal(0, 1.5) $$</p>
+
+<p>$$ \sigma \sim Exponential(1) $$</p>
+
+<p>Then, we posit a distribution for the average log-odds of passing the exam for each classroom: <code>\(\alpha_j \sim Normal(\bar{\alpha}, \sigma)\)</code>. That is, the prior for each intercept will be one distribution that we will simultaneously learn as we learn the individual parameters. Finally, we have hyper-priors: priors for the parameters of the distribution of intercepts ($\bar{\alpha}, \sigma$).</p>
+
+<h2 id="the-simulation">The simulation</h2>
+
+<p>To simulate this model, we will define the parameters of the distribution of intercepts. Then, for each classroom, we will simulate an average log-odds of passing the exam. Then, we will simulate the number of students at each classroom that passed the test.</p>
+
+<p>Notice that neither the hyper-priors nor the priors are part of our simulation. In Richard&rsquo;s words:</p>
+
+<blockquote>
+<p>Priors are epistomology, not ontology.</p>
+</blockquote>
+
+<p>Let&rsquo;s begin by setting the parameters of the population of intercepts:</p>
+
+<pre><code class="language-r">a_bar &lt;- 1.5
+sigma &lt;- 1.5
+n_classrooms &lt;- 60
+# students per classrom
+Ni &lt;- as.integer(rep(c(5, 10, 25, 35), each = 15))
+</code></pre>
+
+<p>Then, we simulate the average log-odds of passing the exam for each of the classrooms</p>
+
+<pre><code class="language-r">avg_lod_odds_per_classrom &lt;- rnorm(n_classrooms, mean = a_bar, sd = sigma)
+</code></pre>
+
+<p>Then, we have the following:</p>
+
+<pre><code class="language-r">data_simulation &lt;- data.frame(classroom = 1:n_classrooms, Ni = Ni, true_log_odds = avg_lod_odds_per_classrom)
+glimpse(data_simulation)
+</code></pre>
+
+<pre><code>## Rows: 60
+## Columns: 3
+## $ classroom     &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16...
+## $ Ni            &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 10, 10, ...
+## $ true_log_odds &lt;dbl&gt; 2.3245048, 0.2375944, 1.5494969, 2.2862246, -1.091406...
+</code></pre>
+
+<h3 id="simulate-the-survivors">Simulate the survivors</h3>
+
+<blockquote>
+<p>Putting the logistic into the random binomial function, we can generate the number of students who passed the test for each classrom:</p>
+</blockquote>
+
+<p>Remember that the logistic is simply the inverse of the logit. Thus, by applying the logistic we go from the log-odds into the probability.</p>
+
+<pre><code class="language-r">data_simulation %&gt;% 
+  mutate(number_passed_test = rbinom(n_classrooms, prob = logistic(true_log_odds), size = Ni)) -&gt; data_simulation
+glimpse(data_simulation)
+</code></pre>
+
+<pre><code>## Rows: 60
+## Columns: 4
+## $ classroom          &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1...
+## $ Ni                 &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 10,...
+## $ true_log_odds      &lt;dbl&gt; 2.3245048, 0.2375944, 1.5494969, 2.2862246, -1.0...
+## $ number_passed_test &lt;int&gt; 5, 5, 4, 5, 1, 4, 5, 5, 5, 1, 5, 5, 3, 5, 5, 8, ...
+</code></pre>
+
+<pre><code class="language-r">data_simulation %&gt;% 
+  ggplot(aes(classroom, number_passed_test, color = Ni)) +
+  geom_point() +
+  scale_color_viridis_c() +
+  labs(title = &quot;Simulated students who passed the test per Classroom&quot;,
+       color = &quot;Initial #&quot;)
+</code></pre>
+
+<p><img src="/post/2020-05-28-simulating-into-understanding-multilevel-models_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+
+<h3 id="no-pooling-estimates">No-pooling estimates</h3>
+
+<p>Pooling means using the information from other classrooms to inform our predictions of estimated probabilities of passing the exams at different classrooms. <strong>Therefore, no-pooling means treating each classroom as completely unrelated to others</strong>. That is, estimating that the variance of the population of parameters is infinite.</p>
+
+<p>Therefore, our estimate of the probability of passing the test at each classroom will just be the raw sample proportion at each classrom:</p>
+
+<pre><code class="language-r">data_simulation %&gt;% 
+  mutate(estimated_probability_no_pooling = number_passed_test / Ni) -&gt; data_simulation
+glimpse(data_simulation)
+</code></pre>
+
+<pre><code>## Rows: 60
+## Columns: 5
+## $ classroom                        &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,...
+## $ Ni                               &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5...
+## $ true_log_odds                    &lt;dbl&gt; 2.3245048, 0.2375944, 1.5494969, 2...
+## $ number_passed_test               &lt;int&gt; 5, 5, 4, 5, 1, 4, 5, 5, 5, 1, 5, 5...
+## $ estimated_probability_no_pooling &lt;dbl&gt; 1.0, 1.0, 0.8, 1.0, 0.2, 0.8, 1.0,...
+</code></pre>
+
+<h3 id="partial-pooling-estimates">Partial pooling estimates</h3>
+
+<p>Partial pooling means to model explicitly the population of parameters. Then, with a mean and a standard deviation estimated, we can perform adaptive regularization, i.e., shrinkage to our predictions. To do so, we will fit a multilevel binomial model:</p>
+
+<pre><code class="language-r">data_model &lt;- list(Si = data_simulation$number_passed_test, Ni = data_simulation$Ni, classroom = data_simulation$classroom)
+
+multilevel_model &lt;- alist(
+  Si ~ dbinom(Ni, p),
+  logit(p) &lt;- a_classroom[classroom], # each pond get its own average log odds of survival
+  a_classroom[classroom] ~ dnorm(a_bar, sigma),
+  a_bar ~ dnorm(0, 1.5),
+  sigma ~ dexp(1)
+)
+</code></pre>
+
+<p>Then, we use HMC to sample from our posterior:</p>
+
+<pre><code class="language-r">multilevel_fit &lt;- ulam(multilevel_model, data = data_model, chains = 4, cores = 4)
+</code></pre>
+
+<p>Let&rsquo;s evaluate the validity of our Markov Chains:</p>
+
+<pre><code class="language-r">traceplot_ulam(multilevel_fit)
+</code></pre>
+
+<pre><code>## [1] 1000
+## [1] 1
+## [1] 1000
+</code></pre>
+
+<pre><code>## Waiting to draw page 2 of 5
+</code></pre>
+
+<p><img src="/post/2020-05-28-simulating-into-understanding-multilevel-models_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+
+<pre><code>## Waiting to draw page 3 of 5
+</code></pre>
+
+<p><img src="/post/2020-05-28-simulating-into-understanding-multilevel-models_files/figure-html/unnamed-chunk-10-2.png" width="672" /></p>
+
+<pre><code>## Waiting to draw page 4 of 5
+</code></pre>
+
+<p><img src="/post/2020-05-28-simulating-into-understanding-multilevel-models_files/figure-html/unnamed-chunk-10-3.png" width="672" /></p>
+
+<pre><code>## Waiting to draw page 5 of 5
+</code></pre>
+
+<p><img src="/post/2020-05-28-simulating-into-understanding-multilevel-models_files/figure-html/unnamed-chunk-10-4.png" width="672" /><img src="/post/2020-05-28-simulating-into-understanding-multilevel-models_files/figure-html/unnamed-chunk-10-5.png" width="672" /></p>
+
+<p>The chains look healthy because:</p>
+
+<ol>
+<li>They have good mixing across the parameter space.</li>
+<li>They are stationary.</li>
+<li>Different chains converge to explore the same spaces.</li>
+</ol>
+
+<p>Now, let&rsquo;s find out our estimated parameters:</p>
+
+<pre><code class="language-r">precis(multilevel_fit, depth = 2) %&gt;% 
+  data.frame() %&gt;% 
+  select(Rhat4) %&gt;% 
+  summary()
+</code></pre>
+
+<pre><code>##      Rhat4       
+##  Min.   :0.9983  
+##  1st Qu.:0.9992  
+##  Median :0.9996  
+##  Mean   :1.0001  
+##  3rd Qu.:1.0005  
+##  Max.   :1.0056
+</code></pre>
+
+<p>The Rhat values look OK. That is, it seems that we sampled correctly from our posterior. Let&rsquo;s use these samples from the posterior distribution to calculate our estimated log-odds of survival for each pond.</p>
+
+<pre><code class="language-r">posterior_samples &lt;- extract.samples(multilevel_fit)
+glimpse(posterior_samples)
+</code></pre>
+
+<pre><code>## List of 3
+##  $ a_classroom: num [1:2000, 1:60] 3.84 2.21 3.35 3.76 4.08 ...
+##  $ a_bar      : num [1:2000(1d)] 1.75 1.3 1.79 1.27 1.7 ...
+##  $ sigma      : num [1:2000(1d)] 1.59 1.67 2.14 1.65 1.78 ...
+##  - attr(*, &quot;source&quot;)= chr &quot;ulam posterior: 2000 samples from multilevel_fit&quot;
+</code></pre>
+
+<p>Before we calculate our estimated log-odds, let&rsquo;s check our estimates for the population of parameters from which each intercept comes:</p>
+
+<pre><code class="language-r">data.frame(alpha_bar = posterior_samples$a_bar) %&gt;% 
+  ggplot(aes(alpha_bar)) +
+  geom_histogram(binwidth = 0.01, color = &quot;black&quot;, fill = &quot;dodgerblue4&quot;, alpha = 0.7) +
+  geom_vline(aes(xintercept = 1.5), linetype = 2, color = &quot;red&quot;) +
+  labs(title = &quot;Posterior samples for population alpha&quot;)
+</code></pre>
+
+<p><img src="/post/2020-05-28-simulating-into-understanding-multilevel-models_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+
+<p>It seems that we&rsquo;ve correctly caputred the mean of the population. Let&rsquo;s check the standard deviation of the distribution:</p>
+
+<pre><code class="language-r">data.frame(sigma = posterior_samples$sigma) %&gt;% 
+  ggplot(aes(sigma)) +
+  geom_histogram(binwidth = 0.01, color = &quot;black&quot;, fill = &quot;dodgerblue4&quot;, alpha = 0.7) +
+  geom_vline(aes(xintercept = 1.5), linetype = 2, color = &quot;red&quot;) +
+  labs(title = &quot;Posterior samples for population s.d.&quot;)
+</code></pre>
+
+<p><img src="/post/2020-05-28-simulating-into-understanding-multilevel-models_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+
+<p>Our estimates for the variation in the population could be better. Nevertheless, let&rsquo;s check our estimated probability of survival for each pond:</p>
+
+<pre><code class="language-r">logistic_own &lt;- function(var) {
+  1/(1+exp(-var))
+}
+
+matrix_estimated_probs &lt;- logistic_own(posterior_samples$a_classroom)
+
+glimpse(matrix_estimated_probs)
+</code></pre>
+
+<pre><code>##  num [1:2000, 1:60] 0.979 0.901 0.966 0.977 0.983 ...
+</code></pre>
+
+<p>We have a matrix of 2000 rows (2000 simulations) and 60 columns (60 different ponds). Let&rsquo;s take the average across samples. This will be our estimated probability for each classroom:</p>
+
+<pre><code class="language-r">partial_pooling_estimates &lt;- apply(matrix_estimated_probs, 2, mean)
+data.frame(estimated_probability_partial_pooling = partial_pooling_estimates) %&gt;% 
+  cbind(data_simulation) -&gt; data_simulation
+glimpse(data_simulation)
+</code></pre>
+
+<pre><code>## Rows: 60
+## Columns: 6
+## $ estimated_probability_partial_pooling &lt;dbl&gt; 0.9086503, 0.9104430, 0.79018...
+## $ classroom                             &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10...
+## $ Ni                                    &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,...
+## $ true_log_odds                         &lt;dbl&gt; 2.3245048, 0.2375944, 1.54949...
+## $ number_passed_test                    &lt;int&gt; 5, 5, 4, 5, 1, 4, 5, 5, 5, 1,...
+## $ estimated_probability_no_pooling      &lt;dbl&gt; 1.0, 1.0, 0.8, 1.0, 0.2, 0.8,...
+</code></pre>
+
+<p>Then, we must convert our true log-odds into true probabilities:</p>
+
+<pre><code class="language-r">data_simulation %&gt;% 
+  mutate(true_probabilities = inv_logit(true_log_odds)) -&gt; data_simulation
+glimpse(data_simulation)
+</code></pre>
+
+<pre><code>## Rows: 60
+## Columns: 7
+## $ estimated_probability_partial_pooling &lt;dbl&gt; 0.9086503, 0.9104430, 0.79018...
+## $ classroom                             &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10...
+## $ Ni                                    &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,...
+## $ true_log_odds                         &lt;dbl&gt; 2.3245048, 0.2375944, 1.54949...
+## $ number_passed_test                    &lt;int&gt; 5, 5, 4, 5, 1, 4, 5, 5, 5, 1,...
+## $ estimated_probability_no_pooling      &lt;dbl&gt; 1.0, 1.0, 0.8, 1.0, 0.2, 0.8,...
+## $ true_probabilities                    &lt;dbl&gt; 0.9108863, 0.5591207, 0.82484...
+</code></pre>
+
+<h2 id="visualizing-pooling-and-shrinkage">Visualizing Pooling and Shrinkage</h2>
+
+<p>Remember that pooling means sharing the information across classrooms. This is done by explicitly modeling the distribution of the average log odds of passing the exam across classrooms. That is, our estimated mean for the distribution of intercepts for each classroom will inform each of our predictions. Let&rsquo;s calculate this estimated global mean across classrooms:</p>
+
+<pre><code class="language-r">data.frame(alpha_bar = posterior_samples$a_bar) %&gt;% 
+  mutate(alpha_bar = inv_logit(alpha_bar)) %&gt;% 
+  summarise(mean(alpha_bar)) -&gt; estimated_global_mean
+estimated_global_mean &lt;- estimated_global_mean[1,1]
+glue::glue(&quot;The estimated global mean is: {round(estimated_global_mean, 2)}&quot;)
+</code></pre>
+
+<pre><code>## The estimated global mean is: 0.81
+</code></pre>
+
+<p>Now let&rsquo;s plot how our classroom estimates relate to the estimated global mean:</p>
+
+<pre><code class="language-r">data_simulation %&gt;% 
+  select(classroom, estimated_probability_partial_pooling, estimated_probability_no_pooling, Ni) %&gt;% 
+  pivot_longer(-c(classroom, Ni), names_to = &quot;method&quot;, values_to = &quot;estimated_probability&quot;) %&gt;% 
+  mutate(Ni = glue::glue(&quot;Sample size in classrooms: {Ni}&quot;),
+         Ni = factor(Ni, levels = c(&quot;Sample size in classrooms: 5&quot;,
+                                    &quot;Sample size in classrooms: 10&quot;,
+                                    &quot;Sample size in classrooms: 25&quot;,
+                                    &quot;Sample size in classrooms: 35&quot;))) %&gt;% 
+  ggplot(aes(classroom, estimated_probability, color = method)) +
+  geom_point(alpha = 0.6) +
+  geom_hline(aes(yintercept = estimated_global_mean), linetype = 2, color = &quot;red&quot;) +
+  facet_wrap(~Ni, scales = &quot;free&quot;) +
+  scale_color_viridis_d() +
+  scale_y_continuous(labels = scales::percent) +
+  theme(legend.position = &quot;bottom&quot;) +
+  labs(title = &quot;Visualizing pooling and Shrinking in a Multilevel Model&quot;,
+       subtitle = &quot;Global estimated mean informs predictions for each classroom. Estimates are shrunk toward the global estimated mean&quot;,
+       caption = &quot;Global estimated mean shown in red.&quot;)
+</code></pre>
+
+<p><img src="/post/2020-05-28-simulating-into-understanding-multilevel-models_files/figure-html/unnamed-chunk-19-1.png" width="672" />
+Now we can see that, <strong>with partial pooling, our estimates are informed by the estimated global mean. Therefore, we shrink whatever proportion we calculate for the specific classroom towards this overall mean.</strong> This can be seen by zooming in on the yellow points, the estimates from partial pooling, and noticing that they are always closer to the red line than the purple points (i.e., the sample classroom proportion). Notice that pooling results in more aggressive shrinkage for the classrooms where we have fewer data. As we will see, these classrooms&rsquo; predictions are exactly the ones that need to be shrunk the most.</p>
+
+<h2 id="visualizing-the-benefits-of-pooling-and-shrinkage">Visualizing the Benefits of Pooling and Shrinkage</h2>
+
+<p>Finally, we can compare how well the different models did:</p>
+
+<pre><code class="language-r">data_simulation %&gt;% 
+  mutate(no_pooling_error = abs(estimated_probability_no_pooling - true_probabilities),
+         partial_pooling_error = abs(estimated_probability_partial_pooling - true_probabilities)) %&gt;% 
+  select(classroom, no_pooling_error, partial_pooling_error, Ni) %&gt;% 
+  pivot_longer(-c(classroom, Ni), names_to = &quot;method&quot;, values_to = &quot;error&quot;) %&gt;% 
+  mutate(Ni = glue::glue(&quot;Sample size in classrooms: {Ni}&quot;),
+         Ni = factor(Ni, levels = c(&quot;Sample size in classrooms: 5&quot;,
+                                    &quot;Sample size in classrooms: 10&quot;,
+                                    &quot;Sample size in classrooms: 25&quot;,
+                                    &quot;Sample size in classrooms: 35&quot;))) %&gt;% 
+  ggplot(aes(error, factor(classroom), color = method)) +
+    geom_point(alpha = 0.6) +
+    scale_color_viridis_d() +
+    facet_wrap(~Ni, scales = &quot;free_y&quot;) +
+    hrbrthemes::theme_ipsum_rc(grid = &quot;Y&quot;) +
+    theme(legend.position = &quot;bottom&quot;) +
+    labs(title = &quot;Partial Pooling vs No-pooling: Benefits of shrinkage&quot;,
+         subtitle = &quot;Partial Pooling shines with low sample sizes and outliers&quot;,
+         y = &quot;classroom&quot;)
+</code></pre>
+
+<p><img src="/post/2020-05-28-simulating-into-understanding-multilevel-models_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+
+<p>This plot shows the prediction errors (comparing our estimated probability to the true probability) across classrooms. Therefore, lower values are better. Nota bene:</p>
+
+<ol>
+<li><p>Partial pooling results into shrinkage. <strong>This is most helpful for the classrooms where we have relatively fewer data</strong> (i.e., classrooms with sample size of 5 and 10). For these clasrooms, we complement the little data that we have with the information pooled from larger classrooms: that is, we shrink our estimates to the population mean that we&rsquo;ve estimated. Whereas the model with no pooling just uses the information in the low sample ponds, resulting in overfitting that shows itself in the plot in the form of large prediction errors. The comparison between the two methods shows us how shrinkage helps us to reduce overfitting and thus predict better out of sample.</p></li>
+
+<li><p>The amount of shrinkage depends on the amount of data available. When we have fewer data, we shrink a lot. <strong>When we have lots of data, we shrink a lot less</strong>. Therefore, we can see that, for the classrooms that have lots of data (i.e., sample size of 35), partial pooling results in an almost identical prediction as the method with no pooling.</p></li>
+
+<li><p>The model with no pooling can sometimes beat the model with partial pooling. However, on average, the model <strong>with partial pooling performs much better</strong>.</p></li>
+</ol>
+
+    </div>
+  
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//https-david-salazar-github-io.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+  
+  </article>
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/python.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

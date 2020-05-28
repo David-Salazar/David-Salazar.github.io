@@ -6,10 +6,21 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 26 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 28 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Simulating into understanding Multilevel Models</title>
+      <link>/2020/05/28/simulating-into-understanding-multilevel-models/</link>
+      <pubDate>Thu, 28 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/05/28/simulating-into-understanding-multilevel-models/</guid>
+      <description>Simulating into Understanding Multilevel Models  Pooling is the process and shrinkning is the result
+ Pooling and Shrinking are not easy concepts to understand. In the lectures, Richard, as always, does an excellent job of creating metaphors and examples to help us gain intuition around what Multilevel models do. Multilevel models are models mnesic models.
+Imagine a cluster of observations: it can be different classrooms in a school. Pooling means using the information from other classrooms to inform our estimates for each classroom.</description>
+    </item>
     
     <item>
       <title>R-squared and fat tails</title>

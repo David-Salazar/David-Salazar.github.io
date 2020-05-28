@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.58.3" />
+
+
+<title>Statistical Rethinking Week 8-&gt;Simulating into Understand Multilevel models - Dilettanting Data Science</title>
+<meta property="og:title" content="Statistical Rethinking Week 8-&gt;Simulating into Understand Multilevel models - Dilettanting Data Science">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/turner.jpg"
+         width="200"
+         height="200"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/David-Salazar">GitHub</a></li>
+    
+    <li><a href="https://www.kaggle.com/davidsalazarv95">Kaggle</a></li>
+    
+    <li><a href="https://david-salazar.github.io/">Posts</a></li>
+    
+    <li><a href="https://twitter.com/DavidSalazarVir?lang=en">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">11 min read</span>
+    
+
+    <h1 class="article-title">Statistical Rethinking Week 8-&gt;Simulating into Understand Multilevel models</h1>
+
+    
+    <span class="article-date">2020/05/27</span>
+    
+    
+
+    <div class="article-content">
+      
+
+
+<div id="simulating-into-understanding-multilevel-models" class="section level1">
+<h1>Simulating into Understanding Multilevel Models</h1>
+<p>Pooling and Shrinking are not easy concepts to understand. In the lectures, Richard, as always, does an excellent job of creating metaphors and examples to help us gain intuition around what Multilevel models do: they propose to model a family of parameters as coming from a statistical population of parameters. For example, the family of varying intercepts for each element in a cluster. Then, <em>as we learn each parameter, we learn simultaneously the family of the parameters; both processes complement each other</em>. Therefore, this distribution of the family of parameters will become an adaptive regularizer for our parameters: <strong>they will shrink the varying intercepts to the mean of the distribution; the amount of shrinkage will be determined by the variation that we estimate for the distribution of the family of parameters</strong>. The more influenced parameters are going to be those that come from clusters with small sample sizes.</p>
+<p>However, it is one thing to know the intuition and <em>understanding</em> something. When it comes to statistics, I am a big fan of simulation. Thankfully, Richard does precisely this in chapter 12.</p>
+<div id="the-model-a-multilevel-binomial" class="section level2">
+<h2>The Model: A multilevel binomial</h2>
+<p>We simulate the survival of some animal in different ponds. That is, each pond has <span class="math inline">\(S_i\)</span> animals at the end, from a maximum of <span class="math inline">\(N_i\)</span>. The model then is the following:</p>
+<p><span class="math display">\[ S_i \sim Binomial(N_i, p_i) \]</span></p>
+<p><span class="math display">\[ logit(p_i) = \alpha_{pond_{[i]}} \]</span></p>
+<p><span class="math display">\[ \alpha_j \sim Normal(\bar{\alpha}, \sigma)\]</span></p>
+<p><span class="math display">\[ \bar{\alpha} \sim Normal(0, 1.5) \]</span></p>
+<p><span class="math display">\[ \sigma \sim Exponential(1) \]</span></p>
+<p>Then, we posit an adaptive prior for each of <span class="math inline">\(\alpha_j\)</span> that will model the population of intercepts. Finally, we have hyperpriors for both the mean and standard deviation.</p>
+</div>
+<div id="the-simulation" class="section level2">
+<h2>The simulation</h2>
+<p>Notice that neither the hyperpriors nor the priors are part of our simulation. In Richard’s words:</p>
+<blockquote>
+<p>Priors are epistomology, not ontology.</p>
+</blockquote>
+<p>Let’s begin by setting the parameters of the population of intercepts:</p>
+<pre class="r"><code>a_bar &lt;- 1.5
+sigma &lt;- 1.5
+nponds &lt;- 60
+# animals per pond
+Ni &lt;- as.integer(rep(c(5, 10, 25, 35), each = 15))</code></pre>
+<p>Then, we simulate the average log-odds of survival for each of the ponds</p>
+<pre class="r"><code>a_pond &lt;- rnorm(nponds, mean = a_bar, sd = sigma)</code></pre>
+<p>Then, we have the following:</p>
+<pre class="r"><code>data_simulation &lt;- data.frame(pond = 1:nponds, Ni = Ni, true_log_odds = a_pond)
+glimpse(data_simulation)</code></pre>
+<pre><code>## Rows: 60
+## Columns: 3
+## $ pond          &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16...
+## $ Ni            &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 10, 10, ...
+## $ true_log_odds &lt;dbl&gt; 3.5564377, 0.6529527, 2.0446926, 2.4492939, 2.1064025...</code></pre>
+<div id="simulate-the-survivors" class="section level3">
+<h3>Simulate the survivors</h3>
+<blockquote>
+<p>Putting the logistic into the random binomial function, we can generate a simulated surivivor for each pond:</p>
+</blockquote>
+<p>Remember that the logistic is simply the inverse of the logit. Thus, by applying the logistic we go from the log-odds into the probability.</p>
+<pre class="r"><code>data_simulation %&gt;% 
+  mutate(Survivors = rbinom(nponds, prob = logistic(true_log_odds), size = Ni)) -&gt; data_simulation
+glimpse(data_simulation)</code></pre>
+<pre><code>## Rows: 60
+## Columns: 4
+## $ pond          &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16...
+## $ Ni            &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 10, 10, ...
+## $ true_log_odds &lt;dbl&gt; 3.5564377, 0.6529527, 2.0446926, 2.4492939, 2.1064025...
+## $ Survivors     &lt;int&gt; 5, 4, 4, 5, 4, 4, 4, 2, 5, 4, 4, 5, 2, 2, 3, 9, 6, 0,...</code></pre>
+<pre class="r"><code>data_simulation %&gt;% 
+  ggplot(aes(pond, Survivors, color = Ni)) +
+  geom_point() +
+  scale_color_viridis_c() +
+  labs(title = &quot;Simulated Survivors per Pond&quot;,
+       color = &quot;Initial #&quot;)</code></pre>
+<p><img src="/post/2020-05-27-simulating-to-understand-multilevel-models_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="no-pooling-estimates" class="section level3">
+<h3>No-pooling estimates</h3>
+<p>Pooling means using the information from other ponds to inform our predictions of estimated probabilities of survival at different ponds. <strong>Therefore, no-pooling means treating each pond as completely unrelated to others</strong>. That is, estimating that the variance of the population of parameters is infinite.</p>
+<p>Therefore, our estimate of the probability of survival at each pond will just be the raw sample proportion at each pond:</p>
+<pre class="r"><code>data_simulation %&gt;% 
+  mutate(estimated_probability_no_pooling = Survivors / Ni) -&gt; data_simulation
+glimpse(data_simulation)</code></pre>
+<pre><code>## Rows: 60
+## Columns: 5
+## $ pond                             &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,...
+## $ Ni                               &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5...
+## $ true_log_odds                    &lt;dbl&gt; 3.5564377, 0.6529527, 2.0446926, 2...
+## $ Survivors                        &lt;int&gt; 5, 4, 4, 5, 4, 4, 4, 2, 5, 4, 4, 5...
+## $ estimated_probability_no_pooling &lt;dbl&gt; 1.0, 0.8, 0.8, 1.0, 0.8, 0.8, 0.8,...</code></pre>
+</div>
+<div id="partial-pooling-estimates" class="section level3">
+<h3>Partial pooling estimates</h3>
+<p>Partial pooling means to model explicitly the population of parameters. Then, with a mean and a standard deviation estimated, we can perform adaptive regularization, i.e., shrinkage to our predictions. To do so, we will fit a multilevel binomial model:</p>
+<pre class="r"><code>data_model &lt;- list(Si = data_simulation$Survivors, Ni = data_simulation$Ni, pond = data_simulation$pond)
+
+multilevel_model &lt;- alist(
+  Si ~ dbinom(Ni, p),
+  logit(p) &lt;- a_pond[pond], # each pond get its own average log odds of survival
+  a_pond[pond] ~ dnorm(a_bar, sigma),
+  a_bar ~ dnorm(0, 1.5),
+  sigma ~ dexp(1)
+)</code></pre>
+<p>Then, we use HMC to sample from our posterior:</p>
+<pre class="r"><code>multilevel_fit &lt;- ulam(multilevel_model, data = data_model, chains = 4, cores = 4)</code></pre>
+<p>Let’s evaluate the validity of our Markov Chains:</p>
+<pre class="r"><code>traceplot_ulam(multilevel_fit)</code></pre>
+<pre><code>## [1] 1000
+## [1] 1
+## [1] 1000</code></pre>
+<pre><code>## Waiting to draw page 2 of 5</code></pre>
+<p><img src="/post/2020-05-27-simulating-to-understand-multilevel-models_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre><code>## Waiting to draw page 3 of 5</code></pre>
+<p><img src="/post/2020-05-27-simulating-to-understand-multilevel-models_files/figure-html/unnamed-chunk-10-2.png" width="672" /></p>
+<pre><code>## Waiting to draw page 4 of 5</code></pre>
+<p><img src="/post/2020-05-27-simulating-to-understand-multilevel-models_files/figure-html/unnamed-chunk-10-3.png" width="672" /></p>
+<pre><code>## Waiting to draw page 5 of 5</code></pre>
+<p><img src="/post/2020-05-27-simulating-to-understand-multilevel-models_files/figure-html/unnamed-chunk-10-4.png" width="672" /><img src="/post/2020-05-27-simulating-to-understand-multilevel-models_files/figure-html/unnamed-chunk-10-5.png" width="672" /></p>
+<p>The chains look healthy. They:</p>
+<ol style="list-style-type: decimal">
+<li>They have good mixing across the parameter space.</li>
+<li>They are stationary.</li>
+<li>Different chains converge to explore the same spaces.</li>
+</ol>
+<p>Now, let’s find out our estimated parameters:</p>
+<pre class="r"><code>precis(multilevel_fit, depth = 2)</code></pre>
+<pre><code>##                   mean        sd         5.5%         94.5%    n_eff     Rhat4
+## a_pond[1]   2.62051108 1.2077715  0.853936002  4.5686127355 3013.638 0.9988798
+## a_pond[2]   1.55506699 0.9759989  0.071762309  3.1823543380 3525.135 0.9993344
+## a_pond[3]   1.54255104 1.0243368 -0.008001261  3.1825338640 3089.825 0.9997053
+## a_pond[4]   2.63471281 1.1658203  0.904688373  4.5927488781 2381.765 0.9998283
+## a_pond[5]   1.53330822 0.9264461  0.163664403  3.1157926810 2431.420 0.9985291
+## a_pond[6]   1.53483106 0.9805653  0.017995603  3.2203311398 4210.465 0.9991544
+## a_pond[7]   1.52292872 1.0107867  0.044535614  3.1827230462 3725.816 0.9988150
+## a_pond[8]   0.04318113 0.8363350 -1.296350643  1.4334234151 3133.628 0.9982024
+## a_pond[9]   2.64105571 1.1428900  1.004490982  4.6039479335 2414.419 1.0014859
+## a_pond[10]  1.53472127 0.9648737  0.125434918  3.1497016371 2885.090 0.9990863
+## a_pond[11]  1.55111835 0.9705884  0.075317046  3.2054827605 3207.120 0.9989009
+## a_pond[12]  2.60215021 1.1802957  0.853795724  4.5395031047 2884.584 0.9996197
+## a_pond[13]  0.05086071 0.8272149 -1.234936296  1.3550309420 4419.786 0.9989470
+## a_pond[14]  0.02253547 0.8143068 -1.296080550  1.3179962008 4045.632 0.9988552
+## a_pond[15]  0.73792006 0.8658417 -0.624763780  2.1469965596 3995.970 0.9987020
+## a_pond[16]  2.13446977 0.8870320  0.839977480  3.6898906371 2783.724 0.9991127
+## a_pond[17]  0.59370028 0.6378287 -0.389595170  1.6150296050 3266.832 0.9994889
+## a_pond[18] -2.02573058 0.9142911 -3.576271151 -0.6774046425 3475.641 0.9989498
+## a_pond[19] -0.96575667 0.6702693 -2.038679014  0.0796665298 4831.203 0.9990080
+## a_pond[20]  3.04913090 1.0631113  1.502888817  4.9293324343 2345.361 0.9997773
+## a_pond[21]  2.14247972 0.8778536  0.844789998  3.6314656280 2808.194 0.9990313
+## a_pond[22] -1.45099728 0.7468194 -2.701618442 -0.3306436190 3204.975 0.9985413
+## a_pond[23]  1.49136738 0.7405811  0.365781235  2.7263919619 3988.558 0.9986592
+## a_pond[24]  2.12152579 0.8723050  0.861129745  3.6601747225 3149.984 0.9991346
+## a_pond[25]  3.02149716 1.0682753  1.471558035  4.8502648710 2624.506 0.9999704
+## a_pond[26]  0.58612705 0.6016495 -0.380821326  1.5654888018 3264.706 0.9985931
+## a_pond[27]  2.12468627 0.8383310  0.858181322  3.5122449390 3371.160 0.9986281
+## a_pond[28]  0.19869332 0.6327375 -0.801237521  1.2155105768 4224.967 0.9989137
+## a_pond[29]  2.99722212 1.0593298  1.436812541  4.8297393489 2307.209 1.0015236
+## a_pond[30]  1.48710402 0.7355210  0.379626733  2.7565827564 4394.987 0.9983071
+## a_pond[31]  2.03160548 0.5920224  1.150229927  3.0367309225 3183.741 0.9997332
+## a_pond[32]  2.91378502 0.7855196  1.758974135  4.2630329248 2660.804 0.9993414
+## a_pond[33]  2.41144730 0.6856406  1.432990653  3.5611365380 2769.035 1.0000874
+## a_pond[34]  0.83618533 0.4264502  0.175213765  1.5051193313 3643.728 0.9987858
+## a_pond[35]  2.00403134 0.5685324  1.137020344  2.9920235331 2639.671 0.9995482
+## a_pond[36] -0.62467822 0.4199729 -1.315490772 -0.0003286255 2861.458 1.0002242
+## a_pond[37]  0.82187201 0.4119659  0.217918425  1.5235715902 3733.913 0.9982844
+## a_pond[38]  1.22220572 0.4776533  0.509172308  2.0280306213 3951.218 0.9986567
+## a_pond[39] -2.33112038 0.6528384 -3.409589482 -1.3694003744 2847.267 0.9989369
+## a_pond[40]  1.44761143 0.4980564  0.684564183  2.2890356510 2600.604 0.9997583
+## a_pond[41]  1.21682555 0.4449477  0.525283525  1.9494261481 4215.860 0.9996654
+## a_pond[42]  1.01623673 0.4406161  0.357288756  1.7425223510 2796.715 0.9990496
+## a_pond[43]  2.38725591 0.6655087  1.379139552  3.4978836159 3450.234 0.9995119
+## a_pond[44]  0.83432083 0.4462497  0.149822419  1.5539089871 4460.148 0.9993964
+## a_pond[45] -0.46886274 0.4025865 -1.138212023  0.1672044516 5303.418 1.0002226
+## a_pond[46]  2.70070833 0.6466851  1.745343617  3.8580100242 2203.591 0.9997162
+## a_pond[47]  0.35215762 0.3449208 -0.189771843  0.9009018692 4002.727 0.9992123
+## a_pond[48]  3.86098772 0.9642809  2.497294625  5.5488013719 2211.137 0.9996260
+## a_pond[49]  1.42140204 0.4333451  0.759960396  2.1428838186 4969.589 0.9989750
+## a_pond[50]  3.17836897 0.7805341  2.028586004  4.5588806059 3013.600 0.9997866
+## a_pond[51]  1.81260747 0.4818859  1.081413186  2.5934538589 4046.638 0.9985115
+## a_pond[52]  0.45942830 0.3499464 -0.103561870  1.0279980615 4456.263 0.9987480
+## a_pond[53]  3.83900604 0.9131653  2.519376317  5.3895993415 2118.590 0.9998757
+## a_pond[54]  2.34222239 0.5720141  1.505867472  3.3137319492 3849.124 0.9992428
+## a_pond[55]  1.81717569 0.4606650  1.114769839  2.5723634954 3948.215 0.9983472
+## a_pond[56]  2.69605094 0.6352994  1.749323780  3.7627314382 3815.109 0.9987441
+## a_pond[57]  2.04152136 0.4898939  1.301720365  2.8527342582 4351.655 0.9984911
+## a_pond[58]  1.61067143 0.4461866  0.939398546  2.3739421758 3347.520 0.9993506
+## a_pond[59] -2.03640071 0.5158864 -2.901278901 -1.2523983230 3100.081 0.9988505
+## a_pond[60]  1.62895882 0.4657623  0.920740957  2.4001167473 4333.517 0.9984714
+## a_bar       1.35798660 0.2385557  0.989742784  1.7411450610 2205.156 0.9994795
+## sigma       1.58131203 0.1997542  1.271452186  1.9083935027 1042.410 0.9995028</code></pre>
+<p>The Rhat values look OK. That is, it seems that we sampled correctly from our posterior. Let’s use these samples from the posterior distribution to calculate our estimated log-odds of survival for each pond.</p>
+<pre class="r"><code>posterior_samples &lt;- extract.samples(multilevel_fit)
+glimpse(posterior_samples)</code></pre>
+<pre><code>## List of 3
+##  $ a_pond: num [1:2000, 1:60] 1.65 2.39 3.36 3.02 1.39 ...
+##  $ a_bar : num [1:2000(1d)] 1.57 1 1.56 1.6 1.4 ...
+##  $ sigma : num [1:2000(1d)] 1.49 1.47 1.41 1.59 1.63 ...
+##  - attr(*, &quot;source&quot;)= chr &quot;ulam posterior: 2000 samples from multilevel_fit&quot;</code></pre>
+<p>Before we calculate our estimated log-odds, let’s check our estimates for the population of parameters:</p>
+<pre class="r"><code>data.frame(alpha_bar = posterior_samples$a_bar) %&gt;% 
+  ggplot(aes(alpha_bar)) +
+  geom_histogram(binwidth = 0.01, color = &quot;black&quot;, fill = &quot;dodgerblue4&quot;, alpha = 0.7) +
+  geom_vline(aes(xintercept = 1.5), linetype = 2, color = &quot;red&quot;) +
+  labs(title = &quot;Posterior samples for population alpha&quot;)</code></pre>
+<p><img src="/post/2020-05-27-simulating-to-understand-multilevel-models_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<pre class="r"><code>data.frame(sigma = posterior_samples$sigma) %&gt;% 
+  ggplot(aes(sigma)) +
+  geom_histogram(binwidth = 0.01, color = &quot;black&quot;, fill = &quot;dodgerblue4&quot;, alpha = 0.7) +
+  geom_vline(aes(xintercept = 1.5), linetype = 2, color = &quot;red&quot;) +
+  labs(title = &quot;Posterior samples for population s.d.&quot;)</code></pre>
+<p><img src="/post/2020-05-27-simulating-to-understand-multilevel-models_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>It seems that we have correctly captured the variation across average log-odds. Let’s check our estimated probability of survival for each pond:</p>
+<pre class="r"><code>matrix_estimated_probs &lt;- inv_logit(posterior_samples$a_pond)
+glimpse(matrix_estimated_probs)</code></pre>
+<pre><code>##  num [1:2000, 1:60] 0.84 0.916 0.966 0.953 0.8 ...</code></pre>
+<p>We have a matrix of 2000 rows (2000 simulations) and 60 columns (60 different ponds). Let’s take the average across samples and convert it to probability. This will be our estimated probability for each pond:</p>
+<pre class="r"><code>partial_pooling_estimates &lt;- apply(matrix_estimated_probs, 2, mean)
+data.frame(estimated_probability_partial_pooling = partial_pooling_estimates) %&gt;% 
+  cbind(data_simulation) -&gt; data_simulation
+glimpse(data_simulation)</code></pre>
+<pre><code>## Rows: 60
+## Columns: 6
+## $ estimated_probability_partial_pooling &lt;dbl&gt; 0.8943761, 0.7883184, 0.78282...
+## $ pond                                  &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10...
+## $ Ni                                    &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,...
+## $ true_log_odds                         &lt;dbl&gt; 3.5564377, 0.6529527, 2.04469...
+## $ Survivors                             &lt;int&gt; 5, 4, 4, 5, 4, 4, 4, 2, 5, 4,...
+## $ estimated_probability_no_pooling      &lt;dbl&gt; 1.0, 0.8, 0.8, 1.0, 0.8, 0.8,...</code></pre>
+<p>Then, we must convert our true log-odds into true probabilities:</p>
+<pre class="r"><code>data_simulation %&gt;% 
+  mutate(true_probabilities = inv_logit(true_log_odds)) -&gt; data_simulation
+glimpse(data_simulation)</code></pre>
+<pre><code>## Rows: 60
+## Columns: 7
+## $ estimated_probability_partial_pooling &lt;dbl&gt; 0.8943761, 0.7883184, 0.78282...
+## $ pond                                  &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10...
+## $ Ni                                    &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,...
+## $ true_log_odds                         &lt;dbl&gt; 3.5564377, 0.6529527, 2.04469...
+## $ Survivors                             &lt;int&gt; 5, 4, 4, 5, 4, 4, 4, 2, 5, 4,...
+## $ estimated_probability_no_pooling      &lt;dbl&gt; 1.0, 0.8, 0.8, 1.0, 0.8, 0.8,...
+## $ true_probabilities                    &lt;dbl&gt; 0.97225163, 0.65767555, 0.885...</code></pre>
+</div>
+</div>
+<div id="comparison-no-pooling-vs-partial-pooling" class="section level2">
+<h2>Comparison: No-pooling vs Partial-Pooling</h2>
+<p>Finally, we can compare how well the different models did:</p>
+<pre class="r"><code>data_simulation %&gt;% 
+  mutate(no_pooling_error = abs(estimated_probability_no_pooling - true_probabilities),
+         partial_pooling_error = abs(estimated_probability_partial_pooling - true_probabilities)) %&gt;% 
+  select(pond, no_pooling_error, partial_pooling_error, Ni) %&gt;% 
+  pivot_longer(-c(pond, Ni), names_to = &quot;method&quot;, values_to = &quot;error&quot;) %&gt;% 
+  mutate(Ni = glue::glue(&quot;Sample size in ponds: {Ni}&quot;),
+         Ni = factor(Ni, levels = c(&quot;Sample size in ponds: 5&quot;,
+                                    &quot;Sample size in ponds: 10&quot;,
+                                    &quot;Sample size in ponds: 25&quot;,
+                                    &quot;Sample size in ponds: 35&quot;))) %&gt;% 
+  ggplot(aes(error, factor(pond), color = method)) +
+    geom_point() +
+    scale_color_viridis_d() +
+    facet_wrap(~Ni, scales = &quot;free_y&quot;) +
+    hrbrthemes::theme_ipsum_rc(grid = &quot;Y&quot;) +
+    theme(legend.position = &quot;bottom&quot;) +
+    labs(title = &quot;Partial Pooling vs No-pooling: Prediction errors&quot;,
+         subtitle = &quot;Partial Pooling shines with low sample sizes and outliers&quot;)</code></pre>
+<p><img src="/post/2020-05-27-simulating-to-understand-multilevel-models_files/figure-html/unnamed-chunk-18-1.png" width="768" /></p>
+<p>This graph plots the errors, compared to the true probability, for each plot. Therefore, lower values are better. Nota bene:</p>
+<ol style="list-style-type: decimal">
+<li><p>Partial pooling results into shrinkage. <strong>This is most helpful for the ponds where we have relatively fewer data</strong> (i.e., ponds with sample size of 5 and 10). For these ponds, we complement the little data that we have with the information pooled from larger ponds: that is, we shrink our estimates to the population mean. Whereas the model with no pooling just uses the information in the low sample ponds, resulting in overfitting that shows itself in the plot in the form of large prediction errors. The comparison between the two methods shows us how shrinkage helps us to reduce overfitting and thus predict better out of sample.</p></li>
+<li><p>The amount of shrinkage depends on the amount of data available. When we have fewer data, we shrink a lot. <strong>When we have lots of data, we shrink a lot less</strong>. Therefore, we can see that, for the ponds that have lots of data (i.e., sample size of 35), partial pooling results in an almost identical prediction as the method with no pooling.</p></li>
+<li><p>The model with no pooling can sometimes beat the model with partial pooling. However, on average, the model <strong>with partial pooling performs much better</strong>.</p></li>
+</ol>
+</div>
+</div>
+
+    </div>
+  
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//https-david-salazar-github-io.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+  
+  </article>
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/python.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
