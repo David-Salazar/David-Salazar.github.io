@@ -6,10 +6,19 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 28 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 29 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Statistical Rethinking Week 8</title>
+      <link>/2020/05/29/statistical-rethinking-week-8/</link>
+      <pubDate>Fri, 29 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/05/29/statistical-rethinking-week-8/</guid>
+      <description>Statistical Rethinking Week 8This week was our first introduction to Multilevel models. Models where we explicitly model a family of parameters as coming from a common distribution: with each sample, we simultaneously learn each parameter and the parameters of the common distribution. This process of sharing information is called pooling. The end result is shrinkage: each parameter gets pulled towards the estimated mean of the common distribution. I tried my best to understand this process and result by simulating in this post</description>
+    </item>
     
     <item>
       <title>Simulating into understanding Multilevel Models</title>
