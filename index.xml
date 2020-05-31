@@ -6,10 +6,19 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 29 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 30 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Central Limit Theorem in Action</title>
+      <link>/2020/05/30/central-limit-theorem-in-action/</link>
+      <pubDate>Sat, 30 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/05/30/central-limit-theorem-in-action/</guid>
+      <description>I have recently been exploring Nassim Taleb’s latest technical book: Statistical Consequences of Fat Tails. In it, we have seen how the Law of Large Numbers for different estimators simply does not work fast enough (in Extremistan) to be used in real life. For example, we have seen how the distribution of the sample mean, PCA, sample correlation and \(R^2\) turn into pure noise when we are dealing with fat-tails.</description>
+    </item>
     
     <item>
       <title>Statistical Rethinking Week 8</title>
