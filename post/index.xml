@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 30 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 01 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Understanding Pooling across Intercepts and Slopes</title>
+      <link>/2020/06/01/understanding-pooling-across-intercepts-and-slopes/</link>
+      <pubDate>Mon, 01 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/06/01/understanding-pooling-across-intercepts-and-slopes/</guid>
+      <description>Statistical Rethinking is a fabulous course on Bayesian Statistics (and much more). By following simulations in the book, I recently tried to understand why pooling is the process and shrinkage is the result. In this post, I’ll try to do the same for a model where we pool across intercepts and slopes. That is, we will posit a multivariate common distribution for both intercept and slopes to impose adaptive regularization on our predictions.</description>
+    </item>
     
     <item>
       <title>Central Limit Theorem in Action</title>
