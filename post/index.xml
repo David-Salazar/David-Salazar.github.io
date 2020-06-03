@@ -6,10 +6,30 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 01 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 03 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Bayesian Instrumental Variable Regression</title>
+      <link>/2020/06/03/bayesian-instrumental-variable-regression/</link>
+      <pubDate>Wed, 03 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/06/03/bayesian-instrumental-variable-regression/</guid>
+      <description>Statistical Rethinking is a fabulous course on Bayesian Statistics (and much more). In what follows, I’ll give a succinct presentation of Instrumental Variable Regression in a Bayesian setting using simulated data.
+I had already seen the traditional econometrics formulation and yet found Richard’s presentation both illuminating and fun. It’s a testament of his incredible achievement with this book.
+The problemThe start of every instrumental variable setting is the following.</description>
+    </item>
+    
+    <item>
+      <title>LLN for higher p Moments</title>
+      <link>/2020/06/02/lln-for-higher-p-moments/</link>
+      <pubDate>Tue, 02 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/06/02/lln-for-higher-p-moments/</guid>
+      <description>I have recently been exploring Nassim Taleb’s latest technical book: Statistical Consequences of Fat Tails. In it, we have seen how the Law of Large Numbers for different estimators simply does not work fast enough (in Extremistan) to be used in real life. For example, we have seen how the distribution of the sample mean, PCA, sample correlation and \(R^2\) turn into pure noise when we are dealing with fat-tails.</description>
+    </item>
     
     <item>
       <title>Understanding Pooling across Intercepts and Slopes</title>
