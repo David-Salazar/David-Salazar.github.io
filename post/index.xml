@@ -23,6 +23,15 @@ The problemThe start of every instrumental variable setting is the following.</
     </item>
     
     <item>
+      <title>Statistical Rethinking: Week 9</title>
+      <link>/2020/06/03/statistical-rethinking-week-9/</link>
+      <pubDate>Wed, 03 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/06/03/statistical-rethinking-week-9/</guid>
+      <description>Week 9 was all about fitting models with multivariate distributions in them. For example, a multivariate likelihood helps us use an instrumental variable to estimate the true causal effect of a predictor. But also as an adaptive prior for some of the predictors. In both cases, we found out that the benefit comes from modelling the resulting var-cov matrix. In the instrumental variable case, the resulting joint distribution for the residuals was the key to capture the statistical information of the confounding variable.</description>
+    </item>
+    
+    <item>
       <title>LLN for higher p Moments</title>
       <link>/2020/06/02/lln-for-higher-p-moments/</link>
       <pubDate>Tue, 02 Jun 2020 00:00:00 +0000</pubDate>

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.58.3" />
+
+
+<title>Statistical Rethinking: Week 9 - Dilettanting Data Science</title>
+<meta property="og:title" content="Statistical Rethinking: Week 9 - Dilettanting Data Science">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/turner.jpg"
+         width="200"
+         height="200"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/David-Salazar">GitHub</a></li>
+    
+    <li><a href="https://www.kaggle.com/davidsalazarv95">Kaggle</a></li>
+    
+    <li><a href="https://david-salazar.github.io/">Posts</a></li>
+    
+    <li><a href="https://twitter.com/DavidSalazarVir?lang=en">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">15 min read</span>
+    
+
+    <h1 class="article-title">Statistical Rethinking: Week 9</h1>
+
+    
+    <span class="article-date">2020/06/03</span>
+    
+    
+
+    <div class="article-content">
+      
+
+
+<p>Week 9 was all about fitting models with multivariate distributions in them. For example, a multivariate likelihood helps us use an instrumental variable to estimate the true causal effect of a predictor. But also as an adaptive prior for some of the predictors. In both cases, we found out that the benefit comes from modelling the resulting var-cov matrix. In the <a href="2020-06-03-bayesian-instrumental-variable-regression.html">instrumental variable</a> case, the resulting joint distribution for the residuals was the key to capture the statistical information of the confounding variable. In the adaptive prior case, it helps understand the relationship between different parameter types.</p>
+<div id="homework" class="section level1">
+<h1>Homework</h1>
+</div>
+<div id="st-question" class="section level1">
+<h1>1st question</h1>
+<p>Revisit the Bangladesh fertility data,<code>data(bangladesh)</code>. Fit a model with both varying intercepts by district_id and varying slopes of urban (as a 0/1 indicator variable) by district_id. You are still predicting use.contraception. Inspect the correlation between the intercepts and slopes. Can you interpret this correlation, in terms of what it tells you about the pattern of contraceptive use in the sample? It might help to plot the varying effect estimates for both the intercepts and slopes, by district. Then you can visualize the correlation and maybe more easily think through what it means to have a particular correlation. Plotting predicted proportion of women using contraception, in each district, with urban women on one axis and rural on the other, might also help.</p>
+<pre class="r"><code>data(&quot;bangladesh&quot;)
+
+# Fix the district id
+bangladesh %&gt;% 
+  mutate(district_id = as.integer( as.factor(district) ) ) -&gt; bangladesh
+glimpse(bangladesh)</code></pre>
+<pre><code>## Rows: 1,934
+## Columns: 7
+## $ woman             &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15...
+## $ district          &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1...
+## $ use.contraception &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0...
+## $ living.children   &lt;int&gt; 4, 1, 3, 4, 1, 1, 4, 4, 2, 4, 1, 1, 2, 4, 4, 4, 1...
+## $ age.centered      &lt;dbl&gt; 18.4400, -5.5599, 1.4400, 8.4400, -13.5590, -11.5...
+## $ urban             &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1...
+## $ district_id       &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1...</code></pre>
+<p>Let’s fit the varying effects models for each district to have its average contraception use its own the differential between urban and rural areas.</p>
+<pre class="r"><code>data_varying &lt;- list(
+  contraception = bangladesh$use.contraception,
+  district_id = bangladesh$district_id,
+  urban = bangladesh$urban
+)
+
+
+model_varying &lt;- ulam(
+  alist(
+    contraception ~ binomial(1, p),
+    logit(p) &lt;- alpha[district_id] + beta[district_id] * urban,
+    
+    # adaptive priors
+    c(alpha, beta)[district_id] ~ multi_normal(c(a, b), Rho, sigma),
+    
+    # hyper-priors
+    a ~ normal(-0.5, 1),
+    b ~ normal(0, 1),
+    sigma ~ exponential(1),
+    Rho ~ lkj_corr(2)
+  ),
+  data = data_varying,
+  chains = 4, cores = 4,
+  iter = 2000
+)</code></pre>
+<p>Let’s check our chains’ health:</p>
+<pre class="r"><code>traceplot_ulam(model_varying)</code></pre>
+<pre><code>## [1] 2000
+## [1] 1
+## [1] 2000</code></pre>
+<pre><code>## Waiting to draw page 2 of 9</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre><code>## Waiting to draw page 3 of 9</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
+<pre><code>## Waiting to draw page 4 of 9</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-4-3.png" width="672" /></p>
+<pre><code>## Waiting to draw page 5 of 9</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-4-4.png" width="672" /></p>
+<pre><code>## Waiting to draw page 6 of 9</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-4-5.png" width="672" /></p>
+<pre><code>## Waiting to draw page 7 of 9</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-4-6.png" width="672" /></p>
+<pre><code>## Waiting to draw page 8 of 9</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-4-7.png" width="672" /></p>
+<pre><code>## Waiting to draw page 9 of 9</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-4-8.png" width="672" /><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-4-9.png" width="672" />
+The chains look healthy enough. They are:</p>
+<ol style="list-style-type: decimal">
+<li>They are stationary</li>
+<li>They mix well across the parameter space.</li>
+<li>Different chains converge to explore the same parameter space.</li>
+</ol>
+<p>Let’s check the <span class="math inline">\(\hat{R}\)</span> values:</p>
+<pre class="r"><code>results &lt;- precis(model_varying, depth = 3)
+results %&gt;% 
+  data.frame() %&gt;% 
+  select(Rhat4) %&gt;% 
+  summary()</code></pre>
+<pre><code>##      Rhat4       
+##  Min.   :0.9990  
+##  1st Qu.:0.9997  
+##  Median :1.0003  
+##  Mean   :1.0004  
+##  3rd Qu.:1.0007  
+##  Max.   :1.0073  
+##  NA&#39;s   :1</code></pre>
+<p>The <span class="math inline">\(\hat{R}\)</span> look OK, indicating that the Markov chains are in close agreement with each other. Let’s check the parameters:</p>
+<pre class="r"><code>precis(model_varying, depth = 2, pars = c(&quot;sigma&quot;, &quot;a&quot;, &quot;b&quot;))</code></pre>
+<pre><code>##                mean         sd       5.5%      94.5%     n_eff    Rhat4
+## sigma[1]  0.5786484 0.09828595  0.4292069  0.7413760 1045.7467 1.002100
+## sigma[2]  0.7940139 0.20343339  0.4842624  1.1288106  559.7612 1.007331
+## a        -0.7082751 0.09949188 -0.8694463 -0.5519926 2987.0724 1.000048
+## b         0.6974763 0.16855244  0.4322226  0.9654286 1807.1544 1.000958</code></pre>
+<p>The contraceptive use is not that likely, thus the negative (in log-odds scale) average value in the adaptive prior for <span class="math inline">\(a\)</span>. The positive value for <span class="math inline">\(b\)</span>, on the other hand, indicates that the average distribution of slopes is positive. That is, women in urban areas are, on average, more likely to use contraception. Finally, the variances. Both indicate quite a bit of variation in the multivariate population for intercepts and slopes.</p>
+<pre class="r"><code>precis(model_varying, pars = &quot;Rho&quot;, depth = 3)</code></pre>
+<pre><code>##                mean           sd       5.5%      94.5%     n_eff     Rhat4
+## Rho[1,1]  1.0000000 0.000000e+00  1.0000000  1.0000000       NaN       NaN
+## Rho[1,2] -0.6601642 1.620913e-01 -0.8704667 -0.3654447  732.5506 1.0050530
+## Rho[2,1] -0.6601642 1.620913e-01 -0.8704667 -0.3654447  732.5506 1.0050530
+## Rho[2,2]  1.0000000 5.906874e-17  1.0000000  1.0000000 3865.9577 0.9989995</code></pre>
+<p>There’s a negative correlation between the parameter types: i.e., for districts with higher contraceptive usage overall, the correlation informs us that we should predict a lower than average differential in the use of contraceptives between rural and urban areas.</p>
+<p>We can follow Richard’s advice and plot both types of parameters for each district. We can even overlay the ellipses that determine the levels of the multivariate adaptive prior:</p>
+<pre class="r"><code>samples &lt;- extract.samples(model_varying)
+
+Mu_est &lt;- c(mean(samples$a), mean(samples$b))
+rho_est &lt;- mean(samples$Rho[,1,2])
+sa_est &lt;- mean(samples$sigma[,1])
+sb_est &lt;- mean(samples$sigma[, 2])
+cov_ab &lt;- sa_est*sb_est*rho_est
+Sigma_est &lt;- matrix(c(sa_est^2, cov_ab, cov_ab, sb_est^2), ncol = 2)
+
+contour_level &lt;- function(level) {
+  ellipse::ellipse(Sigma_est, centre = Mu_est, level = level) %&gt;% 
+    data.frame() %&gt;% 
+    mutate(level = level)
+} 
+
+purrr::map(c(0.1, 0.3, 0.5, 0.8, 0.99), contour_level) %&gt;% 
+  bind_rows() -&gt; data_elipses
+data_elipses %&gt;% 
+  ggplot(aes(x, y)) +
+  geom_path(aes(group = level), linetype = 2) +
+  geom_point(data = data.frame(x = Mu_est[1]), y = Mu_est[2], color = &quot;red&quot;)</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Finally, we can plot the points:</p>
+<pre class="r"><code>model_varying %&gt;% 
+  spread_draws(alpha[district_id], beta[district_id]) %&gt;% 
+  median_qi() %&gt;% 
+  select(district_id, alpha, beta) %&gt;% 
+  ggplot(aes(alpha, beta)) +
+  geom_point(alpha = 0.6) +
+  geom_path(data = data_elipses,
+            inherit.aes = F,
+            mapping = aes(x, y, group = level), linetype = 2, color = &quot;dodgerblue4&quot;) +
+  geom_point(data = data.frame(x = Mu_est[1]), y = Mu_est[2], color = &quot;red&quot;,
+             inherit.aes = FALSE,
+             mapping = aes(x, y)) +
+  labs(title = &quot;Negative correlation between intercepts and slopes per district&quot;,
+       subtitle = &quot;Districts with higher overall use have lower differentials between urban and rural&quot;,
+       x = expression(alpha),
+       y = expression(beta))</code></pre>
+<pre><code>## Warning: `combine()` is deprecated as of dplyr 1.0.0.
+## Please use `vctrs::vec_c()` instead.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_warnings()` to see where this warning was generated.</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-9-1.png" width="768" /></p>
+</div>
+<div id="nd-question" class="section level1">
+<h1>2nd question</h1>
+<p>Now consider the predictor variables age.centered and living.children, also contained in data(bangladesh). Suppose that age influences contraceptive use (changing attitudes) and number of children (older people have had more time to have kids). Number of children may also directly influence contraceptive use. Draw a DAG that reflects these hypothetical relationships. Then build models needed to evaluate the DAG. You will need at least two models. Retain district and urban, as in Problem 1. What do you conclude about the causal influence of age and children?</p>
+<pre class="r"><code>dag &lt;- dagitty::dagitty(&quot; dag {
+                        Age -&gt; N_children
+                        Age -&gt; contraception
+                        N_children -&gt; contraception
+                        }&quot;)
+drawdag(dag)</code></pre>
+<pre><code>## Loading required package: dagitty</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>Conditional on this DAG, the total causal effect of Age on contraception is mediated (pipe) with Number of Children. Thus, to get the total effect we must not control by number of children.</p>
+<p>Let’s fit this model:</p>
+<pre class="r"><code>data_varying &lt;- list(
+  contraception = bangladesh$use.contraception,
+  district_id = bangladesh$district_id,
+  urban = bangladesh$urban,
+  age = bangladesh$age.centered, 
+  kids = bangladesh$living.children
+)
+model_only_age &lt;- ulam(
+  alist(
+    contraception ~ dbinom(1, p),
+    logit(p) &lt;- alpha[district_id] + beta[district_id] * urban + gamma*age,
+    
+    # traditional priors
+    gamma ~ normal(0, 1),
+    
+    # adaptive priors
+    c(alpha, beta)[district_id] ~ multi_normal(c(a, b), Rho, sigma),
+    
+    # hyper-priors
+    a ~ normal(-0.5, 1),
+    b ~ normal(0, 1),
+    sigma ~ exponential(1),
+    Rho ~ lkj_corr(2)
+  ),
+  chains = 4, cores = 4,
+  data = data_varying,
+  iter = 2000
+)</code></pre>
+<pre><code>## Warning: The largest R-hat is NA, indicating chains have not mixed.
+## Running the chains for more iterations may help. See
+## http://mc-stan.org/misc/warnings.html#r-hat</code></pre>
+<pre><code>## Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+## Running the chains for more iterations may help. See
+## http://mc-stan.org/misc/warnings.html#bulk-ess</code></pre>
+<pre><code>## Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
+## Running the chains for more iterations may help. See
+## http://mc-stan.org/misc/warnings.html#tail-ess</code></pre>
+<p>Let’s check our chains’ health:</p>
+<pre class="r"><code>traceplot_ulam(model_only_age)</code></pre>
+<pre><code>## [1] 2000
+## [1] 1
+## [1] 2000</code></pre>
+<pre><code>## Waiting to draw page 2 of 9</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<pre><code>## Waiting to draw page 3 of 9</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-12-2.png" width="672" /></p>
+<pre><code>## Waiting to draw page 4 of 9</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-12-3.png" width="672" /></p>
+<pre><code>## Waiting to draw page 5 of 9</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-12-4.png" width="672" /></p>
+<pre><code>## Waiting to draw page 6 of 9</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-12-5.png" width="672" /></p>
+<pre><code>## Waiting to draw page 7 of 9</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-12-6.png" width="672" /></p>
+<pre><code>## Waiting to draw page 8 of 9</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-12-7.png" width="672" /></p>
+<pre><code>## Waiting to draw page 9 of 9</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-12-8.png" width="672" /><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-12-9.png" width="672" /></p>
+<p>The chains look healthy enough. They are:</p>
+<ol style="list-style-type: decimal">
+<li>They are stationary</li>
+<li>They mix well across the parameter space.</li>
+<li>Different chains converge to explore the same parameter space.</li>
+</ol>
+<p>Let’s check the <span class="math inline">\(\hat{R}\)</span> values:</p>
+<pre class="r"><code>precis(model_only_age, depth = 3) %&gt;% 
+  data.frame() %&gt;% 
+  select(Rhat4) %&gt;% 
+  summary()</code></pre>
+<pre><code>##      Rhat4       
+##  Min.   :0.9990  
+##  1st Qu.:0.9996  
+##  Median :1.0000  
+##  Mean   :1.0002  
+##  3rd Qu.:1.0003  
+##  Max.   :1.0065  
+##  NA&#39;s   :1</code></pre>
+<p>The <span class="math inline">\(\hat{R}\)</span> look OK, indicating that the Markov chains are in close agreement with each other. Let’s check the parameters:</p>
+<pre class="r"><code>precis(model_only_age, depth = 3, pars = c(&quot;a&quot;, &quot;b&quot;, &quot;gamma&quot;, &quot;sigma&quot;, &quot;Rho&quot;))</code></pre>
+<pre><code>##                  mean           sd          5.5%       94.5%     n_eff
+## a        -0.711762041 1.016663e-01 -0.8738737644 -0.55035329 2989.5685
+## b         0.700611163 1.741395e-01  0.4232006020  0.97883232 2287.3215
+## gamma     0.009349941 5.519684e-03  0.0003497057  0.01790265 9153.1955
+## sigma[1]  0.585669620 9.828294e-02  0.4388782248  0.74686286 1263.1565
+## sigma[2]  0.809974756 1.983980e-01  0.4990433095  1.13027856  535.6430
+## Rho[1,1]  1.000000000 0.000000e+00  1.0000000000  1.00000000       NaN
+## Rho[1,2] -0.652030760 1.667586e-01 -0.8597655065 -0.35087085  735.4713
+## Rho[2,1] -0.652030760 1.667586e-01 -0.8597655065 -0.35087085  735.4713
+## Rho[2,2]  1.000000000 6.023137e-17  1.0000000000  1.00000000 3746.2430
+##              Rhat4
+## a        1.0000706
+## b        1.0016128
+## gamma    0.9997223
+## sigma[1] 1.0007466
+## sigma[2] 1.0064544
+## Rho[1,1]       NaN
+## Rho[1,2] 1.0005888
+## Rho[2,1] 1.0005888
+## Rho[2,2] 0.9989995</code></pre>
+<p>The distribution of intercepts and slopes looks completely unchanged. For the <span class="math inline">\(\gamma\)</span>, our estimated effect has much of its probability mass around zero and 0.02. Therefore, we conclude that the total causal effect of age on the use of contraception is small. For example, let’s take the woman from the first district and predict our expected probability that they use contraception, across both urban and rural areas, as function of age:</p>
+<pre class="r"><code>data.frame(data_varying) %&gt;% 
+  group_by(urban) %&gt;% 
+  data_grid(age, district_id = 1) %&gt;% 
+  add_fitted_draws(model_only_age) %&gt;% 
+  ggplot(aes(age, .value)) +
+  stat_lineribbon(fill = &quot;dodgerblue4&quot;, alpha = 1/4) +
+  scale_fill_brewer(palette = &quot;Greys&quot;) +
+  facet_wrap(~factor(urban, labels = c(&quot;Rural&quot;, &quot;Urban&quot;))) +
+  labs(title = &quot;Predicted prob of using contraception as function of age&quot;,
+       subtitle = &quot;Age has a positive small effect. No statistical adjustment by # of kids &quot;,
+       y = &quot;predicted prob&quot;)</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-15-1.png" width="768" /></p>
+<p>Now for the model that takes into account the number of children each woman has:</p>
+<pre class="r"><code>model_age_kids &lt;- ulam(
+  alist(
+    contraception ~ dbinom(1, p),
+    logit(p) &lt;- alpha[district_id] + beta[district_id] * urban + gamma*age + delta*kids,
+    
+    # traditional priors
+    gamma ~ normal(0, 1),
+    delta ~ normal(0, 1),
+    
+    # adaptive priors
+    c(alpha, beta)[district_id] ~ multi_normal(c(a, b), Rho, sigma),
+    
+    # hyper-priors
+    a ~ normal(-0.5, 1),
+    b ~ normal(0, 1),
+    sigma ~ exponential(1),
+    Rho ~ lkj_corr(2)
+  ),
+  chains = 4, cores = 4,
+  data = data_varying,
+  iter = 2000
+)</code></pre>
+<pre><code>## Warning: There were 1 chains where the estimated Bayesian Fraction of Missing Information was low. See
+## http://mc-stan.org/misc/warnings.html#bfmi-low</code></pre>
+<pre><code>## Warning: Examine the pairs() plot to diagnose sampling problems</code></pre>
+<pre><code>## Warning: The largest R-hat is NA, indicating chains have not mixed.
+## Running the chains for more iterations may help. See
+## http://mc-stan.org/misc/warnings.html#r-hat</code></pre>
+<pre><code>## Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+## Running the chains for more iterations may help. See
+## http://mc-stan.org/misc/warnings.html#bulk-ess</code></pre>
+<pre><code>## Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
+## Running the chains for more iterations may help. See
+## http://mc-stan.org/misc/warnings.html#tail-ess</code></pre>
+<p>Let’s look at our <span class="math inline">\(\hat{R}\)</span>:</p>
+<pre class="r"><code>precis(model_age_kids, depth = 3) %&gt;% 
+  data.frame() %&gt;% 
+  select(Rhat4) %&gt;% 
+  summary()</code></pre>
+<pre><code>##      Rhat4       
+##  Min.   :0.9990  
+##  1st Qu.:0.9997  
+##  Median :1.0002  
+##  Mean   :1.0004  
+##  3rd Qu.:1.0006  
+##  Max.   :1.0081  
+##  NA&#39;s   :1</code></pre>
+<p>The <span class="math inline">\(\hat{R}\)</span> look OK, indicating agreement between chains. Let’s check our posterior’s parameters:</p>
+<pre class="r"><code>precis(model_age_kids,  depth = 3, pars = c(&quot;a&quot;, &quot;b&quot;, &quot;gamma&quot;, &quot;sigma&quot;, &quot;Rho&quot;, &quot;delta&quot;))</code></pre>
+<pre><code>##                 mean           sd        5.5%       94.5%     n_eff     Rhat4
+## a        -1.82036784 1.856883e-01 -2.12219932 -1.53155651  533.9671 0.9998956
+## b         0.73866276 1.670306e-01  0.48116719  1.00324146 2071.6075 1.0010045
+## gamma    -0.02962083 7.866211e-03 -0.04246785 -0.01720007 1241.7177 0.9996156
+## sigma[1]  0.60705627 1.027245e-01  0.45205872  0.77837377  903.2108 1.0037991
+## sigma[2]  0.77489131 2.123463e-01  0.46279053  1.12176700  279.0930 1.0080781
+## Rho[1,1]  1.00000000 0.000000e+00  1.00000000  1.00000000       NaN       NaN
+## Rho[1,2] -0.63920946 1.702942e-01 -0.86080086 -0.33813996  952.2360 1.0027153
+## Rho[2,1] -0.63920946 1.702942e-01 -0.86080086 -0.33813996  952.2360 1.0027153
+## Rho[2,2]  1.00000000 6.137198e-17  1.00000000  1.00000000 3775.0627 0.9989995
+## delta     0.41248989 5.651360e-02  0.32333587  0.50111890  604.6562 0.9996603</code></pre>
+<p>Our population distribution for slopes and parameters has shifted: the average probability of using contraception, for a woman with 1 kids, is much lower. That can be explained as our parameters for the number of children, <span class="math inline">\(\delta\)</span>, is clearly positive with an 87% compatibility interval between (0.33, 0.50) in the log-odds. Notice also that the effect of age has changed signs and it’s mass is around (-0.04, -0.02) in the log odds scale. That is, older women, adjusting by the number of children they have, are less likely to use contraception.</p>
+<p>Let’s plot the effect of having children for the women of the district 20 of average age:</p>
+<pre class="r"><code>data.frame(data_varying) %&gt;% 
+  group_by(urban) %&gt;% 
+  data_grid(kids, district_id = 20, age = 0) %&gt;% 
+  add_fitted_draws(model_age_kids) %&gt;% 
+  ggplot(aes(kids, .value)) +
+  stat_lineribbon(fill = &quot;dodgerblue4&quot;, alpha = 1/4) +
+  scale_fill_brewer(palette = &quot;Greys&quot;) +
+  facet_wrap(~factor(urban, labels = c(&quot;Rural&quot;, &quot;Urban&quot;))) +
+  labs(title = &quot;Predicted prob of using contraception as function of # of kids&quot;,
+       subtitle = &quot;Women with more kids are more likely to use contraception&quot;)</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p>Now, for age:</p>
+<pre class="r"><code>data.frame(data_varying) %&gt;% 
+  group_by(urban) %&gt;% 
+  data_grid(age, district_id = 1, kids = 1) %&gt;% 
+  add_fitted_draws(model_age_kids) %&gt;% 
+  ggplot(aes(age, .value)) +
+  stat_lineribbon(fill = &quot;dodgerblue4&quot;, alpha = 1/4) +
+  scale_fill_brewer(palette = &quot;Greys&quot;) +
+  facet_wrap(~factor(urban, labels = c(&quot;Rural&quot;, &quot;Urban&quot;))) +
+  labs(title = &quot;Predicted prob of using contraception as function of age&quot;,
+       subtitle = &quot;Age has a negative effect. Statistically adjusting by # of kids&quot;,
+       y = &quot;predicted prob&quot;)</code></pre>
+<p><img src="/post/2020-06-03-statistical-rethinking-week-9_files/figure-html/unnamed-chunk-20-1.png" width="768" /></p>
+<p><strong>Going back to our DAG</strong>, our findings are in accordance with it. <strong>The total causal effect of age is less than the direct causal effect due to the pipe that goes through number of kids</strong>. That is, older women have lower probabilities to use contraception once we statistically adjust by the number of kids they have. However, older women also tend to have more children and the direct effect of having more children is to be less likely to use contraception. Therefore, the mixed signal that we get from the total effect.</p>
+</div>
+<div id="rd-question" class="section level1">
+<h1>3rd question</h1>
+<p>Modify any models from Problem 2 that contained that children variable and model the variable now as a monotonic ordered category, like education from the week we did ordered categories. Education in that example had 8 categories. Children here will have fewer (no one in the sample had 8 children). So modify the code appropriately. What do you conclude about the causal influence of each additional child on use of contraception?</p>
+<p>Almost inadvertently, in our previous model we assumed that the additional effect of each kid in the log odds of using contraception was constant. By modelling as an ordered category, we let the data decide whether it should be so.</p>
+<pre class="r"><code>data_varying &lt;- list(
+  contraception = bangladesh$use.contraception,
+  district_id = bangladesh$district_id,
+  urban = bangladesh$urban,
+  age = bangladesh$age.centered, 
+  kids = as.integer(bangladesh$living.children),
+  alpha = rep(2, 3)
+)
+
+model_age_kids_ord &lt;- ulam(
+  alist(
+    contraception ~ dbinom(1, p),
+    logit(p) &lt;- alp[district_id] + beta[district_id] * urban + gamma*age + bks*sum(delta_j[1:kids]),
+    
+    # traditional priors
+    gamma ~ normal(0, 1),
+    bks ~ normal(0, 1),
+    # adaptive priors
+    c(alp, beta)[district_id] ~ multi_normal(c(a, b), Rho, sigma),
+    
+    # hyper-priors
+    a ~ normal(-0.5, 1),
+    b ~ normal(0, 1),
+    sigma ~ exponential(1),
+    Rho ~ lkj_corr(2),
+    vector[4]: delta_j &lt;&lt;- append_row(0, delta),
+    simplex[3]: delta ~ dirichlet(alpha)
+  ),
+  chains = 4, cores = 4,
+  data = data_varying,
+  iter = 2000
+)</code></pre>
+<pre><code>## Warning: The largest R-hat is NA, indicating chains have not mixed.
+## Running the chains for more iterations may help. See
+## http://mc-stan.org/misc/warnings.html#r-hat</code></pre>
+<pre><code>## Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+## Running the chains for more iterations may help. See
+## http://mc-stan.org/misc/warnings.html#bulk-ess</code></pre>
+<pre><code>## Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
+## Running the chains for more iterations may help. See
+## http://mc-stan.org/misc/warnings.html#tail-ess</code></pre>
+<p>Let’s look at our <span class="math inline">\(\hat{R}\)</span>:</p>
+<pre class="r"><code>precis(model_age_kids_ord, depth = 3) %&gt;% 
+  data.frame() %&gt;% 
+  select(Rhat4) %&gt;% 
+  summary()</code></pre>
+<pre><code>##      Rhat4       
+##  Min.   :0.9990  
+##  1st Qu.:0.9998  
+##  Median :1.0003  
+##  Mean   :1.0006  
+##  3rd Qu.:1.0009  
+##  Max.   :1.0060  
+##  NA&#39;s   :1</code></pre>
+<p>The <span class="math inline">\(\hat{R}\)</span> values look OK, indicating that the chains are in close agreement with each other. Let’s check our parameters:</p>
+<pre class="r"><code>precis(model_age_kids_ord,  depth = 3, pars = c(&quot;a&quot;, &quot;b&quot;, &quot;gamma&quot;, &quot;sigma&quot;, &quot;Rho&quot;, &quot;bks&quot;))</code></pre>
+<pre><code>##                mean           sd        5.5%      94.5%     n_eff     Rhat4
+## a        -1.6514769 1.514724e-01 -1.89843017 -1.4179548  871.2946 1.0057797
+## b         0.7514093 1.629754e-01  0.50108831  1.0185079 1752.0280 1.0015779
+## gamma    -0.0285001 7.407644e-03 -0.04056768 -0.0168950 2057.2264 1.0028480
+## sigma[1]  0.5981766 1.000483e-01  0.44626160  0.7638943 1036.4408 1.0019039
+## sigma[2]  0.7635441 1.984322e-01  0.45813573  1.0999865  544.0611 1.0050227
+## Rho[1,1]  1.0000000 0.000000e+00  1.00000000  1.0000000       NaN       NaN
+## Rho[1,2] -0.6318018 1.689763e-01 -0.84777126 -0.3208823  878.7722 1.0020329
+## Rho[2,1] -0.6318018 1.689763e-01 -0.84777126 -0.3208823  878.7722 1.0020329
+## Rho[2,2]  1.0000000 6.061396e-17  1.00000000  1.0000000 3864.9296 0.9989995
+## bks       1.3761956 1.617300e-01  1.12476270  1.6413969  887.7721 1.0059553</code></pre>
+<p>The overall effect of the children variable, when a woman has 4 children, has the same sign and roughly the same magnitude as previous inferences. Let’s look at the effect splitted by the number of children:</p>
+<pre class="r"><code>precis(model_age_kids_ord, depth = 3, pars = &quot;delta&quot;)</code></pre>
+<pre><code>##                mean         sd       5.5%     94.5%    n_eff     Rhat4
+## delta[1] 0.73384745 0.07997228 0.60088384 0.8586518 5351.777 1.0007419
+## delta[2] 0.16715997 0.07748654 0.05121571 0.3016555 5478.395 1.0011143
+## delta[3] 0.09899258 0.05470453 0.02328985 0.1974188 6702.511 0.9998626</code></pre>
+<p>Remember that these are percentages of the total effect. That is, around 73% of the total effect comes from having the second child. Therefore, we conclude that most of the effect that having children increases the chances of using contraception comes from having a second child.</p>
+</div>
+
+    </div>
+  
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//https-david-salazar-github-io.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+  
+  </article>
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/python.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
