@@ -6,10 +6,20 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 03 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 04 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Varying effects for continuous predictors -&gt; GP regression</title>
+      <link>/2020/06/04/varying-effects-for-continuous-predictors/</link>
+      <pubDate>Thu, 04 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/06/04/varying-effects-for-continuous-predictors/</guid>
+      <description>Statistical Rethinking is a fabulous course on Bayesian Statistics (and much more). Following its presentation, I’ll give a succinct intuitive introduction to Gaussian Process (GP) regression as a method to extend the varying effects strategy to continuous predictors. This method is incredibly useful when assuming a linear functional relationship between a continuous predictor and the outcome variable is not enough to capture the variation in the data.
+First, I’ll begin by motivating the varying effects strategy.</description>
+    </item>
     
     <item>
       <title>Bayesian Instrumental Variable Regression</title>
