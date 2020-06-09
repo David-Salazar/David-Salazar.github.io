@@ -6,10 +6,20 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 04 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 09 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Statistical Rethinking Week 10</title>
+      <link>/2020/06/09/statistical-rethinking-week-10/</link>
+      <pubDate>Tue, 09 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/06/09/statistical-rethinking-week-10/</guid>
+      <description>This is the final week of the best Statistics course out there. It showed the benefits of being ruthless with conditional probabilities: replace everything you don’t know with a distribution conditioned on what you do know. Bayes will do the rest. This holds for both measurement error and missing data.
+1st problemConsider the relationship between brain volume (brain) and body mass (body) in the data(Primates301). These values are presented as single values for each species.</description>
+    </item>
     
     <item>
       <title>Varying effects for continuous predictors -&gt; GP regression</title>
