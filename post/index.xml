@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 09 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 10 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Fisher Tippet Th: a &#34;CLT&#34; for the sample maxima</title>
+      <link>/2020/06/10/fisher-tippet-th-a-clt-for-the-sample-maxima/</link>
+      <pubDate>Wed, 10 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/06/10/fisher-tippet-th-a-clt-for-the-sample-maxima/</guid>
+      <description>For fat-tailed random variables, the statistical properties are determined by a few observations in the tail. In Nassim Taleb’s words, “the tail wags the dog”. Therefore, it is vital to study the distribution of these few observations. A logical question to ask, then, is: is there a limiting distribution for the sample maxima as the number of samples grows? This is precisely what the Fisher Tippet Theorem states: the limiting distribution of (a normalized) sample maxima is the Generalized Extreme distribution (GED).</description>
+    </item>
     
     <item>
       <title>Statistical Rethinking Week 10</title>
