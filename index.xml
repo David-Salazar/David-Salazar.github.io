@@ -6,10 +6,20 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 10 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 11 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>How to not get fooled by the &#34;Empirical Distribution&#34;</title>
+      <link>/2020/06/11/how-to-not-get-fooled-by-the-empirical-distribution/</link>
+      <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/06/11/how-to-not-get-fooled-by-the-empirical-distribution/</guid>
+      <description>With fat-tailed random variables, as Nassim Taleb says, the tail wags the dogs. That is, “the tails (the rare events) play a disproportionately large role in determining the properties”. Following the presentation given by Taleb in his latest technical book: Statistical Consequences of Fat Tails, I’ll show:
+Why using the empirical distribution for estimating the moments of a fat-tailed random variable is a terrible idea.A less “unreliable” alternative to estimating the moments.</description>
+    </item>
     
     <item>
       <title>Fisher Tippet Th: a &#34;CLT&#34; for the sample maxima</title>
