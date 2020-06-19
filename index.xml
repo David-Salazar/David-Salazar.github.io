@@ -6,12 +6,17 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+<<<<<<< HEAD
     <lastBuildDate>Wed, 17 Jun 2020 00:00:00 +0000</lastBuildDate>
+=======
+    <lastBuildDate>Sun, 14 Jun 2020 00:00:00 +0000</lastBuildDate>
+>>>>>>> 81512df628589fe779cd2dd8e91c667a9ba9e2c9
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+<<<<<<< HEAD
       <title>Extreme Value Theory for Time Series</title>
       <link>/2020/06/17/extreme-value-theory-for-time-series/</link>
       <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
@@ -21,6 +26,8 @@
     </item>
     
     <item>
+=======
+>>>>>>> 81512df628589fe779cd2dd8e91c667a9ba9e2c9
       <title>When are GARCH (and friends) models warranted?</title>
       <link>/2020/06/14/when-are-garch-and-friends-models-warranted/</link>
       <pubDate>Sun, 14 Jun 2020 00:00:00 +0000</pubDate>
