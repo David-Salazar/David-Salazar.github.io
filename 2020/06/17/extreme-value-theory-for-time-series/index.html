@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.58.3" />
+
+
+<title>Extreme Value Theory for Time Series - Dilettanting Data Science</title>
+<meta property="og:title" content="Extreme Value Theory for Time Series - Dilettanting Data Science">
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/turner.jpg"
+         width="200"
+         height="200"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/David-Salazar">GitHub</a></li>
+    
+    <li><a href="https://www.kaggle.com/davidsalazarv95">Kaggle</a></li>
+    
+    <li><a href="https://david-salazar.github.io/">Posts</a></li>
+    
+    <li><a href="https://twitter.com/DavidSalazarVir?lang=en">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">6 min read</span>
+    
+
+    <h1 class="article-title">Extreme Value Theory for Time Series</h1>
+
+    
+    <span class="article-date">2020/06/17</span>
+    
+    
+
+    <div class="article-content">
+      
+
+
+<p>The Fisher-Tippet theorem (<a href="2020-06-10-fisher-tippet-th-a-clt-for-the-sample-maxima.html">a type of CLT for the tail events</a>) rests on the assumption that the observed values are independent and identically distributed. However, in any non trivial example, time series will reflect an <strong>underlying structure</strong> that will create dependence among the observations. Indeed, tail events <em>tend</em> <strong>to occur in clusters</strong>. Does this mean that we cannot use the Extreme Value Theory (EVT) to model the maxima of a time series?</p>
+<p><em>The answer?</em> Not necessarily. We can only use EVT if the maxima of the time series behave <em>like</em> they are independent. In this blogpost, I’ll give:</p>
+<ol style="list-style-type: decimal">
+<li>An intuitive explanation of the conditions we need to set on the time series to be able to use EVT.</li>
+<li>Show how we can test whether these conditions hold for real data: S&amp;P500 returns</li>
+<li>How, once the conditions hold, we can generalize the Fisher-Tippet theorem by replacing the independence assumption.</li>
+</ol>
+<p>Note that thorought the blogpost I assume that the time series is stationary.</p>
+<div id="the-d-condtions" class="section level2">
+<h2>The D-Condtions</h2>
+<p>The <strong>D-conditions limit the dependence structure</strong> between the maxima of a time series, thereby allowing us to <em>use EVT</em>. There are two of them:</p>
+<ol style="list-style-type: decimal">
+<li><p>The <em><span class="math inline">\(D\)</span></em> condition <strong>limits the long-range dependence</strong> between the maxima of a time series. That is, separate the time series into two intervals: the <span class="math inline">\(D\)</span> condition states that <strong>the maxima of the two separated intervals are approximately independent</strong>.</p></li>
+<li><p>The <span class="math inline">\(D&#39;\)</span> condition <strong>limits the local dependence</strong> structure between the maxima of a time series. That is, separate the time series into <em>small blocks</em>. Count as an exceedance an observation that exceeds a given large threshold. The <span class="math inline">\(D&#39;\)</span> condition postulates that <strong>the probability of observing more than one exceedance in a block is negligible</strong>.</p></li>
+</ol>
+<p>If both <span class="math inline">\(D\)</span> and <span class="math inline">\(D&#39;\)</span> are satisfied, then the dependence between far-apart maxima and local maxima is largely limited. Therefore, we can generalize the Fisher-Tippet Theorem to work with these type of time series. However, <strong>how would one check these conditions with real data</strong>?</p>
+</div>
+<div id="record-breaking-observations" class="section level2">
+<h2>Record breaking observations</h2>
+<p>We can <strong>compare</strong> the number of <em>record-breaking observations</em> in our time series with <strong>the expected number</strong> of record-breaking observations for <strong>independent observations</strong>. If they are roughly similar, we can conclude that both the <span class="math inline">\(D\)</span> conditions hold for our time series. Let’s begin defining how we count the number of record-breaking of observations:</p>
+<p><span class="math display">\[
+N_n=1+\sum_{k=2}^n1_{X_k&gt;M_{k-1}}, \quad n\geq2
+\]</span>
+Then, it can be shown that if the observations are independent, the expected number of record-breaking observations is:</p>
+<p><span class="math display">\[
+E[N_n]=\sum_{k=1}^n \frac{1}{k} \approx \log n +\gamma
+\]</span>
+Where <span class="math inline">\(\gamma\)</span> is Euler’s constant. Therefore, for independent observations, the number of record-breaking observations grows very slowly. We can also check the variance of the number of record-breaking observations for independent observations:</p>
+<p><span class="math display">\[ 
+var(N_n)= \sum_{k=1}^n \left(\frac{1}{k} - \frac{1}{k^2} \right)
+\]</span>
+Let’s try to get some intuition for how these formulas bound the number of record breaking observations when independence holds.</p>
+<div id="a-monte-carlo-proof" class="section level3">
+<h3>A Monte-Carlo proof</h3>
+<p>To prove this statement, I’ll perform a Monte-Carlo experiment with <span class="math inline">\(10^4\)</span> different independent time series with marginal distribution Cauchy. For each time series, I’ll simulate 1,000 observations. Then, we can compare the Monte Carlo distribution of the number of observed record-breaking observations with the expected number.</p>
+<p><img src="/post/2020-06-17-extreme-value-theory-for-time-series_files/figure-html/number-records-1.png" width="768" /></p>
+</div>
+<div id="sp500-tail-returns-independent" class="section level3">
+<h3>SP500 tail returns: independent?</h3>
+<p>We can divide the returns of the S&amp;P500 in positive and negative returns. Can we model the tail returns for either of them with EVT? As we’ve seen, the answer depends on the <span class="math inline">\(D\)</span> conditions: are the maxima too clustered? are far-apart maxima related? If the answer to both questions is no, then we can use EVT.</p>
+<p>To test it out, we will compare the number of record breaking returns (both positive and negative) with the expected number of record breaking returns if the returns where independent. In this analysis, I use all the data from 1948 up to the present day and I’ll model the log returns:</p>
+<p><img src="/post/2020-06-17-extreme-value-theory-for-time-series_files/figure-html/sp5200-1.png" width="960" /></p>
+</div>
+</div>
+<div id="generalizing-the-fisher-tippet-theorem" class="section level2">
+<h2>Generalizing the Fisher-Tippet Theorem</h2>
+<p>If both <span class="math inline">\(D\)</span> conditions hold, we can generalize the Fisher-Tippet Theorem. Crucially, the maxima of the time series will still converge to one of the <span class="math inline">\(GEV_{\xi}\)</span> distributions. However, it will converge to a transformed version of the <span class="math inline">\(GEV\)</span> thus:</p>
+<p>Let <span class="math inline">\(\left\{X_{i}\right\}\)</span> be a dependent time series and let <span class="math inline">\(\left\{\tilde{X}_{i}\right\}\)</span> be independent variables with the same marginal distribution. Set <span class="math inline">\(M_{n}=\max \left\{X_{1}, \ldots, X_{n}\right\}\)</span> and <span class="math inline">\(\tilde{M}_{n}=\max \left\{\tilde{X}_{1}, \ldots, \tilde{X}_{n}\right\} .\)</span> If the <span class="math inline">\(D\)</span> conditions hold, then:
+<span class="math display">\[
+\mathrm{P}\left\{\left(\tilde{M}_{n}-b_{n}\right) / a_{n} \leq z\right\} \rightarrow {GEV_{\xi}}(z), \quad n \rightarrow \infty
+\]</span>
+if and only if
+<span class="math display">\[
+\mathrm{P}\left\{\left(M_{n}-b_{n}\right) / a_{n} \leq z\right\} \rightarrow G(z)
+\]</span>
+where <span class="math inline">\(G(z)={GEV_{\xi}}^{\theta}(z)\)</span> for some constant <span class="math inline">\(\theta \in[0,1]\)</span> which is called the <strong>extremal index</strong> of the time series.</p>
+<div id="consequences" class="section level3">
+<h3>Consequences</h3>
+<ul>
+<li><p>The <span class="math inline">\(\theta\)</span> is a measure of the clustering of the maxima. The lower the theta, the more clustered are the maxima.</p></li>
+<li><p>If the observations are independent, <span class="math inline">\(\theta = 1\)</span>. Thus, the extremal index is a measure of dependence between the data. The smaller the extremal index, the more dependent are the maxima of the time series. In particular:</p></li>
+</ul>
+<p><span class="math display">\[
+P(M_n &lt; x) \approx F(x)^{n\theta}
+\]</span></p>
+<p>Therefore, we can consider these maxima arising from a dependent time series as <em>equivalently</em> arising <strong>from <span class="math inline">\(n\theta\)</span> independent observations</strong> with the same marginal distribution.</p>
+<ul>
+<li>Using the independence assumption leads us <strong>to underestimate the quantiles</strong> of the possible maxima. Indeed, for a large probability p:</li>
+</ul>
+<p><span class="math display">\[
+F^{-1}(p) \approx GEV^{-1}\left(p^{n \theta}\right)&gt;GEV^{-1}\left(p^{n}\right)
+\]</span>
+Indeed, when considering the dependence of the data, the VaR risk (for say 99%) measure will decrease. The probability of none of the extreme events ever happening decreases. However, as we will see, when it rains, it pours.</p>
+<ul>
+<li>Crucially, both <span class="math inline">\({GEV_{\xi}}^{\theta}(z), {GEV_{\xi}}(z)\)</span> <em>share</em> the same shape (<span class="math inline">\(xi\)</span>) parameter: thus, <strong>they share the same tail behavior</strong>. Indeed, by raising the distribution to the power of <span class="math inline">\(\theta\)</span>, the parameters of the distribution change thus:</li>
+</ul>
+<p><span class="math display">\[
+\tilde{\mu}=\mu-\frac{\sigma}{\xi}\left(1-\theta^{-\xi}\right), \quad \tilde{\sigma}=\sigma \theta^{\xi}, \quad \tilde{\xi}=\xi
+\]</span></p>
+<p>That is, when <span class="math inline">\(\xi &gt; 0\)</span> and the MDA of the distribution is the Fréchet, the location and scale parameters change thus:</p>
+<p><img src="/post/2020-06-17-extreme-value-theory-for-time-series_files/figure-html/frechet-1.png" width="768" /></p>
+<p>Why does the mean increase so much when the maxima are <span class="math inline">\(\theta\)</span> is small? The answer is in the dependence of the maxima: when <span class="math inline">\(\theta\)</span> is small, the maxima are dependent. Thus, when one of them happens, all the other events also tend to happen. <strong>When it rains, it pours</strong>.</p>
+<p>To show this, I’ll simulate observations from an Autoregressive(1) Cauchy Sequence:</p>
+<p><span class="math display">\[
+X_t = \rho X_{t-1} + (1-\rho) Z_t \\
+Z_t \sim Cauchy
+\]</span></p>
+<p>The larger <span class="math inline">\(\rho\)</span>, the more dependent the data. Indeed, it can be shown<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> that <span class="math inline">\(\theta = 1 - \rho\)</span>. Therefore,</p>
+<p><img src="/post/2020-06-17-extreme-value-theory-for-time-series_files/figure-html/cauchy-rho-1.png" width="1152" /></p>
+</div>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<p>The serial dependence present in a time series <em>invalidates</em> the independence assumption in the traditional Fisher-Tippet Theorem. Nevertheless, <strong>we can still use Extreme Value Theory</strong> to model the maxima of a time series provided that the <span class="math inline">\(D\)</span> conditions hold. The <span class="math inline">\(D\)</span> conditions limit both the long-range and the local dependence between the maxima. We can test whether these <em>conditions hold in real data</em> by comparing the <strong>number of record breaking observations</strong> in the data with the expected number of record breaking observations if the observations were independent. Once these conditions hold, we can generalize the Fisher-Tippet theorem to model the maxima of time series. Indeed, the same Maximum Domain of Attractions still hold: however, we raise these distributions to the power of <span class="math inline">\(\theta\)</span>: the extremal index. The extremal index is a measure of dependence in the data. The smaller <span class="math inline">\(\theta\)</span>, the more clustered will be the maxima of the time series.</p>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Calculating the extremal index of a class of stationary sequences<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+    </div>
+  
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//https-david-salazar-github-io.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+  
+  </article>
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

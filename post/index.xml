@@ -6,10 +6,29 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 11 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 17 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Extreme Value Theory for Time Series</title>
+      <link>/2020/06/17/extreme-value-theory-for-time-series/</link>
+      <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/06/17/extreme-value-theory-for-time-series/</guid>
+      <description>The Fisher-Tippet theorem (a type of CLT for the tail events) rests on the assumption that the observed values are independent and identically distributed. However, in any non trivial example, time series will reflect an underlying structure that will create dependence among the observations. Indeed, tail events tend to occur in clusters. Does this mean that we cannot use the Extreme Value Theory (EVT) to model the maxima of a time series?</description>
+    </item>
+    
+    <item>
+      <title>When are GARCH (and friends) models warranted?</title>
+      <link>/2020/06/14/when-are-garch-and-friends-models-warranted/</link>
+      <pubDate>Sun, 14 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/06/14/when-are-garch-and-friends-models-warranted/</guid>
+      <description>In this blogpost, I’ll answer the question, following Nassim Taleb’s latest technical book: Statistical Consequences of Fat Tails, when can we use GARCH (and firends) models? As an example, also following Taleb, I’ll check the resulting conditions with the S&amp;amp;P500.
+What are the obstacles?The Generalized Autoregressive Conditional Heteroskedasticity (GARCH) family of models attempt to model a given time series by exploiting “volatility” clustering (i.e., for some periods volatility is consistently high, for other periods is consistently low).</description>
+    </item>
     
     <item>
       <title>How to not get fooled by the &#34;Empirical Distribution&#34;</title>
