@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.58.3" />
+
+
+<title>Bayesian Data Analysis: Week 3 -&gt; Fitting a Gaussian probability model - Dilettanting Data Science</title>
+<meta property="og:title" content="Bayesian Data Analysis: Week 3 -&gt; Fitting a Gaussian probability model - Dilettanting Data Science">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/turner.jpg"
+         width="200"
+         height="200"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/David-Salazar">GitHub</a></li>
+    
+    <li><a href="https://www.kaggle.com/davidsalazarv95">Kaggle</a></li>
+    
+    <li><a href="https://david-salazar.github.io/">Posts</a></li>
+    
+    <li><a href="https://twitter.com/DavidSalazarVir?lang=en">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">3 min read</span>
+    
+
+    <h1 class="article-title">Bayesian Data Analysis: Week 3 -&gt; Fitting a Gaussian probability model</h1>
+
+    
+    <span class="article-date">2020/06/24</span>
+    
+    
+
+    <div class="article-content">
+      
+
+
+<p>Bayesian Data Analysis (Gelman, Vehtari et. alter) is equals part a great introduction and THE reference for advanced Bayesian Statistics. Luckily, it’s <a href="http://www.stat.columbia.edu/~gelman/book/">freely available online</a>. To make things even better for the online learner, Aki Vehtari (one of the authors) has a set of online lectures and homeworks that go through the basics of Bayesian Data Analysis.</p>
+<p>Instead of going through the homeworks (due to the fear of ruining the fun for future students of Aki’s), I’ll go through some of the examples of the book as case studies. In this blogpost, I’ll (wrongly) estimate the speed of light from the measurements of Simon Newcomb’s 1882 experiments.</p>
+<div id="the-gaussian-probability-model" class="section level2">
+<h2>The Gaussian Probability model</h2>
+<p>When fitting a Gaussian probability model, there are to parameters to estimate: <span class="math inline">\(\mu, \sigma\)</span>. Therefore, we arrive at a joint posterior distribution:</p>
+<p><span class="math display">\[
+y | \mu, \sigma^2 \sim N(\mu, \sigma^2) \\
+p(\mu, \sigma | y) \propto p (y | \mu, \sigma) p(\mu, \sigma)
+\]</span>
+In this case, <span class="math inline">\(\sigma\)</span> is a nuisance parameter: we are only really interested in knowing <span class="math inline">\(\mu\)</span>. The following we assume the non-informative prior:</p>
+<p><span class="math display">\[
+p(\mu, \sigma^2) \propto (\sigma^2)^{-1}
+\]</span></p>
+<div id="posterior-marginal-of-sigma" class="section level3">
+<h3>Posterior marginal of sigma</h3>
+<p>We can show that the marginal posterior distribution for <span class="math inline">\(\sigma\)</span> is:</p>
+<p><span class="math display">\[
+\sigma^2 | y \sim Inv -\chi^2 (n - 1, s^2)
+\]</span>
+Where <span class="math inline">\(s^2\)</span> is the sample variance of the <span class="math inline">\(y_i\)</span>’s.</p>
+</div>
+<div id="marginal-conditional-posterior-for-mu" class="section level3">
+<h3>Marginal Conditional posterior for mu</h3>
+<p>Then:</p>
+<p><span class="math display">\[
+\mu | \sigma^2, y \sim N(\bar y, \sigma^2 / n)
+\]</span>
+&gt; The posterior distribution of <span class="math inline">\(\mu\)</span> can be regarded as a mixture of normal distributions, mixed over the scaled inverse <span class="math inline">\(\chi^2\)</span> distribution for the variance, <span class="math inline">\(\sigma^2\)</span>.</p>
+</div>
+<div id="marginal-posterior-for-mu" class="section level3">
+<h3>Marginal posterior for mu</h3>
+<p><span class="math display">\[
+\dfrac{\mu  - \bar y}{s/\sqrt{n}} | y \sim t_{n-1}
+\]</span></p>
+<p>Which has a nice correspondence with the distribution used for the mean estimator in frequentist statistics in the case of small samples.<br />
+## Fitting it with data</p>
+<p>Then, let’s read the measurements from Newcomb’s experiment:</p>
+<pre class="r"><code>read_delim(&quot;http://www.stat.columbia.edu/~gelman/book/data/light.asc&quot;, 
+                     delim = &quot; &quot;, skip = 3,col_names = F) %&gt;% 
+  pivot_longer(everything()) %&gt;% 
+  select(value) %&gt;% 
+  drop_na()-&gt; measurements
+
+measurements %&gt;% 
+  ggplot(aes(value)) +
+  geom_histogram(binwidth = 1, color = &quot;black&quot;, fill = &quot;dodgerblue4&quot;, alpha = 0.5) +
+  labs(title = &quot;Newcomb&#39;s measurements for the speed of light&quot;,
+       subtitle = &quot;There are clearly problems with the data&quot;,
+       x = &quot;measurement&quot;)</code></pre>
+<p><img src="/post/2020-06-24-bayesian-data-analysis-week-3-fitting-a-gaussian-probability-model_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p>There are clearly some problems with the data. Garbage in, garbage out.</p>
+</div>
+<div id="marginal-for-sigma" class="section level3">
+<h3>Marginal for sigma</h3>
+<p>We therefore can derive the marginal distribution for <span class="math inline">\(\sigma\)</span>:</p>
+<pre class="r"><code>measurements%&gt;% 
+  skimr::skim()</code></pre>
+<table>
+<caption><span id="tab:unnamed-chunk-2">Table 1: </span>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">Piped data</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">66</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">numeric</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">value</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">26.21</td>
+<td align="right">10.75</td>
+<td align="right">-44</td>
+<td align="right">24</td>
+<td align="right">27</td>
+<td align="right">30.75</td>
+<td align="right">40</td>
+<td align="left">▁▁▁▂▇</td>
+</tr>
+</tbody>
+</table>
+<p>Thus:</p>
+<p><span class="math display">\[
+\sigma^2 | y \sim Inv -\chi^2 (65, 10.7^2)
+\]</span></p>
+<p>Whereas for mu we have :</p>
+<p><span class="math display">\[
+\dfrac{\mu  - 26.2}{10.7/\sqrt{66}} | y \sim t_{n-1}
+\]</span>
+In code:</p>
+<pre class="r"><code>rsinvchisq &lt;- function(n, nu, s2, ...) nu*s2 / rchisq(n , nu, ...)
+
+sigma_draw = rinvchisq(1000, 65, 10.7^2)
+mu_draw = rtnew(10000, df = 65, mean = 26.2, scale = 10.7/sqrt(66) )</code></pre>
+<p>The 95% credible interval for our <span class="math inline">\(\mu\)</span> is thus:</p>
+<pre class="r"><code>interval &lt;- rethinking::PI(mu_draw, prob = 0.95)
+lower &lt;- interval[[1]]
+upper &lt;- interval[[2]]
+glue::glue(&quot;The 95% credible interval is thus: {round(lower, 1)}, {round(upper, 1)}&quot;)</code></pre>
+<pre><code>## The 95% credible interval is thus: 23.6, 28.8</code></pre>
+<p>A visualization may help:</p>
+<pre class="r"><code>data.frame(mu_draw) %&gt;% 
+  ggplot(aes(mu_draw)) +
+  geom_histogram(binwidth = 0.1, color = &quot;black&quot;, fill = &quot;dodgerblue4&quot;, alpha = 0.5) +
+  geom_vline(aes(xintercept = lower), color = &quot;red&quot;, linetype = 2) +
+  geom_vline(aes(xintercept = upper), color = &quot;red&quot;, linetype = 2) +
+  geom_vline(aes(xintercept = 33), color = &quot;black&quot;, linetype = 1) +
+  labs(title = &quot;Speed of light: Posterior draws for mu&quot;,
+       subtitle = &quot;Contemporary estimates for the speed of light in the experiment is 33. Garbage in, garbage...&quot;)</code></pre>
+<p><img src="/post/2020-06-24-bayesian-data-analysis-week-3-fitting-a-gaussian-probability-model_files/figure-html/mu-1.png" width="768" /></p>
+</div>
+</div>
+
+    </div>
+  
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//https-david-salazar-github-io.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+  
+  </article>
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/python.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

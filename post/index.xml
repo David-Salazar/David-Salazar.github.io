@@ -6,10 +6,30 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 22 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 24 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Bayesian Data Analysis: Week 3 -&gt; Fitting a Gaussian probability model</title>
+      <link>/2020/06/24/bayesian-data-analysis-week-3-fitting-a-gaussian-probability-model/</link>
+      <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/06/24/bayesian-data-analysis-week-3-fitting-a-gaussian-probability-model/</guid>
+      <description>Bayesian Data Analysis (Gelman, Vehtari et. alter) is equals part a great introduction and THE reference for advanced Bayesian Statistics. Luckily, it’s freely available online. To make things even better for the online learner, Aki Vehtari (one of the authors) has a set of online lectures and homeworks that go through the basics of Bayesian Data Analysis.
+Instead of going through the homeworks (due to the fear of ruining the fun for future students of Aki’s), I’ll go through some of the examples of the book as case studies.</description>
+    </item>
+    
+    <item>
+      <title>Probability Calibration under fat-tails: useless</title>
+      <link>/2020/06/24/probability-calibration-under-fat-tails-useless/</link>
+      <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/06/24/probability-calibration-under-fat-tails-useless/</guid>
+      <description>Probability calibration refers to a manner of evaluating forecasts: the forecast frequency of an event should correspond to the correct frequency of the event happening in real life. Is this truly the mark of a good analysis? Under fat-tails, Nassim Taleb in his book answer with a categorical response NO!
+Probability calibration in the real worldProbability calibration amounts, in the real world, to a binary payoff: a fixed sum is paid off if the event happens.</description>
+    </item>
     
     <item>
       <title>Bayesian Data Analysis: Week 2</title>
