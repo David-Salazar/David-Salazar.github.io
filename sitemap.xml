@@ -3,17 +3,22 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/2020/06/25/bayesian-data-analysis-week-3-exercises/</loc>
-    <lastmod>2020-06-25T00:00:00+00:00</lastmod>
+    <loc>/</loc>
+    <lastmod>2020-06-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/</loc>
-    <lastmod>2020-06-25T00:00:00+00:00</lastmod>
+    <loc>/2020/06/26/gini-index-under-fat-tails/</loc>
+    <lastmod>2020-06-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/post/</loc>
+    <lastmod>2020-06-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2020/06/25/bayesian-data-analysis-week-3-exercises/</loc>
     <lastmod>2020-06-25T00:00:00+00:00</lastmod>
   </url>
   

@@ -6,10 +6,20 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 25 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 26 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Gini Index under Fat-Tails</title>
+      <link>/2020/06/26/gini-index-under-fat-tails/</link>
+      <pubDate>Fri, 26 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/06/26/gini-index-under-fat-tails/</guid>
+      <description>I have recently been exploring Nassim Taleb’s latest technical book: Statistical Consequences of Fat Tails. In this blogpost, I’ll follow Taleb’s exposition of the Gini Index under fat-tails in Chapter 13 of his book.
+Intuitively, if we use the “empirical distribution” to estimate the Gini Index, under fat-tails, we underestimate the tail of the distribution and thus underestimate the Gini index. This is yet another example of how we fool ourselves when we are using the “empirical” distribution.</description>
+    </item>
     
     <item>
       <title>Bayesian Data Analysis: Week 3-&gt; Exercises</title>
