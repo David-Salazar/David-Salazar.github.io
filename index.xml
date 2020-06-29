@@ -6,10 +6,20 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 26 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 27 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Bayesian Data Analysis: Week 4 -&gt; Importance Sampling</title>
+      <link>/2020/06/27/bayesian-data-analysis-week-4-importance-sampling/</link>
+      <pubDate>Sat, 27 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/06/27/bayesian-data-analysis-week-4-importance-sampling/</guid>
+      <description>Bayesian Data Analysis (Gelman, Vehtari et. alter) is equals part a great introduction and THE reference for advanced Bayesian Statistics. Luckily, it’s freely available online. To make things even better for the online learner, Aki Vehtari (one of the authors) has a set of online lectures and homeworks that go through the basics of Bayesian Data Analysis.
+In this blogpost, I’ll go over one of the main topics of Week 4: Importance Sampling; I’ll also solve a couple of the exercises for Chapter 10 of the book.</description>
+    </item>
     
     <item>
       <title>Gini Index under Fat-Tails</title>
