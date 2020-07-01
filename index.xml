@@ -6,10 +6,20 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 27 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 29 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Bayesian Data Analysis: Week 5 -&gt; Metropolis </title>
+      <link>/2020/06/29/bayesian-data-analysis-week-5-metropolis/</link>
+      <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/06/29/bayesian-data-analysis-week-5-metropolis/</guid>
+      <description>Bayesian Data Analysis (Gelman, Vehtari et. alter) is equals part a great introduction and THE reference for advanced Bayesian Statistics. Luckily, it’s freely available online. To make things even better for the online learner, Aki Vehtari (one of the authors) has a set of online lectures and homeworks that go through the basics of Bayesian Data Analysis.
+So far in the course, we have seen how the main obstacle in the way of performing Bayesian Statistics is the computation of the posterior.</description>
+    </item>
     
     <item>
       <title>Bayesian Data Analysis: Week 4 -&gt; Importance Sampling</title>

@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.58.3" />
+
+
+<title>Bayesian Data Analysis: Week 5 -&gt; Metropolis  - Dilettanting Data Science</title>
+<meta property="og:title" content="Bayesian Data Analysis: Week 5 -&gt; Metropolis  - Dilettanting Data Science">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/turner.jpg"
+         width="200"
+         height="200"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/David-Salazar">GitHub</a></li>
+    
+    <li><a href="https://www.kaggle.com/davidsalazarv95">Kaggle</a></li>
+    
+    <li><a href="https://david-salazar.github.io/">Posts</a></li>
+    
+    <li><a href="https://twitter.com/DavidSalazarVir?lang=en">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">15 min read</span>
+    
+
+    <h1 class="article-title">Bayesian Data Analysis: Week 5 -&gt; Metropolis </h1>
+
+    
+    <span class="article-date">2020/06/29</span>
+    
+    
+
+    <div class="article-content">
+      
+
+
+<p>Bayesian Data Analysis (Gelman, Vehtari et. alter) is equals part a great introduction and THE reference for advanced Bayesian Statistics. Luckily, it’s <a href="http://www.stat.columbia.edu/~gelman/book/">freely available online</a>. To make things even better for the online learner, Aki Vehtari (one of the authors) has a set of online lectures and homeworks that go through the basics of Bayesian Data Analysis.</p>
+<p>So far in the course, we have seen how the main obstacle in the way of performing Bayesian Statistics is the computation of the posterior. Thus, we must ask ourselves: if we <em>cannot fully</em> compute the <strong>posterior</strong>, but we <em>can</em> evaluate an unnormalized version, how can we <strong>approximate</strong> the posterior distribution?</p>
+<p>In this week, we started analyzing a promising alternative: <strong>Monte-Carlo Markov Chains (MCMC)</strong>. In this blogpost, I’ll give a succinct overview of the most basic MCMC algorithm: the <em>Metropolis Algorithm</em> and quick example of it with some real data.</p>
+<div id="a-monte-carlo-markov-chain" class="section level2">
+<h2>A Monte-Carlo Markov Chain</h2>
+<p>The <strong>Metropolis</strong> Algorithm is just a random walk through parameter space. At each iteration of the algorithm, say <span class="math inline">\(t\)</span>, where we are depends only on where we were at <span class="math inline">\(t-1\)</span>. That is <span class="math inline">\(P(\theta_t | \theta_{t-1}, \theta_{t-2}, \cdots, \theta_{0}) = P(\theta_t | \theta_{t-1}\)</span>. This is the <em>Markov</em> part. At each time step, then, we must define transition distribution: the probability of <span class="math inline">\(P(\theta_t | \theta_{t-1})\)</span>.</p>
+<p>The Monte-Carlo part comes because we use these different samples <span class="math inline">\((\theta_{t-1}, \theta_{t-2}, \cdots, \theta_{0})\)</span> to estimate the posterior distribution. We can only do this if at time step <span class="math inline">\(T \to \infty\)</span>, <span class="math inline">\(P(\theta_T) = P(\theta_T | y)\)</span>. That is, if the stationary distribution (the probability that we are at any given point in time <span class="math inline">\(T\)</span>) is the target posterior distribution. The <em>challenge</em> then, is <strong>how to engineer each transition distribution such that the stationary distribution is the posterior.</strong> We will check how the Metropolis algorithm solves this problem with a numerical example.</p>
+<p>If we can construct such a Markov Chain, then our <em>Monte-Carlo estimate</em>s using these samples will be <strong>asymptotically consistent</strong>. However, two problems arise: first, there’s an <em>auto-correlation</em> in our samples from the Markov chains. Although the Central Limit Theorem still holds, our <strong>effective sample size for our Monte-Carlo estimates will be lower than our number of Markov Chain iterations</strong>. Secondly, we cannot know if we have run the Markov Chain long enough such that our samples are in proportion according to their stationary distribution: that is, <strong>we cannot know if the chains have converged toward the posterior distribution</strong>. We will check both problems with convergence diagnostics once we have worked out a numerical example of the Metropolis algorithm.</p>
+</div>
+<div id="the-metropolis-algorithm" class="section level2">
+<h2>The Metropolis Algorithm</h2>
+<p>The Metropolis algorithm is thus defined. A random walk through parameter space such that at each iteration of the Markov Chain, our samples are corrected such that they approximate our posterior distribution. In particular, begin at some point <span class="math inline">\(\theta_{0}\)</span>. Then, we generate a proposed move by direct sampling from a proposal distribution: say a normal centered around <span class="math inline">\(\theta_{0}\)</span>. The suggestion then is <span class="math inline">\(\theta^*\)</span>. We will then decide if we move to <span class="math inline">\(\theta^*\)</span> by comparing the ratio of unnormalized posterior distribution densities at <span class="math inline">\(\theta^*\)</span> and <span class="math inline">\(\theta_{0}\)</span>.</p>
+<p><span class="math display">\[
+r = \dfrac{q(\theta^*|y)}{q(\theta_0| y)}
+\]</span>
+Which, given that both are normalized by the same constant in the posterior distribution, is equivalent to comparing the posterior densities at both points:</p>
+<p><span class="math display">\[
+ r = \dfrac{q(\theta^*|y)}{q(\theta_0| y)} = \dfrac{q(\theta^*|y) / \int q(\theta|y) d\theta}{q(\theta_0| y)/ \int q(\theta|y) d\theta} =  \dfrac{p(\theta^*|y)}{p(\theta_0 | y)}
+\]</span>
+Finally, we decide whether to move to <span class="math inline">\(\theta^*\)</span> by a Bernoulli trial with probability <span class="math inline">\(min(r, 1)\)</span>. That is:</p>
+<ul>
+<li>if the proposed jump increases the posterior (<span class="math inline">\(p(\theta^*|y) &gt; p(\theta_0|y)\)</span>), then our Markov Chain moves to <span class="math inline">\(\theta^*\)</span> and we set <span class="math inline">\(\theta_t = \theta^*\)</span>.</li>
+<li>if the proposed jump decreases the posterior (<span class="math inline">\(p(\theta^*|y) &lt; p(\theta_0|y)\)</span>), then our Markov Chain then we may or may not move to <span class="math inline">\(\theta^*\)</span>. The probability that we do move decreases as the decreased density resulting from the jump increases.</li>
+</ul>
+<p>Therefore:</p>
+<blockquote>
+<p>The Metropolis algorithm can thus be viewed as a stochastic version of a stepwise mode-finding algorithm, always accepting steps that increase the density until it finds the mode and then only sometimes accepting steps that decrease the posterior density.</p>
+</blockquote>
+<p>Thus, as long as the algorithm has run long enough to find the posterior mode, <strong>and the area around the mode is a good representation of the overall posterior</strong>, the Metropolis Algorithm will work.</p>
+</div>
+<div id="an-example-of-the-metropolis-algorithm" class="section level2">
+<h2>An example of the Metropolis Algorithm</h2>
+<p>The data come from the excellent Bayesian course <a href="https://xcelab.net/rm/statistical-rethinking/">Statistical Rethinking</a>. Which is the best statistics course that I’ve ever taken.</p>
+<pre class="r"><code>data(&quot;Howell1&quot;)
+heights &lt;- Howell1
+skimr::skim(heights)</code></pre>
+<table>
+<caption><span id="tab:unnamed-chunk-2">Table 1: </span>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">heights</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">544</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">4</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">numeric</td>
+<td align="left">4</td>
+</tr>
+<tr class="odd">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">height</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">138.26</td>
+<td align="right">27.60</td>
+<td align="right">53.98</td>
+<td align="right">125.10</td>
+<td align="right">148.59</td>
+<td align="right">157.48</td>
+<td align="right">179.07</td>
+<td align="left">▁▂▂▇▇</td>
+</tr>
+<tr class="even">
+<td align="left">weight</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">35.61</td>
+<td align="right">14.72</td>
+<td align="right">4.25</td>
+<td align="right">22.01</td>
+<td align="right">40.06</td>
+<td align="right">47.21</td>
+<td align="right">62.99</td>
+<td align="left">▃▂▃▇▂</td>
+</tr>
+<tr class="odd">
+<td align="left">age</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">29.34</td>
+<td align="right">20.75</td>
+<td align="right">0.00</td>
+<td align="right">12.00</td>
+<td align="right">27.00</td>
+<td align="right">43.00</td>
+<td align="right">88.00</td>
+<td align="left">▇▆▅▂▁</td>
+</tr>
+<tr class="even">
+<td align="left">male</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.47</td>
+<td align="right">0.50</td>
+<td align="right">0.00</td>
+<td align="right">0.00</td>
+<td align="right">0.00</td>
+<td align="right">1.00</td>
+<td align="right">1.00</td>
+<td align="left">▇▁▁▁▇</td>
+</tr>
+</tbody>
+</table>
+<p>We will therefore model a very simple Gaussian probability model for the height:</p>
+<p><span class="math display">\[ 
+height_i \sim Normal(\mu, \sigma) \\
+\mu \sim Normal(150, 20) \\
+\sigma \sim Normal(5, 10)
+\]</span></p>
+<p>Thus, for a given <span class="math inline">\(\mu, \sigma\)</span>, the model’s log-likelihood is thus:</p>
+<pre class="r"><code>model_log_likelihood &lt;- function(mu, sigma) {
+  sum(dnorm(heights$height, mu, sigma, log = TRUE))
+}</code></pre>
+<p>The unnormalized posterior is thus the log-likelihood plus the prior density log:</p>
+<pre class="r"><code>log_unnormalized_posterior &lt;- function(mu, sigma) {
+  dnorm(mu, 150, 20, log = TRUE) + dnorm(sigma, 5, 10, log = TRUE) + model_log_likelihood(mu, sigma)
+}</code></pre>
+<p>Therefore, if our proposal algorithm is a normal centered around the past iteration with scale of 5 for <span class="math inline">\(\mu\)</span> and scale of 2 for <span class="math inline">\(\sigma\)</span>, the metropolis algorithm can be written thus:</p>
+<pre class="r"><code>density_ratio &lt;- function(alpha_propose, alpha_previous, sigma_propose, sigma_previous) {
+  exp(log_unnormalized_posterior(alpha_propose, sigma_propose) -  log_unnormalized_posterior(alpha_previous, sigma_previous))
+}
+
+single_metropolis &lt;- function(total_iter = 10000) {
+    
+  alpha &lt;- vector(length = total_iter)
+  sigma &lt;- vector(length = total_iter)
+  alpha[1] &lt;- runif(1, min = 100, 150) # initialize the chains at random points
+  sigma[1] &lt;- runif(1, min = 10, 40) # initialize the chains at random points
+  for (i in 2:total_iter) {
+    
+    # sample proposal
+    alpha_propose &lt;- rnorm(1, mean = alpha[i-1], sd = 5)
+    sigma_propose &lt;- rnorm(1, mean = sigma[i-1], sd = 2)
+    # compare posterior at past and proposal
+    ratio &lt;- density_ratio(alpha_propose, alpha[i-1], sigma_propose, sigma[i-1])
+    ratio &lt;- min(1, ratio) 
+    # check whether you move
+    bool_move &lt;- rbernoulli(1, p = ratio)
+    
+    if (bool_move == 1) {
+      alpha[i] &lt;- alpha_propose
+      sigma[i] &lt;- sigma_propose
+    }
+    
+    else{
+      alpha[i] &lt;- alpha[i-1]
+      sigma[i] &lt;- sigma[i-1]
+    }
+    
+  }
+  list(alpha = alpha[5001:total_iter], sigma = sigma[5001:total_iter])
+}</code></pre>
+<p>Notice that we do not use all of our iterations. In fact, we discard half of them. The reason? At the beginning of the chain, the probabilities have not converged to that of the stationary distribution. Thus, they are not correct samples from the posterior distribution. This beginning period serves to <em>warm-up</em> the Chains long enough until they find the stationary distribution and start yielding usable samples from the posterior.</p>
+<p>To run multiple chains of the Metropolis algorithm:</p>
+<pre class="r"><code>multiple_metropolis &lt;- function(chains = 4) {
+  alpha &lt;- list()
+  sigma &lt;- list()
+  for (chain in 1:chains) {
+    
+    result_chain &lt;- single_metropolis()
+    alpha[[chain]] &lt;- result_chain[[1]]
+    sigma[[chain]] &lt;- result_chain[[2]]
+  }
+  list(alpha = alpha, sigma = sigma)
+}
+
+results &lt;- multiple_metropolis()</code></pre>
+<p>Our results, then, can be summarised just as we work with Monte-Carlo samples from other methods. For example, the posterior mean can is thus:</p>
+<pre class="r"><code>do.call(cbind, results$alpha) %&gt;% 
+  data.frame(iter = 1:5000, .) %&gt;% 
+  pivot_longer(-iter, values_to = &quot;alpha&quot;) %&gt;% 
+  select(-name) %&gt;% 
+  left_join(do.call(cbind, results$sigma) %&gt;% 
+    data.frame(iter = 1:5000, .) %&gt;% 
+    pivot_longer(-iter, values_to = &quot;sigma&quot;) %&gt;% 
+    select(-name)) -&gt; results_plot</code></pre>
+<pre><code>## Joining, by = &quot;iter&quot;</code></pre>
+<pre class="r"><code>results_plot %&gt;% 
+  select(-iter) %&gt;% 
+  summarise_all(mean)</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   alpha sigma
+##   &lt;dbl&gt; &lt;dbl&gt;
+## 1  138.  27.5</code></pre>
+<p>We can visualize the samples from the posterior:</p>
+<pre class="r"><code>results_plot %&gt;% 
+  ggplot(aes(alpha, sigma)) +
+  geom_jitter(alpha = 0.1) +
+  labs(title = &quot;Samples from the posterior&quot;,
+       subtitle = &quot;Posterior obtained with Metropolis algorithm&quot;)</code></pre>
+<p><img src="/post/2020-06-29-bayesian-data-analysis-week-5-metropolis_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+<div id="convergence-diagnostics" class="section level2">
+<h2>Convergence Diagnostics</h2>
+<p>If we run multiple chains, we can check whether each chain converged to explore the same areas of the parameter space in the same proportions. If the chains are in not in agreement between each other, then, it’s a sure sign that the chains have yet to converge. We can visualize the path that each chain took through the parameter space with trace plots:</p>
+<pre class="r"><code>do.call(cbind, results$alpha) %&gt;% 
+  data.frame(., iter = 1:5000) %&gt;% 
+  pivot_longer(-iter, names_to = &quot;chain&quot;, names_prefix = &quot;X&quot;,
+               values_to = &quot;alpha&quot;) %&gt;% 
+  ggplot(aes(iter, alpha, color = chain)) +
+  geom_line() +
+  scale_color_brewer(palette = &quot;Set2&quot;) +
+  labs(title = &quot;Trace plot for alpha&quot;,
+       subtitle = &quot;The chains have converged to explore the same areas&quot;)</code></pre>
+<p><img src="/post/2020-06-29-bayesian-data-analysis-week-5-metropolis_files/figure-html/alpha-trace-1.png" width="768" /></p>
+<pre class="r"><code>do.call(cbind, results$sigma) %&gt;% 
+  data.frame(., iter = 1:5000) %&gt;% 
+  pivot_longer(-iter, names_to = &quot;chain&quot;, names_prefix = &quot;X&quot;,
+               values_to = &quot;sigma&quot;) %&gt;% 
+  ggplot(aes(iter, sigma, color = chain)) +
+  geom_line() +
+  scale_color_brewer(palette = &quot;Set2&quot;) +
+  labs(title = &quot;Trace plot for sigma&quot;,
+       subtitle = &quot;The chains have converged to explore the same areas&quot;)</code></pre>
+<p><img src="/post/2020-06-29-bayesian-data-analysis-week-5-metropolis_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>A numerical convergence-diagnostic is <span class="math inline">\(\widehat R\)</span>. It measures agreement between the chains by comparing the within chain variance <span class="math inline">\(W\)</span> with the estimated variance using all of the available data <span class="math inline">\(var(\theta | y)\)</span>. If all of the chains have converged, <span class="math inline">\(W\)</span> and <span class="math inline">\(var(\theta | y)\)</span> should be equal. Thus, <span class="math inline">\(\widehat R\)</span>, which is the squared root of their ratio should be 1:</p>
+<p><span class="math display">\[
+\widehat R = \sqrt{\dfrac{Var(\theta | y)}{W}}
+\]</span>
+However, if the chains are in disagreement between each other because they have not converged, they will underestimate the total variance <span class="math inline">\(Var(\theta | y)\)</span>. Why? Because they have yet to explore the full posterior scale. Thus, <span class="math inline">\(\widehat R\)</span> will be larger than 1. As the chains converge (as the number of iterations grows), we expect <span class="math inline">\(\widehat R\)</span> to converge to 1 from above.</p>
+<pre class="r"><code>iterations &lt;- c(20, 50, 100, 5000)
+names(iterations) &lt;- c(20, 50, 100, 5000)
+map_df(iterations, ~ rstan::Rhat(do.call(cbind, results$alpha)[1:.x])) %&gt;% 
+  pivot_longer(everything(), names_to = &quot;iterations&quot;, values_to = &quot;Rhat&quot;) %&gt;% 
+  gt::gt() %&gt;% 
+  gt::fmt_number(vars(Rhat))</code></pre>
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#bpkkwkmned .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#bpkkwkmned .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#bpkkwkmned .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#bpkkwkmned .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#bpkkwkmned .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bpkkwkmned .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#bpkkwkmned .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#bpkkwkmned .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#bpkkwkmned .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#bpkkwkmned .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#bpkkwkmned .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#bpkkwkmned .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#bpkkwkmned .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#bpkkwkmned .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#bpkkwkmned .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#bpkkwkmned .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#bpkkwkmned .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#bpkkwkmned .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#bpkkwkmned .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bpkkwkmned .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#bpkkwkmned .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bpkkwkmned .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#bpkkwkmned .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bpkkwkmned .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#bpkkwkmned .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#bpkkwkmned .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#bpkkwkmned .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#bpkkwkmned .gt_left {
+  text-align: left;
+}
+
+#bpkkwkmned .gt_center {
+  text-align: center;
+}
+
+#bpkkwkmned .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#bpkkwkmned .gt_font_normal {
+  font-weight: normal;
+}
+
+#bpkkwkmned .gt_font_bold {
+  font-weight: bold;
+}
+
+#bpkkwkmned .gt_font_italic {
+  font-style: italic;
+}
+
+#bpkkwkmned .gt_super {
+  font-size: 65%;
+}
+
+#bpkkwkmned .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="bpkkwkmned" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">iterations</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Rhat</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_left">20</td>
+      <td class="gt_row gt_right">1.82</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">50</td>
+      <td class="gt_row gt_right">1.16</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">100</td>
+      <td class="gt_row gt_right">1.07</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">5000</td>
+      <td class="gt_row gt_right">1.01</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+<p>Now, for sigma:</p>
+<pre class="r"><code>iterations &lt;- c(20, 50, 100, 5000)
+names(iterations) &lt;- c(20, 50, 100, 5000)
+map_df(iterations, ~ rstan::Rhat(do.call(cbind, results$sigma)[1:.x])) %&gt;% 
+  pivot_longer(everything(), names_to = &quot;iterations&quot;, values_to = &quot;Rhat&quot;) %&gt;% 
+  gt::gt() %&gt;% 
+  gt::fmt_number(vars(Rhat))</code></pre>
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#iqnffsqwqg .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#iqnffsqwqg .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#iqnffsqwqg .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#iqnffsqwqg .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#iqnffsqwqg .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#iqnffsqwqg .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#iqnffsqwqg .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#iqnffsqwqg .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#iqnffsqwqg .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#iqnffsqwqg .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#iqnffsqwqg .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#iqnffsqwqg .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#iqnffsqwqg .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#iqnffsqwqg .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#iqnffsqwqg .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#iqnffsqwqg .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#iqnffsqwqg .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#iqnffsqwqg .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#iqnffsqwqg .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#iqnffsqwqg .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#iqnffsqwqg .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#iqnffsqwqg .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#iqnffsqwqg .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#iqnffsqwqg .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#iqnffsqwqg .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#iqnffsqwqg .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#iqnffsqwqg .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#iqnffsqwqg .gt_left {
+  text-align: left;
+}
+
+#iqnffsqwqg .gt_center {
+  text-align: center;
+}
+
+#iqnffsqwqg .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#iqnffsqwqg .gt_font_normal {
+  font-weight: normal;
+}
+
+#iqnffsqwqg .gt_font_bold {
+  font-weight: bold;
+}
+
+#iqnffsqwqg .gt_font_italic {
+  font-style: italic;
+}
+
+#iqnffsqwqg .gt_super {
+  font-size: 65%;
+}
+
+#iqnffsqwqg .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="iqnffsqwqg" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">iterations</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Rhat</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_left">20</td>
+      <td class="gt_row gt_right">1.77</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">50</td>
+      <td class="gt_row gt_right">1.04</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">100</td>
+      <td class="gt_row gt_right">1.22</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">5000</td>
+      <td class="gt_row gt_right">1.01</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+</div>
+<div id="estimating-the-effective-samples-sizes" class="section level2">
+<h2>Estimating the effective samples sizes</h2>
+<p>As we said before, the sample size is not equal to the number of iterations times the number of chains. There’s an autocorrelation between the samples that we must take into account to find out how many equivalent independent samples from the posterior our iterations represent. To do so, we correct the number of total iterations by the sum of all autocorrelation lags <span class="math inline">\(\rho_t\)</span>:</p>
+<p><span class="math display">\[
+s_{eff} = \dfrac{iterations * chains}{1 + 2\sum^{\infty} \rho_t}
+\]</span></p>
+<p>Which can be estimated for alpha thus:</p>
+<pre class="r"><code>rstan::ess_bulk(do.call(cbind, results$alpha))</code></pre>
+<pre><code>## [1] 1469.648</code></pre>
+<p>We ran 5,000 iterations. Yet, we only have an effective sample size much smaller. Finally, for sigma:</p>
+<pre class="r"><code>rstan::ess_bulk(do.call(cbind, results$sigma))</code></pre>
+<pre><code>## [1] 1223.447</code></pre>
+</div>
+
+    </div>
+  
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//https-david-salazar-github-io.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+  
+  </article>
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/python.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
