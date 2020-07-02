@@ -173,7 +173,7 @@ from the neighborhood between these two extremes known as the typical set</p>
 <p>Therefore, <strong>the Metropolis Algorithm in high dimensions results in inaction</strong>: the Metropolis algorithm will end up without moving at all for a long time. Thus, being a waste of our computational resources.</p>
 <p>In two dimensions, we can visualize a typical set as a thin donut: at any point within it, there’s only a narrow ridge of points next to it that also belong to the typical set. <strong>Any ad-hoc proposal distribution that guesses in which direction we should move will be biased to propose points outside the typical set that will be rejected once we compare the Metropolis acceptance probability</strong>.</p>
 <p>Chi Feng <a href="https://chi-feng.github.io/mcmc-demo/">has awesome interactive visualizations</a> that represent exactly this conundrum:</p>
-<p><img src="/images/metropolis.GIF" /></p>
+<p><img src="/images/metropolis.gif" /></p>
 </div>
 <div id="hamiltonian-monte-carlo" class="section level1">
 <h1>Hamiltonian Monte-Carlo</h1>
@@ -218,7 +218,7 @@ p_0 \sim \pi(p | q)
 <p>Because we have followed the vector field in phase space and projected the momenta away, if we started in the typical set, our proposal is guaranteed to be on the typical set, too. <strong>Thus, allowing extremely efficient exploration of the typical set.</strong></p>
 <p>Finally, we will accept or reject our proposed jump with a Metropolis-Hastings ratio.</p>
 <p>We can visualize the incredible efficiency that Hamiltonian Monte Carlo can deliver. In the exact same example as with the donut we just saw with Metropolis, HMC samples much more efficiently.</p>
-<p><img src="/images/hmc.GIF" /></p>
+<p><img src="/images/hmc.gif" /></p>
 </div>
 </div>
 </div>
