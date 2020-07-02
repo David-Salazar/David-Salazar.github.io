@@ -6,10 +6,20 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 29 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 02 Jul 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>BDA Week 6: MCMC in High Dimensions, Hamiltonian Monte Carlo</title>
+      <link>/2020/07/02/bda-week-6-mcmc-in-high-dimensions-hamiltonian-monte-carlo/</link>
+      <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/07/02/bda-week-6-mcmc-in-high-dimensions-hamiltonian-monte-carlo/</guid>
+      <description>In the last couple of weeks, We’ve seen how the most difficult part of Bayesian Statistics is computing the posterior distribution. In particular, in the last week, we’ve studied the Metropolis Algorithm. In this blogpost, I’ll study why Metropolis does not scale well enough to high dimensions and give an intuitive explanation of our best alternative: Hamiltonian Monte Carlo (HMC).
+This blogpost is my personal digestion of the excellent content that Michael Betancourt has put out there to explain HMC.</description>
+    </item>
     
     <item>
       <title>Bayesian Data Analysis: Week 5 -&gt; Metropolis </title>
