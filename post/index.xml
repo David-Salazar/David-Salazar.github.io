@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 02 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 05 Jul 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Tail Risk of diseases in R</title>
+      <link>/2020/07/05/tail-risk-of-diseases-in-r/</link>
+      <pubDate>Sun, 05 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/07/05/tail-risk-of-diseases-in-r/</guid>
+      <description>The DataThe plotsMax-to-Sum ratioHistogramThe Zipf plotMean Excess PlotFitting the tailWait a moment: infinite casualties?Extreme Value theory on the dual observationsMaximum Likelihood estimateBayesian modelSimulating fake dataFitting the modelPosterior predictive checksConvergence diagnosticsStressing the dataMeasurement errorInfluential observationsConclusionPasquale Cirillo and Nassim Taleb published a short, interesting and important paper on the Tail Risk of contagious diseases.</description>
+    </item>
     
     <item>
       <title>BDA Week 6: MCMC in High Dimensions, Hamiltonian Monte Carlo</title>

@@ -1,0 +1,82 @@
+name,start_year,end_year,lower,avg_est,upper_est,rescaled_avg_est,population
+Plague of Athens,-429,-426,75,88,100,13376,50
+Antonine Plague,165,180,5000,7500,10000,283355,202
+Plague of Cyprian,250,266,1000,1000,1000,37227,205
+Plague of Justinian,541,542,25000,62500,100000,2246550,213
+Plague of Amida,562,562,30,30,30,1078,213
+Roman Plague of 590,590,590,10,20,30,719,213
+Plague of Sheroe,627,628,100,100,100,3594,213
+Plague of the British Isles,664,689,150,175,200,6290,213
+Plague of Basra,688,689,200,200,200,7189,213
+Japanese smallpox epidemic,735,737,2000,2000,2000,67690,226
+Black Death,1331,1353,75000,137500,200000,2678283,392
+Sweating sickness,1485,1551,10,10,10,166,461
+"Smallpox Epidemic in
+Mexico",1520,1520,5000,6500,8000,107684,461
+"Cocoliztli Epidemic of
+1545?1548",1545,1548,5000,10000,15000,165668,461
+1563 London plague,1562,1564,20,20,20,277,554
+Cocoliztli epidemic of 1576,1576,1580,2000,2250,2500,31045,554
+1592?93 London plague,1592,1593,20,20,20,275,554
+Malta plague epidemic,1592,1593,3,3,3,41,554
+Plague in Spain,1596,1602,600,650,700,8969,554
+New Engliand epidemic,1616,1620,7,7,7,97,554
+Italian plague of 1629?1631,1629,1631,280,280,280,3863,554
+Great Plague of Sevilla,1647,1652,150,150,150,2070,554
+Plague in Kingdom of Naples,1656,1658,1250,1250,1250,15840,603
+Plague in the Netherlands,1663,1664,24,24,24,306,603
+Great Plague of London,1665,1666,100,100,100,1267,603
+Plague in France,1668,1668,40,40,40,507,603
+Malta plague epidemic,1675,1676,11,11,11,143,603
+Great Plague of Vienna,1679,1679,76,76,76,963,603
+"Great Northern War plague
+outbreak",1700,1721,176,192,208,2427,603
+"Great Smallpox Epidemic in
+Iceland",1707,1709,18,18,18,228,603
+Great Plague of Marseille,1720,1722,100,100,100,1267,603
+Great Plague of 1738,1738,1738,50,50,50,470,814
+Russian plague of 1770?1772,1770,1772,50,50,50,470,814
+Persian Plague,1772,1772,2000,2000,2000,15444,990
+Ottoman Plague Epidemic,1812,1819,300,300,300,2317,990
+Caragea?s plague,1813,1813,60,60,60,463,990
+Malta plague epidemic,1813,1814,5,5,5,35,990
+First cholera pandemic,1816,1826,100,100,100,772,990
+Second cholera pandemic,1829,1851,100,100,100,772,990
+Typhus epidemic in Canada,1847,1848,20,20,20,154,990
+Third cholera pandemic,1852,1860,1000,1000,1000,6053,1263
+"Cholera epidemic of
+Copenhagen",1853,1853,5,5,5,29,1263
+Third plague pandemic,1855,1960,15000,18500,22000,111986,1263
+Smallpox in British Columbia,1862,1863,3,3,3,18,1263
+Fourth cholera pandemic,1863,1875,600,600,600,3632,1263
+Fiji Measles outbreak,1875,1875,40,40,40,242,1263
+Yellow Fever,1880,1900,100,125,150,757,1263
+Fifth cholera pandemic,1881,1896,9,9,9,42,1654
+Smallpox in Montreal,1885,1885,3,3,3,14,1654
+Russian flu,1889,1890,1000,1000,1000,4620,1654
+Sixth cholera pandemic,1899,1923,800,800,800,3696,1654
+China plague,1910,1912,40,40,40,185,1654
+"Encephalitis lethargica
+pandemic",1915,1926,1500,1500,1500,6930,1654
+American polio epidemic,1916,1916,6,7,7,30,1654
+Spanish flu,1918,1920,17000,58500,100000,193789,2307
+HIV/AIDS pandemic,1920,2020,25000,30000,35000,61768,3712
+Poliomyelitis in USA,1946,1946,2,2,2,5,2948
+Asian flu,1957,1958,2000,2000,2000,5186,2948
+Hong Kong flu,1968,1969,1000,1000,1000,2102,3637
+London flu,1972,1973,1,1,1,2,3866
+Smallpox epidemic of India,1974,1974,15,15,15,29,4016
+"Zimbabwean cholera
+outbreak",2008,2009,4,4,4,5,6788
+Swine Flu,2009,2009,152,364,575,409,6788
+Haiti cholera outbreak,2010,2020,10,10,10,11,7253
+Measles in D.R. Congo,2011,1018,5,5,5,5,7253
+Ebola in West Africa,2013,2016,11,11,11,12,7176
+Indian swine flu outbreak,2015,2015,2,2,2,2,7253
+Yemen cholera outbreak,2016,2020,4,4,4,4,7643
+"2018?19 Kivu Ebola
+epidemic",2018,2020,2,2,3,2,7643
+"2019-20 COVID-19
+Pandemic",2019,2020,117,133.5,150,50,7643
+Measles in D.R. Congo,2019,2020,5,5,5,5,7643
+Dengue fever,2019,2020,2,2,2,2,7643
