@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 05 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 08 Jul 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>BDA week 7: LOO and its diagnostics</title>
+      <link>/2020/07/08/bda-week-7-loo-and-its-diagnostics/</link>
+      <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/07/08/bda-week-7-loo-and-its-diagnostics/</guid>
+      <description>Once Stan’s implementation of HMC has run its magic, we finally have samples from the posterior distribution \(\pi (\theta | y))\). We can then run posterior predictive checks and hopefully our samples looks plausible under our posterior. Nevertheless, this is just an internal validation check: we expect more from our model. We expect it to hold under an external validation check: never seen observations, once predicted, should also look plausible under our posterior.</description>
+    </item>
     
     <item>
       <title>Tail Risk of diseases in R</title>
