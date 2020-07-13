@@ -6,10 +6,20 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 08 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 10 Jul 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>BDA Week 8: Bayesian Decision Analysis</title>
+      <link>/2020/07/10/bda-week-8-bayesian-decision-analysis/</link>
+      <pubDate>Fri, 10 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/07/10/bda-week-8-bayesian-decision-analysis/</guid>
+      <description>Many if not most statistical analyses are performed for the ultimate goal of decision making. Bayesian Statistics has the advantage of direct use of probability to quantify the uncertainty around unobserved quantities of interest: whether those are parameters or predictions, we end up with a posterior distribution.
+Indeed, our posterior predictions interact uniquely for each possible action \(d\) we can take to create a unique distribution of our utility \(U(x)|d\).</description>
+    </item>
     
     <item>
       <title>BDA week 7: LOO and its diagnostics</title>
