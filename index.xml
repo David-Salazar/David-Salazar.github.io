@@ -6,10 +6,20 @@
     <description>Recent content on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 10 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 13 Jul 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>BDA Week 9: Large Sample Theory for the Posterior</title>
+      <link>/2020/07/13/bda-week-9-large-sample-theory-for-the-posterior/</link>
+      <pubDate>Mon, 13 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/07/13/bda-week-9-large-sample-theory-for-the-posterior/</guid>
+      <description>As Richard McElreath says in his fantastic Statistics course, Frequentist statistics is more a framework to evaluate estimators than a framework for deriving them. Therefore, we can use frequentist tools to evaluate the posterior. In particular, what happens to the posterior as more and more data arrive from the same sampling distribution?
+In this blogpost, I’ll follow chapter 4 of Bayesian Data Analysis and the material in week 9 of Aki Vehtari’s course to study the Posterior Distribution under the framework of Large Sample Theory.</description>
+    </item>
     
     <item>
       <title>BDA Week 8: Bayesian Decision Analysis</title>

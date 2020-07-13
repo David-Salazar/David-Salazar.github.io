@@ -63,7 +63,7 @@
 
   <article class="article">
     
-    <span class="article-duration">11 min read</span>
+    <span class="article-duration">12 min read</span>
     
 
     <h1 class="article-title">BDA Week 6: MCMC in High Dimensions, Hamiltonian Monte Carlo</h1>
@@ -173,7 +173,11 @@ from the neighborhood between these two extremes known as the typical set</p>
 <p>Therefore, <strong>the Metropolis Algorithm in high dimensions results in inaction</strong>: the Metropolis algorithm will end up without moving at all for a long time. Thus, being a waste of our computational resources.</p>
 <p>In two dimensions, we can visualize a typical set as a thin donut: at any point within it, there’s only a narrow ridge of points next to it that also belong to the typical set. <strong>Any ad-hoc proposal distribution that guesses in which direction we should move will be biased to propose points outside the typical set that will be rejected once we compare the Metropolis acceptance probability</strong>.</p>
 <p>Chi Feng <a href="https://chi-feng.github.io/mcmc-demo/">has awesome interactive visualizations</a> that represent exactly this conundrum:</p>
-<p><img src="/images/metropolis.gif" /></p>
+<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+<img src="/images/metropolis.gif" />
+=======
+<img src="/images/metropolis.GIF" />
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; abe09e3cd313dfc12630c3063c969959af729a6a</p>
 </div>
 <div id="hamiltonian-monte-carlo" class="section level1">
 <h1>Hamiltonian Monte-Carlo</h1>
@@ -185,7 +189,11 @@ from the neighborhood between these two extremes known as the typical set</p>
 <blockquote>
 <p>Continuing this process traces out a coherent trajectory through the typical set that efficiently moves us far away from the initial point to new, unexplored regions of the typical set as quickly as possible.</p>
 </blockquote>
-<p>The question, then, is how to create these vector field? A first approximation is to exploit the differential structure of the posterior through the gradient. However, following the gradient pulls us away from the typical set and into the mode of the posterior. Here comes Physics to the rescue. This is an equivalent problem to the problem of placing a satellite in a stable orbit around a hypothetical planet.</p>
+<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+The question, then, is how to create these vector field? A first approximation is to exploit the differential structure of the posterior through the gradient. However, following the gradient pulls us away from the typical set and into the mode of the posterior. Here comes Physics to the rescue. This is an equivalent problem to the problem of placing a satellite in a stable orbit around a hypothetical planet.
+=======
+The question, then, is how to create these vector field? A first approximation is to exploit the differential structure of the posterior thoruhg the gradient. However, following the gradient pulls us away from the typical set and into the mode of the posterior. Here comes Physics to the rescue. This is an equivalent problem to the problem of placing a satellite in a stable orbit around a hypothetical planet.
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; abe09e3cd313dfc12630c3063c969959af729a6a</p>
 <p>The key to do it is to endow our walk through the typical set by with enough momentum (<span class="math inline">\(p\)</span>) to counteract the gravitation attraction of the mode. Therefore:</p>
 <blockquote>
 <p>We can <em>twist</em> the gradient vector field into a vector field aligned with the typical set if we expand our original probabilistic system with the introduction of auxiliary momentum parameters.</p>
@@ -196,16 +204,22 @@ from the neighborhood between these two extremes known as the typical set</p>
 <p><span class="math display">\[
 \pi(q, p)=\pi(p \mid q) \pi(q)
 \]</span></p>
-<p>Which allows us to ignore the momenta when necessary by marginalizing it. The joint density <span class="math inline">\(\pi(q, p)\)</span> defines a Hamiltonian</p>
+<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+Which allows us to ignore the momenta when necessary by marginalizing it. The joint density <span class="math inline">\(\pi(q, p)\)</span> defines a Hamiltonian</p>
 <p><span class="math display">\[
 H(p, q) = - log \pi(p,\theta)
 \]</span></p>
 <p>Thus, given some point in the phase space <span class="math inline">\((q_0, p_0)\)</span> that is in the typical set, the Hamiltonian defines how to generate a new sample such that we stay in the typical set.</p>
-<p>Therefore:</p>
+</div>
+</div>
+</div>
+<div id="therefore" class="section level1">
+<h1>Therefore:</h1>
+<p>Which allows us to ignore the momenta when necessary by marginalizing it. The joint density <span class="math inline">\(\pi(q, p)\)</span> is constructed following Hamiltonian dynamics. Therefore:
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; abe09e3cd313dfc12630c3063c969959af729a6a</p>
 <blockquote>
 <p>Following the Hamiltonian vector field for some time, <span class="math inline">\(t\)</span>, generates trajectories, <span class="math inline">\(\phi_{t}(q, p),\)</span> that rapidly move through phase <span class="math inline">\((q_n, p_n)\)</span> space while being constrained to the typical set. Projecting these trajectories back down onto the target parameter space finally yields the efficient exploration of the target typical set for which we are searching.</p>
 </blockquote>
-</div>
 <div id="stages-to-generate-a-proposal-distribution" class="section level3">
 <h3>3 stages to generate a proposal distribution</h3>
 <p>Suppose you are at <span class="math inline">\(q_0\)</span>. How to generate a new proposal?</p>
@@ -216,20 +230,44 @@ H(p, q) = - log \pi(p,\theta)
 p_0 \sim \pi(p | q)
 \]</span></p>
 <p>We know are in the phase space <span class="math inline">\((q_0, p_0)\)</span>.</p>
-<ol start="2" style="list-style-type: decimal">
-<li><p>If we follow the vector field by following Hamilton’s equations that we have created <span class="math inline">\(\phi_{t}(q_0, p_0) = q^*, p^*,\)</span> by integrating for some time <span class="math inline">\(t\)</span>, we coherently push the Markov transition away from the initial point while staying confined to the joint typical set. This movement through the field space is done via discrete <span class="math inline">\(L\)</span> <em>‘leapfrog steps’</em> with discretization time <span class="math inline">\(\epsilon\)</span>. Stan’s implementation of HMC automatically chooses both of these values.</p></li>
-<li><p>If we marginalize the momenta, we project it away and go back to the parameter space with a proposal <span class="math inline">\(q^*\)</span>.</p></li>
+<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+2. If we follow the vector field by following Hamilton’s equations that we have created <span class="math inline">\(\phi_{t}(q_0, p_0) = q^*, p^*,\)</span> by integrating for some time <span class="math inline">\(t\)</span>, we coherently push the Markov transition away from the initial point while staying confined to the joint typical set. This movement through the field space is done via discrete <span class="math inline">\(L\)</span> <em>‘leapfrog steps’</em> with discretization time <span class="math inline">\(\epsilon\)</span>. Stan’s implementation of HMC automatically chooses both of these values.
+=======
+2. If we follow the vector field that we have created <span class="math inline">\(\phi_{t}(q_0, p_0) = q^*, p^*,\)</span> by integrating for some time <span class="math inline">\(t\)</span>, we coherently push the Markov transition away from the initial point while staying confined to the joint typical set. This movement through the field space is done via discrete <span class="math inline">\(L\)</span> <em>‘leapfrog steps’</em>. Stan’s implementation of HMC automatically chooses the leapfrog steps and their respective length.
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; abe09e3cd313dfc12630c3063c969959af729a6a</p>
+<ol start="3" style="list-style-type: decimal">
+<li>If we marginalize the momenta, we project it away and go back to the parameter space with a proposal <span class="math inline">\(q^*\)</span>.</li>
 </ol>
 <p>Because we have followed the vector field in phase space and projected the momenta away, if we started in the typical set, our proposal is guaranteed to be on the typical set, too. <strong>Thus, allowing extremely efficient exploration of the typical set.</strong></p>
-<p>Finally, we will accept or reject our proposed jump with a Metropolis ratio.</p>
+<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+Finally, we will accept or reject our proposed jump with a Metropolis ratio.</p>
 <p><span class="math display">\[
 r = \min \left(1, \exp \left(H(p_0, \theta_0)-H\left(p^{*}, \theta^{*}\right)\right)\right)
 \]</span></p>
 <p>Thus, with probability <span class="math inline">\(r\)</span>, we set <span class="math inline">\(\theta_1 = \theta^*\)</span>. Otherwise, <span class="math inline">\(\theta_1 = \theta_0\)</span>.</p>
 <p>We can visualize the incredible efficiency that Hamiltonian Monte Carlo can deliver. In the exact same example as with the donut we just saw with Metropolis, HMC samples much more efficiently.</p>
-<p><img src="/images/hmc.gif" /></p>
 </div>
 </div>
+<div id="section" class="section level1">
+<h1><img src="/images/hmc.gif" /></h1>
+<p>Finally, we will accept or reject our proposed jump with a Metropolis-Hastings ratio.</p>
+<p>We can visualize the incredible efficiency that Hamiltonian Monte Carlo can deliver. In the exact same example as with the donut we just saw with Metropolis, HMC samples much more efficiently.</p>
+<p><img src="/images/hmc.GIF" /></p>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>abe09e3cd313dfc12630c3063c969959af729a6a</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.58.3" />
+
+
+<title>BDA Week 9: Large Sample Theory for the Posterior - Dilettanting Data Science</title>
+<meta property="og:title" content="BDA Week 9: Large Sample Theory for the Posterior - Dilettanting Data Science">
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/turner.jpg"
+         width="200"
+         height="200"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/David-Salazar">GitHub</a></li>
+    
+    <li><a href="https://www.kaggle.com/davidsalazarv95">Kaggle</a></li>
+    
+    <li><a href="https://david-salazar.github.io/">Posts</a></li>
+    
+    <li><a href="https://twitter.com/DavidSalazarVir?lang=en">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">4 min read</span>
+    
+
+    <h1 class="article-title">BDA Week 9: Large Sample Theory for the Posterior</h1>
+
+    
+    <span class="article-date">2020/07/13</span>
+    
+    
+
+    <div class="article-content">
+      
+
+
+<p>As Richard McElreath says in his fantastic <a href="https://xcelab.net/rm/statistical-rethinking/">Statistics course</a>, Frequentist statistics is more a framework to evaluate estimators than a framework for deriving them. Therefore, we can use frequentist tools to evaluate the posterior. In particular, what happens to the posterior as more and more data arrive from the same sampling distribution?</p>
+<p>In this blogpost, I’ll follow chapter 4 of <a href="http://www.stat.columbia.edu/~gelman/book/">Bayesian Data Analysis</a> and the material in week 9 of <a href="https://github.com/avehtari/BDA_course_Aalto">Aki Vehtari’s course</a> to study the <strong>Posterior Distribution</strong> under the framework of Large Sample Theory.</p>
+<div id="asymptotic-normality-and-consistency" class="section level2">
+<h2>Asymptotic Normality and Consistency</h2>
+<p>Suppose then that the true data distribution is <span class="math inline">\(f(y)\)</span>. If the true data distribution is included in the parametric family, then, for some <span class="math inline">\(\theta_0\)</span> we have <span class="math inline">\(f(y) = \pi(y |\theta_0)\)</span>. <em>Asymptotic consistency</em> then, guarantees that as the sample size increases, our posterior distribution will converge to a point mass at the true parameter value <span class="math inline">\(\theta_0\)</span>. Both the <em>median, the mean and the mode</em> of the posterior are consistent estimators for <span class="math inline">\(\theta_0\)</span>.</p>
+<p>Indeed, asymptotic normality, in its turn, guarantees that the limiting distribution of the posterior can be approximated with a Gaussian centered at the mode <span class="math inline">\(\widehat \theta\)</span> of the posterior:</p>
+<p><span class="math display">\[
+\pi(\theta | y) \approx N(\widehat \theta, [\frac{d^2}{d\theta^2} \log \pi(\theta | y)]_{\theta = \widehat \theta}^{-1} ) 
+\]</span></p>
+<p>Naturally, we can then approximate the posterior by finding the mode by finding the maximum of the posterior and then estimating the curvature at that point. As more and more data arrives, the approximation will be more and more precise.</p>
+</div>
+<div id="big-data-and-the-normal-approximation" class="section level2">
+<h2>Big Data and the Normal Approximation</h2>
+<p>If more and more data makes the normal approximation better and better, does that mean that the era of <strong>Big Data will usher a new era</strong> where the posterior will be easily and reliably <em>approximated with a Gaussian</em>?</p>
+<p>Not quite: as we have more and more data, <strong>so we have more and more questions that we can possibly ask</strong>. We can then create <em>more complex models with more parameters</em> to try to answer these more complicated questions. In this scenario, as more and more data arrives, the posterior distribution will not converge to the Gaussian approximation in the expanding parameter space that reflects the increasing complexity of our model. The reason? <strong>The curse of dimensionality</strong></p>
+<p>The more dimensions we have, ceteris paribus, due to <strong>the concentration of measure</strong>, the mode and the area around the mode will be farther and farther way from the typical set. Thus, the Gaussian approximation that concentrates most of the mass around the mode will be a poor substitute of the typical set and thus a poor approximation for the posterior distribution.</p>
+</div>
+<div id="normal-approximation-for-the-marginals" class="section level2">
+<h2>Normal Approximation for the Marginals</h2>
+<p>Nevertheless, even if we cannot approximate the joint posterior distribution with the Gaussian approximation, the normal approximation is not that faulty if we instead focus on the marginal posterior. The reason? Determining the marginal distribution of a component of <span class="math inline">\(\theta\)</span> is equivalent to averaging over all the other components of <span class="math inline">\(\theta\)</span>, and averaging a family of distributions generally brings them closer to normality, by the same logic that underlies the central limit theorem.</p>
+<p>This fact explains why we see so many approximately Gaussian marginals in practice and why can sometimes summarize them with a point estimate and a standard error.</p>
+</div>
+<div id="unbiasedness-and-hierarchical-models" class="section level2">
+<h2>Unbiasedness and Hierarchical Models</h2>
+<p>Frequentist methods place great emphasis on unbiasedness: <span class="math inline">\(E[\widehat \theta] = \theta_0\)</span>. However, when parameters are related and partial knowledge of some of the parameter is clearly relevant to the estimation of others, the emphasis on unbiasedness is clearly misplaced: it leads to a naive point in the bias-variance trade-off.</p>
+<p>Indeed, if we have a familiy of parameters <span class="math inline">\(\theta_j\)</span> that are related, a Bayesian would fit a hierarchical model by positing a common distribution from which these parameters are sampled. This procedure leads to pooling of the information and thus to shrink the individual parameters <span class="math inline">\(\theta_j\)</span> toward each other; thereby biasing the individual estimates <span class="math inline">\(\theta_j\)</span> but reducing their variance.</p>
+<p>Thus, this highlights the problem that it is often not possible to estimate several parameters at once in an even approximately unbiased manner: unbiased <span class="math inline">\(\theta_j\)</span> leads to ignoring relevant information about their common distribution, which in turn leads to a biased estimate of the variance of the <span class="math inline">\(\theta_j\)</span>.</p>
+</div>
+
+    </div>
+  
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//https-david-salazar-github-io.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+  
+  </article>
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
