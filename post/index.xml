@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 13 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 18 Jul 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Causality: Bayesian Networks and Probability Distributions</title>
+      <link>/2020/07/18/causality-bayesian-networks/</link>
+      <pubDate>Sat, 18 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/07/18/causality-bayesian-networks/</guid>
+      <description>MotivationStats people know that correlation coefficients do not imply causal effects. Yet, very often, partial correlation coefficients from regressions with an ever growing set of ‘control variables’ are unequivocally interpreted as a step in the right direction toward estimating a causal effect. This mistaken intuition was aptly named by Richard McElreath, in his fantastic Stats course, as Causal Salad: people toss a bunch of control variables and hope to get a casual effect out of it.</description>
+    </item>
     
     <item>
       <title>BDA Week 9: Large Sample Theory for the Posterior</title>
