@@ -6,10 +6,20 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 18 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 22 Jul 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Causality: Invariance under Interventions</title>
+      <link>/2020/07/22/causality-invariance-under-interventions/</link>
+      <pubDate>Wed, 22 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/07/22/causality-invariance-under-interventions/</guid>
+      <description>In the last post we saw how two causal models can yield the same testable implications and thus cannot be distinguished from data alone. That is, we cannot gain causal understanding from data alone. Does that mean that we cannot ever gain causal understanding? Far from it; it just means that we must have a causal model.
+Thus, causal effects cannot be estimated from the data itself without a causal story.</description>
+    </item>
     
     <item>
       <title>Causality: Bayesian Networks and Probability Distributions</title>
