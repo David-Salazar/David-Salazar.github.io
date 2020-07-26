@@ -6,10 +6,20 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 22 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 25 Jul 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Causality: To adjust or not to adjust</title>
+      <link>/2020/07/25/causality-to-adjust-or-not-to-adjust/</link>
+      <pubDate>Sat, 25 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/07/25/causality-to-adjust-or-not-to-adjust/</guid>
+      <description>What is this blogpost about?In this blogpost, I’ll simulate data to show how conditioning on as many variables as possible is not a good idea. Sometimes, conditioning can lead to de-confound an effect; other times, however, conditioning on a variable can create unnecessary confounding and bias the effect that we are trying to understand.
+It all depends on our causal story: by applying the backdoor-criterion to our Causal Graph, we can derive an unambiguous answer to decide which variables should we use as controls in our statistical analysis.</description>
+    </item>
     
     <item>
       <title>Causality: Invariance under Interventions</title>

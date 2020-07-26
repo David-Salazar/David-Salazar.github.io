@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.58.3" />
+
+
+<title>Causality: To adjust or not to adjust - Dilettanting Data Science</title>
+<meta property="og:title" content="Causality: To adjust or not to adjust - Dilettanting Data Science">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/turner.jpg"
+         width="200"
+         height="200"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/David-Salazar">GitHub</a></li>
+    
+    <li><a href="https://www.kaggle.com/davidsalazarv95">Kaggle</a></li>
+    
+    <li><a href="https://david-salazar.github.io/">Posts</a></li>
+    
+    <li><a href="https://twitter.com/DavidSalazarVir?lang=en">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">9 min read</span>
+    
+
+    <h1 class="article-title">Causality: To adjust or not to adjust</h1>
+
+    
+    <span class="article-date">2020/07/25</span>
+    
+    
+
+    <div class="article-content">
+      
+
+
+<div id="what-is-this-blogpost-about" class="section level2">
+<h2>What is this blogpost about?</h2>
+<p>In this blogpost, I’ll simulate data to show how <strong>conditioning on as many variables as possible</strong> <em>is not a good idea</em>. Sometimes, conditioning can lead to de-confound an effect; other times, however, conditioning on a variable can create unnecessary confounding and bias the effect that we are trying to understand.</p>
+<p><strong>It all depends on our causal story</strong>: by applying the backdoor-criterion to our Causal Graph, we can derive an unambiguous answer to decide which variables should we use as controls in our statistical analysis.</p>
+</div>
+<div id="motivation" class="section level2">
+<h2>Motivation</h2>
+<p>In the last <a href="https://david-salazar.github.io/2020/07/22/causality-invariance-under-interventions/">couple of posts</a>, we’ve seen how to define causal effects in terms of interventions and how to represent these <em>interventions</em> in terms of <em>graph surgeries</em>. We’ve also seen that <strong>observational data undetermines interventional data</strong>. Therefore, we cannot gain causal understanding unless we accompany our data-analysis with a causal story.</p>
+<p>In particular, we’ve seen that by leveraging the invariant qualities under intervention, we are able to estimate causal effects with the adjustment formula by conditioning on the parents of the exposure <span class="math inline">\(X\)</span>:</p>
+<p><span class="math display">\[
+P(Y=y|\text{do}(X=x)) = \sum_{z} P(Y=y | X=x, pa=z) P(pa=z)
+\]</span>
+However, what happens when we do not measure the parents of <span class="math inline">\(X\)</span> and thus cannot adjust for them? <strong>Can we adjust for some other observed variable(s)</strong>?</p>
+</div>
+<div id="of-confounding" class="section level2">
+<h2>Of confounding</h2>
+<p>Let’s say that we are interested in estimating the causal effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> and we assume the following Causal Graph:</p>
+<pre class="r"><code>example &lt;- dagify(z ~ b + c,
+                  a ~ b,
+                  d ~ c,
+                  x ~ a + z,
+                  w ~ x,
+                  y ~ w + z + d)
+ggdag(example) +
+  labs(title = &quot;We want to estimate x -&gt; y&quot;,
+       subtitle = TeX(&quot;But we don&#39;t observe $A$ and thus we cannot use the adjustment formula&quot;))</code></pre>
+<p><img src="/post/2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>The adjustment formula above states that we should adjust for the parents of <span class="math inline">\(x\)</span>. However, assume that we <strong>cannot measure</strong> <span class="math inline">\(a\)</span>. Can we still estimate the causal effect?</p>
+<p>To answer this question we must understand why is that it’s useful to adjust for the parents. First, remember that in a Causal Graph, <strong>the statistical information flows freely</strong> in the Graph, <em>regardless</em> of the direction of the arrows. Therefore, in the above graph, the causal information from <span class="math inline">\(c\)</span> to <span class="math inline">\(y\)</span> may end up getting picked up by <span class="math inline">\(x\)</span> or vice versa.</p>
+<p><strong>We condition on the parents of <span class="math inline">\(x\)</span> such that we block all the information coming from other causal relationships</strong>. Thus, we don’t end up adding up the causal effect of some other variable in the process. However, if we cannot control by its parents, it’s possible that some of this causal effect coming from other variables will be picked up by <span class="math inline">\(X\)</span> through the arrows that go into it. Therefore, we will have <strong>confounding bias</strong>. Which we defined thus:</p>
+<p><span class="math display">\[
+P(Y | \text{do(X = x)}) \neq P(Y| X=x)
+\]</span></p>
+<div id="blocking-non-causal-paths" class="section level3">
+<h3>Blocking non-causal paths</h3>
+<p>For example, in the above graph there are the following 4 paths from <span class="math inline">\(X\)</span> into <span class="math inline">\(Y\)</span>:</p>
+<pre class="r"><code>ggdag_paths(example, from = &#39;x&#39;, to = &#39;y&#39;, shadow = T) +
+  labs(title = &quot;Paths from x into y&quot;,
+       subtitle = &quot;Of 4 possible paths, only one of them is a causal path&quot;) </code></pre>
+<p><img src="/post/2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/all-paths-1.png" width="960" /></p>
+<p>We have 4 paths but <em>only</em> 1 of them is causal: only one is a direct descendant of <span class="math inline">\(X\)</span>. Therefore, if we want to estimate the causal effect, we must make sure that <strong>all the other non-causal paths (the backdoor paths that have arrows into X) are blocked</strong>. Luckily, we already defined a graphical algorithm to find out which variables we must adjust for in order to block some path: the <strong>d-separation criterion</strong>.</p>
+<p>Therefore, we arrive at the following four possible adjustment sets that guarantee that all non-causal paths will be blocked. By conditioning on them, we will correctly estimate the causal effect:</p>
+<pre class="r"><code>ggdag_adjustment_set(example, exposure = &#39;x&#39;, outcome = &#39;y&#39;, shadow = T)</code></pre>
+<p><img src="/post/2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/adjustment-paths-1.png" width="1152" /></p>
+<p>Let’s see why each of the four available adjustment set works:</p>
+<ol style="list-style-type: decimal">
+<li><p>By conditioning on <span class="math inline">\(z\)</span>, we open a collider between <span class="math inline">\(b\)</span> and <span class="math inline">\(c\)</span>. However, the causal effect of <span class="math inline">\(c\)</span> on <span class="math inline">\(y\)</span> does not get picked up by <span class="math inline">\(x\)</span> because we are blocking the path by conditioning on <span class="math inline">\(a\)</span>.</p></li>
+<li><p>By conditioning on <span class="math inline">\(z\)</span>, we open a collider between <span class="math inline">\(b\)</span> and <span class="math inline">\(c\)</span>. However, given that we adjust for <span class="math inline">\(b\)</span>, the effect of <span class="math inline">\(c\)</span> on <span class="math inline">\(y\)</span> won’t be picked up by <span class="math inline">\(x\)</span>.</p></li>
+<li><p>By conditioning on <span class="math inline">\(z\)</span>, we open a collider between <span class="math inline">\(b\)</span> and <span class="math inline">\(c\)</span>. However, given that we adjust for <span class="math inline">\(c\)</span>, the effect of <span class="math inline">\(c\)</span> on <span class="math inline">\(y\)</span> won’t be picked up by <span class="math inline">\(x\)</span>.</p></li>
+<li><p>By conditioning on <span class="math inline">\(z\)</span>, we open a collider between <span class="math inline">\(b\)</span> and <span class="math inline">\(c\)</span>. However, by adjusting for <span class="math inline">\(d\)</span>, we block the effect of <span class="math inline">\(c\)</span> on <span class="math inline">\(y\)</span> and thus this effect won’t get picked up by <span class="math inline">\(x\)</span>.</p></li>
+</ol>
+</div>
+</div>
+<div id="the-backdoor-criterion" class="section level2">
+<h2>The Backdoor Criterion</h2>
+<p>Given that we cannot directly adjust by the parents of <span class="math inline">\(x\)</span>, <strong>what variables should we condition on to obtain the correct effect?</strong> The question boils down to <strong>finding a set of variables that satisfy the backdoor criterion</strong>:</p>
+<p>Given an ordered pair of variables <span class="math inline">\((X, Y)\)</span> in a directed acyclic graph <span class="math inline">\(G,\)</span> a set of variables <span class="math inline">\(Z\)</span> satisfies the backdoor criterion relative to <span class="math inline">\((X, Y)\)</span> if no node in <span class="math inline">\(\mathrm{Z}\)</span> is a descendant of <span class="math inline">\(X,\)</span> and <span class="math inline">\(\mathrm{Z}\)</span> blocks every path between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> that contains an arrow into X.
+If a set of variables <span class="math inline">\(Z\)</span> satisfies the backdoor criterion for <span class="math inline">\(X\)</span> and <span class="math inline">\(Y,\)</span> then the causal effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> is given by the formula
+<span class="math display">\[
+P(Y=y \mid d o(X=x))=\sum_{z} P(Y=y \mid X=x, Z=z) P(Z=z)
+\]</span></p>
+<p>Note that the parents of <span class="math inline">\(X\)</span> always satisfy the backdoor criterion. Notice also, quite importantly, that the criterion simultaneously says <strong>which variables we should use as control variables and which ones we shouldn’t</strong>. Indeed, by adjusting for the wrong variable we may end up opening a non-causal path into <span class="math inline">\(x\)</span> and thus introducing confounding bias into our estimates.</p>
+</div>
+<div id="correclty-adjusting" class="section level2">
+<h2>Correclty adjusting</h2>
+<p>Let’s keep working with our current Graphical Model.</p>
+<pre class="r"><code>ggdag_exogenous(example)</code></pre>
+<p><img src="/post/2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>We can simulate data coming from such a model thus :</p>
+<pre class="r"><code>n &lt;- 500
+b &lt;- rnorm(n)
+c &lt;- rnorm(n)
+z &lt;- 2*b - 3*c + rnorm(n)
+a &lt;- -b + rnorm(n)
+x &lt;- 2*a -2*z + rnorm(n)
+d &lt;- 1.5*c + rnorm(n)
+w &lt;- x*2 + rnorm(n)
+y &lt;- 5*w -2*d- 5*z + rnorm(n)</code></pre>
+<p>Thus, the causal effect of one unit of <span class="math inline">\(x\)</span> on <span class="math inline">\(y\)</span> is always <span class="math inline">\(10 = 5 \times 2\)</span>. Notice that we have four possible adjustment sets to estimate these causal query and all of these possibilities should yield the same answer. Therefore, <strong>this constraint becomes yet another testable implication of our model.</strong></p>
+<p>Let’s fit a Gaussian Linear regression with each of the possible adjustment sets and compare the results. But first let’s fit a naive model with no adjustment whatsoever.</p>
+<pre class="r"><code>data &lt;- data.frame(b, c, z, a, x, d, w, y)
+model_one &lt;- stan_glm(y ~ x, data = data, refresh = 0) 
+
+model_one %&gt;% 
+  spread_draws(x) %&gt;% 
+  ggplot(aes(x)) +
+  stat_halfeye(alpha = 0.6) + 
+  annotate(&quot;text&quot;, x = 10.2, y = 0.7, label = &quot;True causal effect&quot;, color = &quot;red&quot;, 
+           family = theme_get()$text[[&quot;family&quot;]]) +
+  hrbrthemes::theme_ipsum_rc(grid = &quot;y&quot;)  +
+  geom_vline(aes(xintercept = 10), linetype = 2, color = &quot;red&quot;) +
+  labs(title = &quot;Causal Inference from Model y ~ x&quot;,
+       subtitle = &quot;This estimation overestimates the causal effect due to confounding bias&quot;)</code></pre>
+<p><img src="/post/2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>As expected, our estimations are off. Following the backdoor criterion, the following estimations should be unbiased:</p>
+<pre class="r"><code>model_two &lt;- stan_glm(y ~ x + a +z, data = data, refresh = 0)</code></pre>
+<p><img src="/post/2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>Much better! Let’s check the other models:</p>
+<pre class="r"><code>model_three &lt;- stan_glm(y ~ x + b +z, data = data, refresh = 0)</code></pre>
+<p><img src="/post/2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>Also a correct estimation! Let’s fit the model where we adjust by <span class="math inline">\(c\)</span>:</p>
+<pre class="r"><code>model_four &lt;- stan_glm(y ~ x + c +z, data = data, refresh = 0)</code></pre>
+<p><img src="/post/2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>Finally, the model where we condition on <span class="math inline">\(z, d\)</span>:</p>
+<pre class="r"><code>model_five &lt;- stan_glm(y ~ x + d +z, data = data, refresh = 0)</code></pre>
+<p><img src="/post/2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+</div>
+<div id="incorreclty-adjusting" class="section level2">
+<h2>Incorreclty adjusting</h2>
+<p>Adjusting on a variable can sometimes open backdoor paths that would had otherwise remained closed. Take the following example:</p>
+<pre class="r"><code>hurting &lt;- dagify(Y ~ X + u1,
+                  X ~ u2,
+                  L ~ u1 + u2)
+ggdag(hurting) +
+  labs(title = &quot;If we don&#39;t condition on L, the only backdoor path between X and Y is closed&quot;)</code></pre>
+<p><img src="/post/2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>Notice that there is only one backdoor path for <span class="math inline">\(X\)</span>. However, it contains a collider: <span class="math inline">\(L\)</span>. Therefore, unless we condition on <span class="math inline">\(L\)</span>, the backdoor path will remain closed. In this case, we must not adjust for any of the variables, as there is no confounding bias: <span class="math inline">\(P(Y | do (X = x)) = P(Y| X = x)\)</span>.</p>
+<p>If we are naive, and we consider that controlling for observables is always a step in the right direction toward causal inference, we will end up with the wrong inference. By condition on <span class="math inline">\(L\)</span>, we open up a collider that will create a relationship between <span class="math inline">\(u_1\)</span> and <span class="math inline">\(u_2\)</span>; therefore, <span class="math inline">\(X\)</span> will pick up the causal effect of <span class="math inline">\(u_1\)</span> on <span class="math inline">\(y\)</span>.</p>
+<pre class="r"><code>ggdag_adjust(hurting, var = &quot;L&quot;) +  
+  scale_color_brewer(type = &quot;qual&quot;, palette = &quot;Set2&quot;)  +
+  labs(title = &quot;Conditioning on a collider opens a backdoor path between X and Y&quot;)</code></pre>
+<p><img src="/post/2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>We can easily confirm this insight by simulating some data and fitting models.</p>
+<pre class="r"><code>u1 &lt;- rnorm(n)
+u2 &lt;- rnorm(n)
+x &lt;- 2*u2 + rnorm(n)
+y &lt;- 2*x -5*u1 + rnorm(n)
+l &lt;- u1 + u2 + rnorm(n)
+data &lt;- data.frame(u1, u2, x, y, l)</code></pre>
+<p>Thus, the correct causal effect of one unit of <span class="math inline">\(x\)</span> on <span class="math inline">\(y\)</span> is always 2.</p>
+<p>First, let’s fit the correct model where we don’t condition on any of the other variables:</p>
+<pre class="r"><code>model_correct &lt;- stan_glm(y ~ x, data = data, refresh = 0)</code></pre>
+<p><img src="/post/2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p>However, if we adjust for <span class="math inline">\(L\)</span>, our estimations will be biased:</p>
+<pre class="r"><code>model_incorrect &lt;- stan_glm(y ~ x + l, data = data, refresh =0)</code></pre>
+<p><img src="/post/2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+</div>
+<div id="conclusions" class="section level1">
+<h1>Conclusions</h1>
+<p>Stats people know that <strong>correlation coefficients do not imply causal effects</strong>. Yet, very often, <em>partial correlation</em> coefficients from <strong>regressions with an ever growing set of ‘control variables’</strong> are unequivocally interpreted as a step in the <em>right direction</em> toward estimating a <strong>causal effect</strong>. This mistaken intuition was aptly named by Richard McElreath, in his fantastic <a href="https://xcelab.net/rm/statistical-rethinking/">Stats course</a>, as <em>Causal Salad</em>: people toss a bunch of control variables and hope to get a casual effect out of it.</p>
+<p>With the introduction of Causal Graphs, we gain a invaluable tool with the <strong>backdoor criterion</strong>. With a simple <em>graphical algorithm</em>, we can define <strong>which variables we must include</strong> in our analysis in order to <strong>cancel out all the information coming from different causal relationships than the one we are interested</strong>.</p>
+</div>
+
+    </div>
+  
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//https-david-salazar-github-io.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+  
+  </article>
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/python.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
