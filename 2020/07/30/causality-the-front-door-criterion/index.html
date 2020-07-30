@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.58.3" />
+
+
+<title>Causality: The front-door criterion - Dilettanting Data Science</title>
+<meta property="og:title" content="Causality: The front-door criterion - Dilettanting Data Science">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/turner.jpg"
+         width="200"
+         height="200"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/David-Salazar">GitHub</a></li>
+    
+    <li><a href="https://www.kaggle.com/davidsalazarv95">Kaggle</a></li>
+    
+    <li><a href="https://david-salazar.github.io/">Posts</a></li>
+    
+    <li><a href="https://twitter.com/DavidSalazarVir?lang=en">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">7 min read</span>
+    
+
+    <h1 class="article-title">Causality: The front-door criterion</h1>
+
+    
+    <span class="article-date">2020/07/30</span>
+    
+    
+
+    <div class="article-content">
+      
+
+
+<div id="motivation" class="section level2">
+<h2>Motivation</h2>
+<p>In a <a href="https://david-salazar.github.io/2020/07/25/causality-to-adjust-or-not-to-adjust/">past blogpost</a>, I’ve explore the backdoor criterion: a simple <em>graphical algorithm</em>, we can define <strong>which variables we must include</strong> in our analysis in order to <strong>cancel out all the information coming from different causal relationships than the one we are interested</strong>. However, these variables are not always measured. What else can we do?</p>
+<p>In this blogpost, I’ll explore the front-door criterion: i) an intuitive proof of why it works; (ii) how to estimate it; (iii) what are its fundamental assumptions; finally, (iv) an experiment with monte-carlo samples. Whereas the back-door criterion blocks all the non-causal information that <span class="math inline">\(X\)</span> could possibly pick up, the <strong>front-door exploits the outgoing information from <span class="math inline">\(X\)</span></strong> to derive a causal estimator.</p>
+</div>
+<div id="the-limits-of-the-back-door-a-quick-example" class="section level2">
+<h2>The limits of the back-door: a quick example</h2>
+<p>Let’s assume the following DAG, which is a darling of Pearl’s work. Does smoking cause cancer?</p>
+<pre class="r"><code>example &lt;- dagify(x ~ u,
+                  m ~ x,
+                  y ~ u + m,
+                  labels = c(&quot;x&quot; = &quot;Smoking&quot;,
+                             &quot;m&quot; = &quot;Cancer&quot;,
+                             &quot;z&quot; = &quot;Tar&quot;,
+                             &quot;u&quot; = &quot;Genotype&quot;),
+                  latent = &quot;u&quot;,
+                  exposure = &quot;x&quot;,
+                  outcome = &quot;y&quot;)</code></pre>
+<p><img src="/post/2020-07-30-causality-the-front-door-criterion_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Given that we cannot measure genotype, we cannot use the back-door criterion to stop <span class="math inline">\(Smoking\)</span> from picking up the causal effect of <span class="math inline">\(Genotype\)</span>. Therefore, one can not use the back-door criterion to <strong>ascertain which portion of the observed association</strong> between smoking and cancer is <em>spurious</em> (because it is attributable to their common cause, Genotype) and what portion is <em>genuinely causative</em>.</p>
+</div>
+<div id="consecutive-applications-of-the-back-door-criterion" class="section level2">
+<h2>Consecutive applications of the back-door criterion</h2>
+<p>However, we notice that we can use the <em>back-door criterion</em> to estimate two partial effects: <span class="math inline">\(X \rightarrow M\)</span> and <span class="math inline">\(M \rightarrow Y\)</span>. <strong>By chaining</strong> these two partial effects, we can obtain <em>the overall effect</em> <span class="math inline">\(X \rightarrow Y\)</span>.</p>
+<p>The intuition for the chaining is thus: intervening on the levels of tar in the lungs lead to different probabilities of cancer: <span class="math inline">\(P(Y = y | \text{do(M = m)})\)</span>. However, the levels of tar are themselves determined by how much someone smokes: <span class="math inline">\(P(M= m| \text{do(X = x)})\)</span>. Therefore, by intervening on smoking to determine the levels of tar we can estimate the causal effect of smoking.</p>
+<p>We intervene on smoking and check the respective effect for each value of tar:</p>
+<p><span class="math display">\[
+P(Y \mid d o(X))=\sum_{M} P(Y \mid M, d o(X)) \times P(M \mid d o(X))
+\]</span></p>
+<p>Because smoking blocks all the back-door paths from tar into cancer, we can replace the conditioning expression by an intervention expression in the first term.<span class="math inline">\(P(Y \mid M, d o(X))=P(Y \mid d o(M), d o(X))\)</span>. Given that intervening on smoking, once we have intervened on tar has no effect on cancer, we can also write <span class="math inline">\(P(Y \mid M, d o(X))=P(Y \mid d o(M), d o(X))=P(Y \mid d o(M))\)</span>.</p>
+<p>Given that smoking blocks all backdoor paths into tar, we can estimate <span class="math inline">\(P(Y \mid d o(M))\)</span> using the back-door adjustment:</p>
+<p><span class="math display">\[
+P(Y \mid d o(M))=\sum_{X} P(Y \mid X, M) \times P(X)
+\]</span></p>
+<p>Therefore, we can re-write <span class="math inline">\(P(Y \mid d o(X))\)</span> thus:</p>
+<p><span class="math display">\[
+P(Y \mid d o(X)) = \sum_{M} P(M | do(X)) \sum_{X&#39;} P(Y \mid X&#39;, M) \times P(X&#39;)
+\]</span></p>
+<p>Considering that there are no backdoor paths from smoking to tar, we can write <span class="math inline">\(P(M | do(X)) = P(M | X)\)</span>. Therefore, we can re-write our entire expression for <span class="math inline">\(P(Y \mid d o(X))\)</span> in terms of pre-intervention probabilities:</p>
+<p><span class="math display">\[
+P(Y \mid d o(X)) = \sum_{M} P(M | X) \sum_{X&#39;} P(Y \mid X&#39;, M) \times P(X&#39;)
+\]</span></p>
+<p>This is the <strong>front-door formula</strong>.</p>
+</div>
+<div id="empirical-estimation" class="section level2">
+<h2>Empirical estimation</h2>
+<p><a href="https://www.canr.msu.edu/afre/events/Bellemare%20and%20Bloem%20(2020).pdf">Conceptually</a>,</p>
+<blockquote>
+<p>the FDC [Front-door Criterion] approach works by first estimating the effect of X on M, and then estimating the effect of M on Y holding X constant. Both of these effects are unbiased because <em>nothing confounds</em> the effect of X on M and X blocks <em>the only back-door path</em> between M on Y. <strong>Multiplying these effects by one another yields the FDC estimand</strong>.</p>
+</blockquote>
+<p>Therefore, in a regression setting we can estimate the causal effect using the Average Treatment Effect (ATE) via the FDC thus. Formulate two linear regressions:</p>
+<p><span class="math display">\[
+M_{i}=\kappa+\gamma X_{i}+\omega_{i}
+\]</span>
+and
+<span class="math display">\[
+Y_{i}=\lambda+\delta M_{i}+\phi X_{i}+v_{i}
+\]</span></p>
+<p>Our estimate of the ATE is given by:</p>
+<p><span class="math display">\[
+ATE = E[Y|do(X)] = \delta \times \gamma
+\]</span></p>
+</div>
+<div id="when-can-we-use-the-front-door-criterion" class="section level2">
+<h2>When can we use the Front-Door criterion?</h2>
+<p>We’ve given an intuitive proof of the Front-door criterion and given an empirical estimation technique. But what exactly have we presupposed that allowed us to do all of this? In other words, <strong>what are the fundamental assumptions behind the criterion?</strong></p>
+<p>A set of variables <span class="math inline">\(Z\)</span> is said to satisfy the front-door criterion relative to an ordered pair of variables <span class="math inline">\((X, Y)\)</span> if:</p>
+<ol style="list-style-type: decimal">
+<li><p>Z intercepts all directed paths from <span class="math inline">\(X\)</span> to <span class="math inline">\(Y\)</span>.</p></li>
+<li><p>There is no backdoor path from <span class="math inline">\(X\)</span> to <span class="math inline">\(Z\)</span></p></li>
+<li><p>All backdoor paths from Z to <span class="math inline">\(Y\)</span> are blocked by X.</p></li>
+</ol>
+<p>When these conditions are met, we can use the Front-Door criterion to estimate the causal effect of <span class="math inline">\(X\)</span>.</p>
+</div>
+<div id="a-monte-carlo-experiment" class="section level2">
+<h2>A Monte-Carlo experiment</h2>
+<p>Let’s work a Monte-Carlo experiment to show the power of the backdoor criterion. Consider the following DAG:</p>
+<pre class="r"><code>dag &lt;- downloadGraph(&quot;dagitty.net/m331&quot;)
+ggdag(dag) +
+  labs(title = &quot;We only need to measure W to estimate the effect of X on Y&quot;)</code></pre>
+<p><img src="/post/2020-07-30-causality-the-front-door-criterion_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Assume that only <span class="math inline">\(X, Y\)</span>, and one additional variable can be measured. Which variable would would allow the identification of the causal effect <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>? The answer is all in the front-door criterion! We only need to measure <span class="math inline">\(W\)</span> to be able to estimate the effect. Notice that:</p>
+<ol style="list-style-type: decimal">
+<li><p><span class="math inline">\(W\)</span> intercepts all the direct paths from <span class="math inline">\(X\)</span> into <span class="math inline">\(Y\)</span>.</p></li>
+<li><p>There is no backdoor path from <span class="math inline">\(X\)</span> into <span class="math inline">\(W\)</span>.</p></li>
+<li><p>All back-door paths from <span class="math inline">\(W\)</span> into <span class="math inline">\(Y\)</span> are blocked</p></li>
+</ol>
+<p>Therefore, we can use the front-door criterion.</p>
+<p>Let’s use a Monte-Carlo simulation to confirm the answer.</p>
+<pre class="r"><code>n &lt;- 500
+b &lt;- rnorm(n)
+c &lt;- rnorm(n)
+z &lt;- -2*b +2*c + rnorm(n)
+a &lt;- 3*b + rnorm(n)
+d &lt;- -3*c + rnorm(n)
+x &lt;- 4+a +2*z + rnorm(n)
+w &lt;- -2*x + rnorm(n)
+y &lt;- z + 2*w + d + rnorm(n)
+
+data &lt;- data.frame(b, c, z, a, d, x, w, y)</code></pre>
+<p>In this simulated dataset, the causal effect of unit of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> is -4. Let’s recuperate this effect by using the back-door criterion to find out for which variables we must control.</p>
+<pre class="r"><code>ggdag_adjustment_set(dag, outcome = &quot;Y&quot;, exposure = &quot;X&quot;)</code></pre>
+<p><img src="/post/2020-07-30-causality-the-front-door-criterion_files/figure-html/unnamed-chunk-6-1.png" width="768" /></p>
+<p>Let’s take the first adjustment set.</p>
+<pre class="r"><code>model_backdoor &lt;- stan_glm(y ~ x + a + z, data = data, refresh = 0)
+model_backdoor %&gt;% 
+  spread_draws(x) %&gt;% 
+  ggplot(aes(x)) +
+  stat_halfeye(alpha = 0.6) + 
+  hrbrthemes::theme_ipsum_rc(grid = &quot;y&quot;) +
+  geom_vline(aes(xintercept = -4), linetype = 2, color = &quot;red&quot;) +
+  annotate(&quot;text&quot;, x = -4.08, y = 0.7, label = &quot;True causal effect&quot;, color = &quot;red&quot;, 
+           family = theme_get()$text[[&quot;family&quot;]]) +
+  labs(title = &quot;Causal inference from Model y ~ x + a + z&quot;,
+       subtitle = &quot;We deconfound our estimates by conditioning on a and z&quot;)</code></pre>
+<p><img src="/post/2020-07-30-causality-the-front-door-criterion_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>Given our DAG, a testable implication is that we must arrive at the same answer by using the front-door criterion. <strong>Remember that it is just a consecutive use of the back-door criterion that translates into two regressions</strong>. Therefore, we can use a multi-variable model thus:</p>
+<pre class="r"><code>model_frontdoor &lt;- ulam(
+  alist(
+    c(Y, W) ~ multi_normal(c(muY, muW), Rho, Sigma),
+    muY &lt;- alphaY + delta*W,
+    muW &lt;- alphaW + gamma*X, 
+    gq&gt; ate &lt;- gamma * delta, # calculate ate directly in stan
+    c(alphaY, alphaW) ~ normal(0, 0.2),
+    c(gamma, delta) ~ normal(0, 0.5),
+    Rho ~ lkj_corr(2),
+    Sigma ~ exponential(1)
+  ),
+  data = list(Y = data$y, X = data$x, W = data$w), chains = 4, cores = 4, iter = 3000
+)
+precis(model_frontdoor)</code></pre>
+<pre><code>##               mean          sd        5.5%      94.5%    n_eff     Rhat4
+## alphaW  0.01187482 0.057276595 -0.07778247  0.1032302 4063.034 1.0004632
+## alphaY  0.11804071 0.129827718 -0.09150507  0.3268671 4323.525 1.0000242
+## delta   2.00284478 0.011868695  1.98373489  2.0216856 4492.053 0.9999025
+## gamma  -1.99528593 0.008820984 -2.00926991 -1.9811433 4335.204 1.0002112
+## ate    -3.99623875 0.028262327 -4.04128286 -3.9509541 4830.228 0.9997636</code></pre>
+<p>And indeed, we arrive at the same answer!</p>
+<p><img src="/post/2020-07-30-causality-the-front-door-criterion_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p>Besides Chapter 3 of Pearl’s Causality, I found this <a href="https://www.canr.msu.edu/afre/events/Bellemare%20and%20Bloem%20(2020).pdf">terrific paper (PDF)</a> by Bellemare and Bloem.</p>
+</div>
+
+    </div>
+  
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//https-david-salazar-github-io.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+  
+  </article>
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/python.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

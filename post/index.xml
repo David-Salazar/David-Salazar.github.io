@@ -6,10 +6,20 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 25 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 30 Jul 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Causality: The front-door criterion</title>
+      <link>/2020/07/30/causality-the-front-door-criterion/</link>
+      <pubDate>Thu, 30 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/07/30/causality-the-front-door-criterion/</guid>
+      <description>MotivationIn a past blogpost, I’ve explore the backdoor criterion: a simple graphical algorithm, we can define which variables we must include in our analysis in order to cancel out all the information coming from different causal relationships than the one we are interested. However, these variables are not always measured. What else can we do?
+In this blogpost, I’ll explore the front-door criterion: i) an intuitive proof of why it works; (ii) how to estimate it; (iii) what are its fundamental assumptions; finally, (iv) an experiment with monte-carlo samples.</description>
+    </item>
     
     <item>
       <title>Causality: To adjust or not to adjust</title>
