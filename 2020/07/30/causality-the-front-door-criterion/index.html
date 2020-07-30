@@ -89,8 +89,8 @@
                   m ~ x,
                   y ~ u + m,
                   labels = c(&quot;x&quot; = &quot;Smoking&quot;,
-                             &quot;m&quot; = &quot;Cancer&quot;,
-                             &quot;z&quot; = &quot;Tar&quot;,
+                             &quot;y&quot; = &quot;Cancer&quot;,
+                             &quot;m&quot; = &quot;Tar&quot;,
                              &quot;u&quot; = &quot;Genotype&quot;),
                   latent = &quot;u&quot;,
                   exposure = &quot;x&quot;,
@@ -209,11 +209,11 @@ model_backdoor %&gt;%
 )
 precis(model_frontdoor)</code></pre>
 <pre><code>##               mean          sd        5.5%      94.5%    n_eff     Rhat4
-## alphaW  0.01187482 0.057276595 -0.07778247  0.1032302 4063.034 1.0004632
-## alphaY  0.11804071 0.129827718 -0.09150507  0.3268671 4323.525 1.0000242
-## delta   2.00284478 0.011868695  1.98373489  2.0216856 4492.053 0.9999025
-## gamma  -1.99528593 0.008820984 -2.00926991 -1.9811433 4335.204 1.0002112
-## ate    -3.99623875 0.028262327 -4.04128286 -3.9509541 4830.228 0.9997636</code></pre>
+## alphaW  0.01183337 0.058140572 -0.08199145  0.1051270 4275.335 0.9999872
+## alphaY  0.11237368 0.133358314 -0.10015930  0.3262319 4563.233 1.0005627
+## delta   2.00267147 0.011849295  1.98388340  2.0218516 4469.185 1.0001956
+## gamma  -1.99611539 0.008785965 -2.01026653 -1.9820546 4177.599 0.9997894
+## ate    -3.99755386 0.028159192 -4.04276982 -3.9518142 5064.846 1.0004504</code></pre>
 <p>And indeed, we arrive at the same answer!</p>
 <p><img src="/post/2020-07-30-causality-the-front-door-criterion_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 </div>
