@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 31 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 10 Aug 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Causality: Counterfactuals - Clash of Worlds</title>
+      <link>/2020/08/10/causality-counterfactuals-clash-of-worlds/</link>
+      <pubDate>Mon, 10 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/08/10/causality-counterfactuals-clash-of-worlds/</guid>
+      <description>MotivationWe’ve seen how the language of causality require an exogenous intervention on the values of \(X\); so far we’ve studied interventions on all the population, represented by the expression \(do(X)\). Nevertheless, with this language, there are plenty of interventions that remain outside our realm: most notably, counterfactual expressions where the antecedent is in contradiction with the observed behavior: there’s a clash between the observed world and the hypothetical world of interest.</description>
+    </item>
     
     <item>
       <title>Causality: Testing Identifiability</title>
