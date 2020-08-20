@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 10 Aug 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 16 Aug 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Causality: Regret? Look at Effect of Treatment on the Treated</title>
+      <link>/2020/08/16/causality-effect-of-treatment-on-the-treated/</link>
+      <pubDate>Sun, 16 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/08/16/causality-effect-of-treatment-on-the-treated/</guid>
+      <description>Why read this?Regret about our actions stems from a counterfactual question: What if I had acted differently?. Therefore, to answer such question, we need a more elaborate language than the one we need to answer prediction or intervention questions. Why? Because we need to compare what happened with what would had happened if we had acted differently. We need to compute the Effect of Treatment on the Treated (ETT).</description>
+    </item>
     
     <item>
       <title>Causality: Counterfactuals - Clash of Worlds</title>
