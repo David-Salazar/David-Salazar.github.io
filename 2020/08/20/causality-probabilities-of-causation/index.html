@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.58.3" />
+
+
+<title>Causality: Probabilities of Causation - Dilettanting Data Science</title>
+<meta property="og:title" content="Causality: Probabilities of Causation - Dilettanting Data Science">
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/turner.jpg"
+         width="200"
+         height="200"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/David-Salazar">GitHub</a></li>
+    
+    <li><a href="https://www.kaggle.com/davidsalazarv95">Kaggle</a></li>
+    
+    <li><a href="https://david-salazar.github.io/">Posts</a></li>
+    
+    <li><a href="https://twitter.com/DavidSalazarVir?lang=en">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">7 min read</span>
+    
+
+    <h1 class="article-title">Causality: Probabilities of Causation</h1>
+
+    
+    <span class="article-date">2020/08/20</span>
+    
+    
+
+    <div class="article-content">
+      
+
+
+<div id="why-read-this" class="section level2">
+<h2>Why read this?</h2>
+<p>Questions of attribution are everywhere: i.e., did <span class="math inline">\(X=x\)</span> cause <span class="math inline">\(Y=y\)</span>? From legal battles to personal decision making, we are obsessed by them. Can we give a rigorous answer to the <strong>problem of attribution</strong>?</p>
+<p>One alternative to solve the problem of attribution is to reason in the following manner: if there is <em>no possible alternative</em> causal process, <strong>which does not involve <span class="math inline">\(X\)</span></strong>,that can cause <span class="math inline">\(Y=y\)</span>, then <span class="math inline">\(X=x\)</span> is <strong>necessary</strong> to produce the effect in question. Therefore, the effect <span class="math inline">\(Y=y\)</span> <em>could not</em> have happened without <span class="math inline">\(X=x\)</span>. In causal inference, this type of reasoning is studied by computing the <strong>Probability of Necessity (PN)</strong></p>
+<p>In the above alternative, however, the reasoning is tailored to a specific event under consideration. What if we are interested in studying a general tendency of a given effect? In this case, we are asking <strong>how sufficient</strong> is a <em>cause</em>, <span class="math inline">\(X=x\)</span>, for the production of the effect, <span class="math inline">\(Y=y\)</span>. We answer this question with the <strong>Probability of Sufficiency (PS)</strong></p>
+<p>In this blogpost, we will give <a href="https://david-salazar.github.io/2020/08/10/causality-counterfactuals-clash-of-worlds/"><strong>counterfactual interpretations</strong></a> to both probabilities: <span class="math inline">\(PN\)</span> and <span class="math inline">\(PS\)</span>. Thereby, we will be able to study them in a systematic fashion using the tools of causal inference. Although we will realize that they are <strong>not generally identifiable</strong> from a causal diagram and data alone, if we are willing to assume <em>monotonicity</em>, we will be able to estimate both <span class="math inline">\(PN\)</span> and <span class="math inline">\(PS\)</span> with a <em>combination</em> of experimental and observational data.</p>
+<p>Finally, we will work through some examples to put what we have learnt into practice. This blogpost follows the notation of <a href="http://bayes.cs.ucla.edu/BOOK-2K/">Pearl’s Causality</a>, Chapter 9 and Pearl’s <a href="http://bayes.cs.ucla.edu/PRIMER/">Causal Inference in Statistics: A primer</a>.</p>
+</div>
+<div id="counterfactual-definitions" class="section level2">
+<h2>Counterfactual definitions</h2>
+<p>Let <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> be two binary variables in causal model. In what follows, we will give counterfactual interpretations to both <span class="math inline">\(PN\)</span> and <span class="math inline">\(PS\)</span>.</p>
+<div id="probability-of-necessity" class="section level3">
+<h3>Probability of Necessity</h3>
+<p>The <strong>Probability of Necessity (PN)</strong> stands for the probability that the <em>event <span class="math inline">\(Y=y\)</span> would not have occurred</em> in the <strong>absence of event <span class="math inline">\(X=X\)</span></strong>, given that <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> did in fact occur.</p>
+<p><span class="math display">\[
+PN := P(Y_{x&#39;} = false | X = true, Y = true)
+\]</span></p>
+<p>To gain some intuition, imagine Ms. Jones: a former cancer patient that underwent both a lumpectomy and irradiation. She speculates: <strong>do I owe my life to irradiation?</strong> We can study this question by figuring out <em>how necessary</em> was the lumpectomy for the remission to occur:</p>
+<p><span class="math display">\[
+PN = P(Y_{\text{no irradiation}} = \text{no remission}| X = irradiation, Y = remission)
+\]</span></p>
+<p>If <span class="math inline">\(PN\)</span> is high, then, yes, Ms. Jones owes her life to her decision of having irradiation.</p>
+</div>
+<div id="probability-of-sufficiency" class="section level3">
+<h3>Probability of Sufficiency</h3>
+<p>On the other hand:</p>
+<blockquote>
+<p>The <strong>Probability of Sufficiency (PS)</strong> measures the capacity of <span class="math inline">\(x\)</span> to produce <span class="math inline">\(y\)</span>, and, since “production” implies a transition from absence to presence, we condition <span class="math inline">\(Y_x\)</span> on situations where x and y are absent</p>
+</blockquote>
+<p>Therefore:</p>
+<p><span class="math display">\[
+PS := P(Y_x = true | X = false, Y = false)
+\]</span></p>
+<p>The following example may clarify things. Imagine that, contrary to Ms. Jones above, Mrs. Smith had a lumpectomy alone and her tumor recurred. She speculates on her decision and concludes: <em>I should have gone through irradiation</em>. Is this regret warranted? We can quantify this by speaking about <span class="math inline">\(PS\)</span>:</p>
+<p><span class="math display">\[
+PS = P(Y_{irradiation} = remission| X = \text{no irradiation}, Y = \text{no remission})
+\]</span>
+That is, <span class="math inline">\(PS\)</span> computes the probability that remission would have occurred had Mrs. Smith gone through irradiation, given that she did not go and remission did not occur. Thus, it measures the degree to which <em>the action not taken</em>, <span class="math inline">\(X=1\)</span>, <strong>would have been sufficient for her recovery</strong>.</p>
+</div>
+<div id="combining-both-probabilities" class="section level3">
+<h3>Combining both probabilities</h3>
+<p>We can compute the probability that the cause is necessary and sufficient thus:</p>
+<p><span class="math display">\[
+P N S:= P(y_{x}, y&#39;_{x&#39;}) =P(x, y) P N+P\left(x^{\prime}, y^{\prime}\right) P S
+\]</span></p>
+<p>That is, the contribution of <span class="math inline">\(PN\)</span> is amplified or reduced by <span class="math inline">\(P(x, y)\)</span> and likewise for the <span class="math inline">\(PS\)</span>’s contribution.</p>
+</div>
+</div>
+<div id="idenitfiability" class="section level2">
+<h2>Idenitfiability</h2>
+<p>In the <strong>general case</strong>, when we have a causal diagram and observed (and experimental) data, <strong>neither <span class="math inline">\(PN\)</span> nor <span class="math inline">\(PS\)</span> are identifiable</strong>. This happens due to the relationship between the counterfactual’s antecedent and the fact that we are conditioning on <span class="math inline">\(Y\)</span>. If we wanted to model this relationship, we would need to know the functional relationship between <span class="math inline">\(X, Pa_y\)</span> and <span class="math inline">\(Y\)</span>.</p>
+<p>In practice, if we don’t know the functional relationship, we <em>must</em> at least assume monotonicity of <span class="math inline">\(Y\)</span> relative to <span class="math inline">\(X\)</span> to be able to identify them. Otherwise, we must content ourselves with <em>theoretically sharp bounds</em> on the probabilities of causation.</p>
+<div id="what-is-monotonicity" class="section level3">
+<h3>What is Monotonicity?</h3>
+<p>Let <span class="math inline">\(u\)</span> be <a href="https://david-salazar.github.io/2020/08/10/causality-counterfactuals-clash-of-worlds/">the unobserved background variables in a SCM</a>, then, <span class="math inline">\(Y\)</span> is monotonic relative to <span class="math inline">\(X\)</span> if:</p>
+<p><span class="math display">\[
+Y_1(u) \geq Y_0 (u)
+\]</span></p>
+<p>That is, exposure to treatment <span class="math inline">\(X=1\)</span> always helps to bring about <span class="math inline">\(Y=1\)</span>.</p>
+</div>
+<div id="identifying-the-probabilities-of-causation" class="section level3">
+<h3>Identifying the probabilities of causation</h3>
+<p>If we are willing to assume that Y is monotonic relative to X, then both <span class="math inline">\(PN\)</span> and <span class="math inline">\(PS\)</span> <strong>are identifiable when the causal effects <span class="math inline">\(P(Y| do(X=1)\)</span> and <span class="math inline">\(P(Y| do(X=0)\)</span> are identifiable</strong>. Whether this causal effect is identifiable because we have <em>experimental evidence</em>, or because we can identify them by using the Back-Door criterion or <em>other graph-assisted identification strategy</em>, it does not matter. Then, we can estimate <span class="math inline">\(PN\)</span> with a combination of do-expressions and observational data thus:</p>
+<p><span class="math display">\[
+PN = P(y&#39;_{x&#39;} | x, y) = \frac{P(y) - P(y| do (x&#39;))}{P(x, y)}
+\]</span></p>
+<p>Moreover, if monotonicity does not hold, the above expression becomes a lower bound for <span class="math inline">\(PN\)</span>. The <a href="https://ftp.cs.ucla.edu/pub/stat_ser/R271-U.pdf">complete bound is the following</a>:</p>
+<p><span class="math display">\[
+\max \left\{0, \frac{P(y)-P\left(y \mid d o\left(x^{\prime}\right)\right)}{P(x, y)}\right\} \leq P N \leq \min \left\{1, \frac{P\left(y^{\prime} \mid d o\left(x^{\prime}\right)\right)-P\left(x^{\prime}, y^{\prime}\right)}{P(x, y)}\right\}
+\]</span></p>
+<p>Equivalently, <span class="math inline">\(PS\)</span> can be estimated thus:</p>
+<p><span class="math display">\[
+PS = P(y_x | x&#39;, y&#39;) = \frac{P(y| do(x)) - P(y)}{P(x&#39;, y&#39;)}
+\]</span></p>
+<p>Which becomes the lower bound if we are not willing to assume monotonicity:</p>
+<p><span class="math display">\[
+\max \left\{\begin{array}{c}
+0,
+\frac{P\left(y | do (x) \right)-P(y)}{P\left(x^{\prime}, y^{\prime}\right)}
+\end{array}\right\} \leq P S \leq \min \left\{\begin{array}{c}
+1, 
+\frac{P\left(y | do(x) \right)-P(x, y)}{P\left(x^{\prime}, y^{\prime}\right)}
+\end{array}\right\}
+\]</span></p>
+<p>Let’s use the estimators and the bounds in the following example.</p>
+</div>
+</div>
+<div id="a-first-example" class="section level2">
+<h2>A first example</h2>
+<blockquote>
+<p>A lawsuit is filed against the manufacturer of a drug X that was supposed to relieve back-pain. Was the drug a necessary cause for the the death of Mr. A?</p>
+</blockquote>
+<p>The experimental data provide the estimates
+<span class="math display">\[
+\begin{aligned}
+P(y \mid d o(x)) &amp;=16 / 1000=0.016 \\
+P\left(y \mid d o\left(x^{\prime}\right)\right) &amp;=14 / 1000=0.014
+\end{aligned}
+\]</span>
+whereas the non-experimental data provide the estimates
+<span class="math display">\[
+P(y)=30 / 2000=0.015
+\]</span>
+<span class="math display">\[
+\begin{array}{l}
+P(x, y)=2 / 2000=0.001 \\
+P(y \mid x)=2 / 1000=0.002 \\
+P\left(y \mid x^{\prime}\right)=28 / 1000=0.028
+\end{array}
+\]</span></p>
+<p>Therefore, assuming that the drug could only cause (but never prevent death), monotonicity holds:</p>
+<p><span class="math display">\[
+PN = \frac{0.015-0.014}{0.001} = 1
+\]</span></p>
+<blockquote>
+<p>The plaintiff was correct; barring sampling errors, the data provide us with 100% assurance that drug x was in fact responsible for the death of Mr A.</p>
+</blockquote>
+</div>
+<div id="a-second-example" class="section level2">
+<h2>A second example</h2>
+<p>Remember Ms. Jones? Is she right in attributing her recovery to the irradiation therapy. Suppose she gets her hands on the following data:</p>
+<p><span class="math display">\[
+\begin{aligned}
+P\left(y^{\prime}\right) &amp;=0.3 \\
+P\left(x^{\prime} \mid y^{\prime}\right) &amp;=0.7 \\
+P(y \mid d o(x)) &amp;=0.39 \\
+P\left(y \mid d o\left(x^{\prime}\right)\right) &amp;=0.14
+\end{aligned}
+\]</span></p>
+<p>We can therefore start to bound <span class="math inline">\(PN\)</span> to figure out whether irradiation was <strong>necessary</strong> for remission:</p>
+<p><span class="math display">\[
+\begin{aligned}
+P N &amp; \geq \frac{P(y)-P\left(y \mid d o\left(x^{\prime}\right)\right)}{P(x, y)} \\
+&amp;=\frac{P(y)-P\left(y \mid d o\left(x^{\prime}\right)\right)}{P(y \mid x) P(x)} \\
+&amp;=\frac{P(y)-P\left(y \mid d o\left(x^{\prime}\right)\right)}{\left(1-\frac{P\left(x \mid y^{\prime}\right) P\left(y^{\prime}\right)}{P(x)}\right) P(x)} \\
+&amp;=\frac{P(y)-P\left(y \mid d o\left(x^{\prime}\right)\right)}{P(x)-P\left(x \mid y^{\prime}\right) P\left(y^{\prime}\right)}
+\end{aligned}
+\]</span></p>
+<p>We don’t have data for <span class="math inline">\(P(x)\)</span>. However, given that we are interested in a lower bound, we can choose the parametrization that yields the smallest bound: <span class="math inline">\(P(x) = 1\)</span>. Therefore, the bound becomes:</p>
+<p><span class="math display">\[
+\begin{aligned}
+P N &amp; \geq \frac{P(y)-P\left(y \mid d o\left(x^{\prime}\right)\right)}{P(x)-P\left(x \mid y^{\prime}\right) P\left(y^{\prime}\right)} \\
+&amp; \geq \frac{0.7-0.14}{1-(1-0.7) * 0.3} = \\
+&amp; 0.62 &gt; 0.5
+\end{aligned}
+\]</span></p>
+<p>Therefore, irradiation was more likely than not <strong>necessary</strong> for her remission.</p>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<p>In this blogpost, we saw how we can analyze <strong>attribution problems</strong> by <em>giving counterfactual interpretations</em> to the probability that a cause is <strong>necessary and/or sufficient</strong>. These quantities turn out be generally not identifiable because they are sensitive to the specific functional relationships that connect <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> in a SCM.</p>
+<p>However, we can give theoretically sharp bounds for them by <strong>combining experimental and observational data</strong>. If we are willing to <em>assume monotonicity</em>, the bounds collapse to give a point estimate for both probabilities of causation, <span class="math inline">\(PN\)</span> and <span class="math inline">\(PS\)</span>.</p>
+</div>
+
+    </div>
+  
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//https-david-salazar-github-io.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+  
+  </article>
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

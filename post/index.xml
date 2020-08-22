@@ -6,10 +6,20 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 16 Aug 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 20 Aug 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Causality: Probabilities of Causation</title>
+      <link>/2020/08/20/causality-probabilities-of-causation/</link>
+      <pubDate>Thu, 20 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/08/20/causality-probabilities-of-causation/</guid>
+      <description>Why read this?Questions of attribution are everywhere: i.e., did \(X=x\) cause \(Y=y\)? From legal battles to personal decision making, we are obsessed by them. Can we give a rigorous answer to the problem of attribution?
+One alternative to solve the problem of attribution is to reason in the following manner: if there is no possible alternative causal process, which does not involve \(X\),that can cause \(Y=y\), then \(X=x\) is necessary to produce the effect in question.</description>
+    </item>
     
     <item>
       <title>Causality: Regret? Look at Effect of Treatment on the Treated</title>
