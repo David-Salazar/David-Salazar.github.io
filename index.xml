@@ -17,7 +17,7 @@
       <pubDate>Wed, 26 Aug 2020 00:00:00 +0000</pubDate>
       
       <guid>/2020/08/26/causality-mediation-analysis/</guid>
-      <description>MotivationKids are the prototypical question makers; they never stop asking questions. Just after you have answered a Why? question, they ask yet another Why? This is the problem of mediation analysis: if you answer that X causes Y, how does exactly the causal mechanism work? Is the causal effect direct or mediated through yet another variable M? Mediation analysis aims to disentangle the direct effect (which does not pass through the mediator) from the indirect effect (the part that passes through the mediator).</description>
+      <description>library(tidyverse)library(ggdag)extrafont::loadfonts(device=&amp;quot;win&amp;quot;)theme_set(theme_dag(base_family = &amp;quot;Roboto Condensed&amp;quot;))MotivationKids are the prototypical question makers; they never stop asking questions. Just after you have answered a Why? question, they ask yet another Why? This is the problem of mediation analysis: if you answer that X causes Y, how does exactly the causal mechanism work? Is the causal effect direct or mediated through yet another variable M? Mediation analysis aims to disentangle the direct effect (which does not pass through the mediator) from the indirect effect (the part that passes through the mediator).</description>
     </item>
     
     <item>

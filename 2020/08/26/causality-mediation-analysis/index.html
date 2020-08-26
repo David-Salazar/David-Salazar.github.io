@@ -19,6 +19,11 @@
 
 
 
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
 <link rel="stylesheet" href="/css/fonts.css" media="all">
 <link rel="stylesheet" href="/css/main.css" media="all">
 
@@ -58,7 +63,7 @@
 
   <article class="article">
     
-    <span class="article-duration">4 min read</span>
+    <span class="article-duration">11 min read</span>
     
 
     <h1 class="article-title">Causality: Mediation Analysis</h1>
@@ -72,6 +77,10 @@
       
 
 
+<pre class="r"><code>library(tidyverse)
+library(ggdag)
+extrafont::loadfonts(device=&quot;win&quot;)
+theme_set(theme_dag(base_family = &quot;Roboto Condensed&quot;))</code></pre>
 <div id="motivation" class="section level2">
 <h2>Motivation</h2>
 <p>Kids are the prototypical question makers; they never stop asking questions. Just after you have answered a <strong>Why?</strong> question, they ask yet another <em>Why</em>? This is the problem of mediation analysis: if you answer that <em>X causes Y</em>, how does exactly <strong>the causal mechanism work</strong>? Is the causal <strong>effect direct or mediated</strong> through yet another variable M? Mediation analysis aims to disentangle the <strong>direct effect</strong> (which does not pass through the mediator) from the indirect effect (the part that passes through the mediator).</p>
@@ -137,6 +146,186 @@ necessarily</strong> due to M.</p>
 </div>
 <div id="identification" class="section level2">
 <h2>Identification</h2>
+<p>Because both the NDE and the NIE are defined with <em>nested counterfactuals</em>, they imply a contradiction between two <strong>different and clashing causal worlds</strong> that can only be resolved through the invariant information across worlds. However, not all structural causal models (SCM) imply enough restrictions such that this invariant information is enough to estimate the nested counterfactuals with a combination of <strong>observational and experimental evidence</strong>.</p>
+<p>What type of causal models yield NDE (and NIE) that are identifiable? In <a href="">this paper</a>, Pearl says that every model where there is a set <span class="math inline">\(w\)</span> of measured covariates such that:</p>
+<ol style="list-style-type: decimal">
+<li><p>No member of <span class="math inline">\(W\)</span> is a descendant of <span class="math inline">\(T\)</span>.</p></li>
+<li><p><span class="math inline">\(W\)</span> blocks all backdoor paths from <span class="math inline">\(M\)</span> to <span class="math inline">\(Y\)</span> not traversing <span class="math inline">\(T\)</span>. That is, <span class="math inline">\(W\)</span> deconfounds the mediator-outcome relationship (holding <span class="math inline">\(T\)</span> constant).</p></li>
+</ol>
+<p>Then, both effects (NDE and NIE) are <strong>identifiable</strong> with <em>experimental evidence</em>. The formula for the NDE becomes thus:</p>
+<p><span class="math display">\[
+\begin{aligned}
+ N D E=\sum_{m} \sum_{w}\left[E(Y \mid d o(T=1, M=m)), W=w)-E(Y \mid d o(T=0, M=m), W=w)\right] \\
+P(M=m \mid d o(T=0), W=w) P(W=w)
+\end{aligned}
+\]</span></p>
+<p>The intuition is the following:</p>
+<blockquote>
+<p>The natural direct effect is the weighted average of the controlled direct effect <span class="math inline">\(C D E(m),\)</span> shown in the square brackets, using the no-treatment distribution <span class="math inline">\(P(M=m \mid T=0)\)</span> as a weighting function.</p>
+</blockquote>
+<p>Furthermore, if we require <strong>identification</strong> with <em>observational data</em>, we must have a causal model where, <em>besides</em> the former two assumptions, the following two assumptions also hold:</p>
+<ul>
+<li>The <span class="math inline">\(W\)</span> -specific effect of the treatment on the mediator is identifiable by some means.
+<span class="math display">\[
+[P(m \mid d o(t), w) \text { is identifiable }]
+\]</span></li>
+<li>The <span class="math inline">\(W\)</span> -specific joint effect of <span class="math inline">\(\{\)</span> treatment <span class="math inline">\(+\)</span> mediator <span class="math inline">\(\}\)</span> on the outcome is identifiable by some means.
+<span class="math display">\[
+[P(y \mid d o(t, m), w) \text { is identifiable }]
+\]</span></li>
+</ul>
+<p>Then, the equation for the NDE (and the NIE) becomes:</p>
+<p><span class="math display">\[
+\begin{equation}
+\begin{array}{c}
+N D E=\sum_{m} \sum_{w}[E(Y \mid T=1, M=m, W=w)-E(Y \mid T=0, M=m, W=w)] \\
+P(M=m \mid T=0, W=w) P(W=w) \\
+N I E=\sum_{m} \sum_{w}[P(M=m \mid T=1, W=w)-P(M=m \mid T=0, W=w)] \\
+E(Y \mid T=0, M=m, W=w) P(W=w)
+\end{array}
+\end{equation}
+\]</span></p>
+<p>Finally, if there is no confounding in our causal model whatsoever, there’s no need fo conditioning on <span class="math inline">\(W\)</span> and we arrive at the <strong>mediation formulas</strong>:</p>
+<p><span class="math display">\[
+NDE = \sum_{m}[E[Y \mid T=1, M=m]-E[Y \mid T=0, M=m]] P(M=m \mid T=0)
+\]</span>
+Similarly, for the NIE the mediation formula is the following:</p>
+<p><span class="math display">\[
+N I E=\sum_{m} E[Y \mid T=0, M=m][P(M=m \mid T=1)-P(M=m \mid T=0)]
+\]</span>
+In the following section, I’ll present four examples of causal models where the NDE and NIE may not be identifiable.</p>
+<div id="examples-of-identification" class="section level3">
+<h3>Examples of Identification</h3>
+<div id="first-example" class="section level4">
+<h4>First example</h4>
+<p>Suppose you have the following causal model. Are the NDE and NIE identifiable?</p>
+<pre class="r"><code>first_example &lt;- dagify(y ~ t + m,
+                        m ~ t)
+ggdag(first_example) +
+  labs(title = &quot;Are the NDE and NIE identifiable?&quot;,
+       subtitle = &quot;Given that there&#39;s no confounding, they are identifiable!&quot;)</code></pre>
+<p><img src="/post/2020-08-26-causality-mediation-analysis_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>Yes, the effects are identifiable: there’s no confounding and we can use the <strong>mediator formulas</strong>.</p>
+</div>
+<div id="second-example" class="section level4">
+<h4>Second example</h4>
+<p>Suppose you have the following causal model. Are the NDE and NIE identifiable?</p>
+<pre class="r"><code>second_example &lt;- dagify(y ~ t + m + w,
+                        m ~ t + w,
+                        t ~ w)
+ggdag(second_example) +
+  labs(title = &quot;Are the NDE and NIE identifiable?&quot;,
+       subtitle = &quot;w confounds all three relationships. Adjusting for W, renders NDE and NIE identifiable&quot;)</code></pre>
+<p><img src="/post/2020-08-26-causality-mediation-analysis_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+Yes, we can identify the NDE and the NIE. Although <span class="math inline">\(W\)</span> confounds all three relationships, by adjusting by <span class="math inline">\(W\)</span>, we can deconfound them and estimate the NDE and NIE.</p>
+</div>
+<div id="third-example" class="section level4">
+<h4>Third example</h4>
+<p>Suppose you have the following causal model where the dashed arc represents a common unobserved ancestor. Are the NDE and NIE identifiable?</p>
+<pre class="r"><code>third_example &lt;- dagify(m ~ t,
+                        z ~ m,
+                        y ~ z + t,
+                        m ~~ y)
+tidy_dagitty(third_example, layout = &quot;nicely&quot;, seed = 2) %&gt;% 
+  mutate(linetype = if_else(direction == &quot;-&gt;&quot;, &quot;solid&quot;, &quot;dashed&quot;)) %&gt;% 
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend, edge_linetype = linetype)) +
+  geom_dag_edges(aes(end_cap = ggraph::circle(10, &quot;mm&quot;))) +
+  geom_dag_point() + 
+  geom_dag_text() +
+  labs(title = &quot;Are the NDE and NIE identifiable?&quot;,
+       subtitle = &quot;Although the causal effect M-&gt;Y is identifiable, we cannot deconfound the relationships and
+        thus cannot estimate neither the NDE nor the NIE&quot;)</code></pre>
+<p><img src="/post/2020-08-26-causality-mediation-analysis_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>We cannot!</p>
+<blockquote>
+<p>Unfortunately, although the causal effect of <span class="math inline">\(\{T, M\}\)</span> on <span class="math inline">\(Y,\)</span> as well as the controlled direct effect <span class="math inline">\(C D E(m)\)</span> are both identifiable (through the front-door estimator), condition <span class="math inline">\(2\)</span> cannot be satisfied; no covariate can be measured that deconfounds the <span class="math inline">\(M \rightarrow Y\)</span> relationship. The front-door estimator provides a consistent estimate of the population causal effect, <span class="math inline">\(P(Y=y \mid d o(M=m)),\)</span> while unconfoundedness, as defined before, requires independence of <span class="math inline">\(U_{M}\)</span> and <span class="math inline">\(U_{Y},\)</span> which measurement of <span class="math inline">\(Z\)</span> cannot induce.</p>
+</blockquote>
+<p>This is yet another example of the <strong>Causal Hierarchy Theorem</strong>: experimental evidence is not enough to determine counterfactual information. In this case, causal effects are not enough to determine the nested counterfactuals that define the NDE.</p>
+</div>
+<div id="four-example" class="section level4">
+<h4>Four example</h4>
+<p>Suppose you have the following causal model. Are the NDE and NIE identifiable?</p>
+<pre class="r"><code>fourth_example &lt;- dagify(y ~ t + m + w,
+                        m ~ t + w,
+                        w ~ t)
+ggdag(fourth_example) +
+  labs(title = &quot;Are the NDE and NIE identifiable?&quot;,
+       subtitle = &quot;Although W deconfounds M-&gt;Y, it is a descendant of T. Thus, we cannot identify NDE or NIE. &quot;)</code></pre>
+<p><img src="/post/2020-08-26-causality-mediation-analysis_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>No, neither NDE nor NIE are identifiable. Given our first assumption, there’s the following “general pattern that prevents identification of natural effects in any non-parametric model”:</p>
+<blockquote>
+<p>Whenever a variable exists, be it measured or unmeasured, that
+is a descendant of T and an ancestor of both M and Y (W in our examples), NDE is not
+identifiable.</p>
+</blockquote>
+<p>However, the restriction does not apply to linear models where every counterfactual is identifiable once the parameters are identified. Sadly, “the increased identification power comes at increasing the danger of mis-specification”.</p>
+</div>
+</div>
+</div>
+<div id="numerical-example" class="section level2">
+<h2>Numerical example</h2>
+<p>I’ll finish the post by giving the following numerical example to show how we can use what we’ve learnt to estimate natural effects and solve a mediation problem with data. This is the exercise 4.5.4 in Pearl’s primer.</p>
+<blockquote>
+<p>Suppose that a company is accused of gender discrimination. Let <span class="math inline">\(T = 1\)</span> standing for male
+applicants, <span class="math inline">\(M = 1\)</span> standing for highly qualified applicants, and <span class="math inline">\(Y = 1\)</span> standing for hiring.
+(Find the proportion of the hiring disparity that is due to gender, and the proportion that
+could be explained by disparity in qualification alone.)</p>
+</blockquote>
+<p>That is, there are two paths whereby there’s discrimination. Male applicants tend to get more easily hired and thus have more qualifications. However, male applicants may also be favored by the company just because they are male. We draw the following DAG:</p>
+<pre class="r"><code>gender_discrimination &lt;- dagify(m ~ t,
+                                y ~ m + t,
+                                labels = c(&quot;m&quot; = &quot;Qualifications&quot;,
+                                           &quot;t&quot; = &quot;Gender&quot;,
+                                           &quot;y&quot; = &quot;Hiring&quot;))
+gender_discrimination %&gt;%  tidy_dagitty(layout = &quot;tree&quot;) %&gt;% 
+   ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
+    geom_dag_edges() +
+    geom_dag_text(col = &quot;white&quot;) +
+    geom_dag_point(alpha = 0.5) +
+    geom_dag_label_repel(aes(label = label), fill = &quot;dodgerblue4&quot;,
+      col = &quot;white&quot;, show.legend = FALSE, family = &quot;Roboto Condensed&quot;)</code></pre>
+<p><img src="/post/2020-08-26-causality-mediation-analysis_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Let’s say that we collect the following data:</p>
+<p><span class="math display">\[
+\begin{array}{ccc}
+\hline \text { Gender } &amp; \text { Qualification } &amp; \text { Success Hiring } \\
+T &amp; M &amp; E(Y \mid T=t, M=m) \\
+\hline 1 &amp; 1 &amp; 0.80 \\
+1 &amp; 0 &amp; 0.40 \\
+0 &amp; 1 &amp; 0.30 \\
+0 &amp; 0 &amp; 0.20 \\
+\hline
+\end{array}
+\]</span></p>
+<p><span class="math display">\[
+\begin{array}{cc}
+\hline \text { Gender } &amp; \text { Qualification } \\
+T &amp; E(M \mid T=t) \\
+\hline 0 &amp; 0.40 \\
+1 &amp; 0.75 \\
+\hline
+\end{array}
+\]</span>
+Assuming that there’s no confounding, we use the <strong>mediator formulas thus</strong>:</p>
+<p><span class="math display">\[
+\begin{aligned}
+N D E=&amp; \sum_{m}[E[Y \mid T=1, M=m]-E[Y \mid T=0, M=m]] P(M=m \mid T=0) \\
+=&amp;[E[Y \mid T=1, M=0]-E[Y \mid T=0, M=0]] P(M=0 \mid T=0) \\
+&amp;+[E[Y \mid T=1, M=1]-E[Y \mid T=0, M=1]] P(M=1 \mid T=0) \\
+=&amp;(0.4-0.2)(1-0.4)+(0.8-0.3) 0.4 \\
+=&amp; 0.32 \\
+N I E=&amp; \sum_{m} E[Y \mid T=0, M=m][P(M=m \mid T=1)-P(M=m \mid T=0)] \\
+=&amp; E[Y \mid T=0, M=0][P(M=0 \mid T=1)-P(M=0 \mid T=0)] \\
+&amp;+E[Y \mid T=0, M=1][P(M=1 \mid T=1)-P(M=1 \mid T=0)] \\
+=&amp;(0.75-0.4)(0.3-0.2) \\
+=&amp; 0.035
+\end{aligned}
+\]</span></p>
+<p>Therefore, given that the direct effect is substantially larger than the indirect effect, we conclude that it is not the different qualifications in themselves, but the gender that is driving the hiring process in the company.</p>
+</div>
+<div id="conclusions" class="section level2">
+<h2>Conclusions</h2>
+<p>Mediation analysis aims to disentangle the <strong>NDE</strong> (which does not pass through the mediator) from the <strong>NIE</strong> (the part that passes through the mediator). We’ve seen how the correct definition of these effects requires counterfactual thinking that cannot always be empirIcally identified with either experimental or observational evidence. After having stated the required assumptions for identifiability, we practiced recognizing such assumptions with several causal models. Finally, we practiced with a numerical example out of Pearl’s primer.</p>
 </div>
 
     </div>
@@ -184,6 +373,19 @@ necessarily</strong> due to M.</p>
 
     </div>
     
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/python.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
 
     
 <script src="/js/math-code.js"></script>
