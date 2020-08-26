@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.58.3" />
+
+
+<title>Causality: Mediation Analysis - Dilettanting Data Science</title>
+<meta property="og:title" content="Causality: Mediation Analysis - Dilettanting Data Science">
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/turner.jpg"
+         width="200"
+         height="200"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/David-Salazar">GitHub</a></li>
+    
+    <li><a href="https://www.kaggle.com/davidsalazarv95">Kaggle</a></li>
+    
+    <li><a href="https://david-salazar.github.io/">Posts</a></li>
+    
+    <li><a href="https://twitter.com/DavidSalazarVir?lang=en">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">4 min read</span>
+    
+
+    <h1 class="article-title">Causality: Mediation Analysis</h1>
+
+    
+    <span class="article-date">2020/08/26</span>
+    
+    
+
+    <div class="article-content">
+      
+
+
+<div id="motivation" class="section level2">
+<h2>Motivation</h2>
+<p>Kids are the prototypical question makers; they never stop asking questions. Just after you have answered a <strong>Why?</strong> question, they ask yet another <em>Why</em>? This is the problem of mediation analysis: if you answer that <em>X causes Y</em>, how does exactly <strong>the causal mechanism work</strong>? Is the causal <strong>effect direct or mediated</strong> through yet another variable M? Mediation analysis aims to disentangle the <strong>direct effect</strong> (which does not pass through the mediator) from the indirect effect (the part that passes through the mediator).</p>
+<p>Judah Pearl has formulated an answer to the mediation problem by using counterfactuals. By giving precise counterfactual interpretations to both the <strong>Natural Direct Effects (NDE)</strong> and the <strong>Natural Indirect Effects (NIE)</strong>, we can use the machinery of Causal Inference to solve the mediation problem.</p>
+<p>In this post, we’ll study the <strong>counterfactual definition and identification criteria</strong> behind <em>direct and indirect effects</em>. Finally, we’ll solve a numerical example to put what we have learnt into practice.</p>
+<p>All quotes come from Chapter 9 of Pearl’s Causality and Chapter 4 of his primer.</p>
+</div>
+<div id="counterfactual-definitions" class="section level2">
+<h2>Counterfactual Definitions</h2>
+<p>We will use the following canonical Structural Model for a mediation problem to define the following direct and indirect effects.</p>
+<p><span class="math display">\[
+t=f_{T}\left(u_{T}\right) \quad m=f_{M}\left(t, u_{M}\right) \quad y=f_{Y}\left(t, m, u_{Y}\right)
+\]</span>
+Let <span class="math inline">\(T\)</span> be a binary treatment.</p>
+<div id="control-freak" class="section level3">
+<h3>Control freak</h3>
+<p>So far, we have studied the total causal effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>: <span class="math inline">\(P(Y|do(X))\)</span>. “The term “direct effect” is meant to quantify an effect that
+is not mediated by other variables in the model or, more accurately, the sensitivity of <span class="math inline">\(Y\)</span> to changes in <span class="math inline">\(X\)</span> while all other factors in the analysis are held fixed". Notice that holding variables fixed implies an <strong>intervention</strong> that <em>cannot always</em> be mimicked by <strong>conditioning</strong>.</p>
+<p>We will label this effect the <strong>Controlled Direct Effect (CDE)</strong>. In counterfactual terms, it is defined thus:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\operatorname{CDE}(m) &amp;=E\left[Y_{1, m}-Y_{0, m}\right] \\
+&amp;=E[Y \mid d o(T=1, M=m)]-E[Y \mid d o(T=0, M=m)]
+\end{aligned}
+\]</span></p>
+<blockquote>
+<p>CDE measures the expected increase in <span class="math inline">\(Y\)</span> as the treatment changes from <span class="math inline">\(T=0\)</span> to <span class="math inline">\(T=1,\)</span> while the mediator is set to a specified level <span class="math inline">\(M=m\)</span> uniformly over the entire population.</p>
+</blockquote>
+<p>However, intervening on the mediator is an over-kill. We need to be more intelligent.</p>
+</div>
+<div id="natural-let-it-flow" class="section level3">
+<h3>Natural: Let it flow</h3>
+<p>A less stringent intervention is defined by studying the expected increase in <span class="math inline">\(Y\)</span> as the treatment changes from <span class="math inline">\(T=0\)</span> to <span class="math inline">\(T=1,\)</span>, “while the mediator is set to whatever value <em>it would have attained (for each individual) prior to the change</em>, that is, under <span class="math inline">\(T = 0\)</span>”. We will label this the <strong>Natural Direct Effect (NDE)</strong>. In counterfactual terms:</p>
+<p><span class="math display">\[
+N D E=E\left[Y_{1, M_{0}}-Y_{0, M_{0}}\right]
+\]</span>
+Whereas the CDE is made out of do-expressions, the NDE is defined in terms of <em>nested counterfactuals</em>. Therefore, according to <a href="https://david-salazar.github.io/2020/08/10/causality-counterfactuals-clash-of-worlds/">Pearl’s Ladder of Causation and Bareinboim’s Causal Hierarchy Theorem</a>, NDE requires a <strong>more elaborate causal knowledge</strong> to be <em>identified</em> than the CDE. That is, whereas the CDE could be estimated using experimental evidence, the NDE, in principle, cannot be estimated using <strong>only</strong> experimental evidence.</p>
+<div id="what-about-indirect-effects" class="section level4">
+<h4>What about indirect effects?</h4>
+<p>Once we have defined a direct effect, the natural thing to do, in order to tackle the mediation problem, is to also define an <em>indirect</em> effect. The comparison of the two terms will allow us to answer the mediation problem.</p>
+<p>Notice that we must define the <strong>Natural Indirect Effect (NIE)</strong> such that it measures “the portion of the effect that can be explained by mediation alone. Thus, it must disable the capacity of <span class="math inline">\(Y\)</span> to respond to <span class="math inline">\(X\)</span>”. To do so, we will define the NIE thus:</p>
+<blockquote>
+<p>NIE measures the expected increase in Y when the treatment is held constant, at <span class="math inline">\(T = 0\)</span>, and <span class="math inline">\(M\)</span> changes to whatever value it would have attained (for each individual) under <span class="math inline">\(T=1\)</span>.</p>
+</blockquote>
+<p>In counterfactual language:</p>
+<p><span class="math display">\[
+N I E=E\left[Y_{0, M_{1}}-Y_{0, M_{0}}\right]
+\]</span>
+Just like with the NDE, we are faced with nested counterfactuals that cannot always be estimated using experimental evidence.</p>
+</div>
+</div>
+<div id="response-fractions" class="section level3">
+<h3>Response fractions</h3>
+<p>To answer the mediation question, it is useful to state the direct and indirect effects in terms of the total effect.</p>
+<p>What percentage is due to the <strong>direct effect</strong> of <span class="math inline">\(X\)</span>? The ratio <span class="math inline">\(NDE/TE\)</span> “measures the fraction of the response that is transmitted directly, with <span class="math inline">\(M\)</span> frozen.”</p>
+<p>What percentage is due to the mediator variable, that is, is due to the <strong>indirect effect</strong> of <span class="math inline">\(X\)</span>?</p>
+<blockquote>
+<p><span class="math inline">\(NIE∕TE\)</span> measures the fraction of the response that <strong>may be</strong> transmitted through <span class="math inline">\(M\)</span>, with <span class="math inline">\(Y\)</span> blinded to
+<span class="math inline">\(X\)</span>. Consequently, the difference <span class="math inline">\((TE − NDE)∕TE\)</span> measures the fraction of the response that <strong>is
+necessarily</strong> due to M.</p>
+</blockquote>
+</div>
+</div>
+<div id="identification" class="section level2">
+<h2>Identification</h2>
+</div>
+
+    </div>
+  
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//https-david-salazar-github-io.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+  
+  </article>
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

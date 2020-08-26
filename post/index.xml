@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 20 Aug 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 26 Aug 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Causality: Mediation Analysis</title>
+      <link>/2020/08/26/causality-mediation-analysis/</link>
+      <pubDate>Wed, 26 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/08/26/causality-mediation-analysis/</guid>
+      <description>MotivationKids are the prototypical question makers; they never stop asking questions. Just after you have answered a Why? question, they ask yet another Why? This is the problem of mediation analysis: if you answer that X causes Y, how does exactly the causal mechanism work? Is the causal effect direct or mediated through yet another variable M? Mediation analysis aims to disentangle the direct effect (which does not pass through the mediator) from the indirect effect (the part that passes through the mediator).</description>
+    </item>
     
     <item>
       <title>Causality: Probabilities of Causation</title>
