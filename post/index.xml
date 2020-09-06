@@ -6,10 +6,20 @@
     <description>Recent content in Posts on Dilettanting Data Science</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 26 Aug 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 03 Sep 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Forecasting elections? Taleb says no</title>
+      <link>/2020/09/03/forecasting-elections-taleb-says-no/</link>
+      <pubDate>Thu, 03 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/09/03/forecasting-elections-taleb-says-no/</guid>
+      <description>With US elections around the corner, news outlets are constantly deploying new models to try to predict who will win the next presidential elections. Ever since Trump’s ‘surprising’ win in ’16, these (pre-election) polls based models have come under scrutiny. Indeed, there is a huge amount of uncertainty that these models do not seem to capture well enough.
+Taleb’s and Dhruv Madeka’s point is the following: whilst forecasting an uncertain election, one cannot invoke probabilistic thinking unless one imposes severe constraints on how the forecast will move up to election day.</description>
+    </item>
     
     <item>
       <title>Causality: Mediation Analysis</title>
