@@ -1,61 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>mooc on Dilettanting Data Science</title>
-    <link>/categories/mooc/</link>
-    <description>Recent content in mooc on Dilettanting Data Science</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Wed, 08 Jan 2020 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="/categories/mooc/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>Coursera Machine Learning: Neural Networks, Representation</title>
-      <link>/2020/01/08/coursera-machine-learning-neural-networks-representation/</link>
-      <pubDate>Wed, 08 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/2020/01/08/coursera-machine-learning-neural-networks-representation/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Coursera Machine Learning Logistic Regression and Regularization</title>
-      <link>/2020/01/01/coursera-machine-learning-logistic-regression/</link>
-      <pubDate>Wed, 01 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/2020/01/01/coursera-machine-learning-logistic-regression/</guid>
-      <description>Classification ProblemsLinear Regression?Logistic RegressionDecision BoundariesCost FunctionCross EntropyA maximum likelihood derivationVectorised implementationMulti Classification ProblemRegularizationSolutions to overfitting:Cost functionMoving towards neural networksClassification ProblemsIn all of these problems the variable that we’re trying to predict is a variable \(y\) that we can think of as taking on two values either zero or one, either spam or not spam, fraudulent or not fraudulent, related malignant or benign.</description>
-    </item>
-    
-    <item>
-      <title>Coursera Machine Learning: Introduction and Linear Regression</title>
-      <link>/2019/12/26/coursera-machine-learning-week-1/</link>
-      <pubDate>Thu, 26 Dec 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/2019/12/26/coursera-machine-learning-week-1/</guid>
-      <description>Why?Week 1Why Machine Learning?What is Machine LearningSupervised LearningRegression Problems and Classification ProblemsMath SettingExample of ML algorithm and a loss functionWhich ML Algorithm for which Loss Function?Unsupervised LearningLinear RegressionLoss FunctionGradient DescentGradient Descent JustificationGradient Descent in Linear RegressionImplementing Linear Regression with Gradient DescentProblems with linear regressionSensibility to OutliersMulticollinearityHeteroscedasticityWhy?</description>
-    </item>
-    
-    <item>
-      <title>deeplearning.ai Specialization</title>
-      <link>/2019/12/18/deeplearning-ai-specialization/</link>
-      <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/2019/12/18/deeplearning-ai-specialization/</guid>
-      <description>deeplearning.aiOver the next few days, I’ll go over (this time I am paying and thus have access to the exams :)) the deeplearning.ai Coursera Specialization. Here, I’ll gather my notes of the course for easy access:
-Neural Networks and Deep LearningImproving Deep Neural Networks: Hyperparameter tuning, Regularization and Optimization.Structuring Machine Learning Projects.Convolutional Neural Networks.Sequence Models.Why?I have already used DL in a couple of personal projects.</description>
-    </item>
-    
-    <item>
-      <title>Neural Networks and Deep Learning </title>
-      <link>/2019/12/18/neural-networks-and-deep-learning/</link>
-      <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/2019/12/18/neural-networks-and-deep-learning/</guid>
-      <description>Week 1Why Neural Networks?Economic value from Neural NetworksStructured vs UnstructuredWhy now? Scale, scale and scaleUniversal ApproximatorsWeek 2NotationLogistic RegressionA rational loss functionArriving at cost function: Maximum LikelihoodGradient DescentMinimizing directional derivativeComputational Graphs and backpropExample with logistic regressionVectorisationBroadcastingAssingments’ need to remember:Week 3Hidden LayerNotationActivation functionWhy bother with any activation function at all?</description>
-    </item>
-    
-  </channel>
-</rss>

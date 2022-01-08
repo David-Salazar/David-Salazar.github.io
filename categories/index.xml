@@ -1,87 +1,10 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Categories on Dilettanting Data Science</title>
-    <link>/categories/</link>
-    <description>Recent content in Categories on Dilettanting Data Science</description>
+    <title>Categories on David Salazar&#39;s blog</title>
+    <link>https://david-salazar.github.io/categories/</link>
+    <description>Recent content in Categories on David Salazar&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Wed, 08 Jan 2020 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>mooc</title>
-      <link>/categories/mooc/</link>
-      <pubDate>Wed, 08 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/mooc/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>algorithms</title>
-      <link>/categories/algorithms/</link>
-      <pubDate>Thu, 19 Dec 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/algorithms/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>python</title>
-      <link>/categories/python/</link>
-      <pubDate>Thu, 19 Dec 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/python/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Lingua Latina</title>
-      <link>/categories/lingua-latina/</link>
-      <pubDate>Thu, 19 Jul 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/lingua-latina/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>R</title>
-      <link>/categories/r/</link>
-      <pubDate>Tue, 17 Jul 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/r/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>tutorial</title>
-      <link>/categories/tutorial/</link>
-      <pubDate>Sun, 10 Jun 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/tutorial/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Deep Learning</title>
-      <link>/categories/deep-learning/</link>
-      <pubDate>Fri, 01 Jun 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/deep-learning/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Packages</title>
-      <link>/categories/packages/</link>
-      <pubDate>Sun, 20 May 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/packages/</guid>
-      <description></description>
-    </item>
-    
+    <language>en-us</language><atom:link href="https://david-salazar.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

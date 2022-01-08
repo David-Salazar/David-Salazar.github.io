@@ -1,42 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>machine learning on Dilettanting Data Science</title>
-    <link>/tags/machine-learning/</link>
-    <description>Recent content in machine learning on Dilettanting Data Science</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Wed, 08 Jan 2020 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="/tags/machine-learning/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>Coursera Machine Learning: Neural Networks, Representation</title>
-      <link>/2020/01/08/coursera-machine-learning-neural-networks-representation/</link>
-      <pubDate>Wed, 08 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/2020/01/08/coursera-machine-learning-neural-networks-representation/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Coursera Machine Learning: Introduction and Linear Regression</title>
-      <link>/2019/12/26/coursera-machine-learning-week-1/</link>
-      <pubDate>Thu, 26 Dec 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/2019/12/26/coursera-machine-learning-week-1/</guid>
-      <description>Why?Week 1Why Machine Learning?What is Machine LearningSupervised LearningRegression Problems and Classification ProblemsMath SettingExample of ML algorithm and a loss functionWhich ML Algorithm for which Loss Function?Unsupervised LearningLinear RegressionLoss FunctionGradient DescentGradient Descent JustificationGradient Descent in Linear RegressionImplementing Linear Regression with Gradient DescentProblems with linear regressionSensibility to OutliersMulticollinearityHeteroscedasticityWhy?</description>
-    </item>
-    
-    <item>
-      <title>Trees, Ensembles and beyond, XGBoost and LGBM</title>
-      <link>/2018/06/10/trees-ensembles-and-beyond/</link>
-      <pubDate>Sun, 10 Jun 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/2018/06/10/trees-ensembles-and-beyond/</guid>
-      <description>Why?Set-upTreesFitting themInterpretationEnsemblesBaggingBootstrapingRandom ForestsConclusions for BaggingBoostingDirectional DerivativeGradient Boosting: Back to our problemConclusions for BoostingWhy?lightgbm and xgboost appear in every single competition at Kaggle. Thus, these boosting techniques must be able to learn something that cannot be easily learned from intelligent bagging techniques like Random Forests. This is my attempt to understand why and how they can do that.</description>
-    </item>
-    
-  </channel>
-</rss>
