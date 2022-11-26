@@ -1,0 +1,386 @@
+---
+title: Understanding Pooling across Intercepts and Slopes
+author: ''
+date: '2020-06-01'
+slug: understanding-pooling-across-intercepts-and-slopes
+categories: []
+tags: []
+aliases: 
+  - ../../2020/06/01/understanding-pooling-across-intercepts-and-slopes/
+---
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+library(tidyverse)
+library(rethinking)
+library(MASS)
+library(latex2exp)
+
+# rstan stuff
+extrafont::loadfonts(device="win")
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+Sys.setenv(LOCAL_CPPFLAGS = '-march=corei7 -mtune=corei7')
+# set seed
+set.seed(5)
+# set theme
+theme_set(hrbrthemes::theme_ipsum_rc())
+```
+
+
+[Statistical Rethinking](https://xcelab.net/rm/statistical-rethinking/) is a fabulous course on Bayesian Statistics (and much more). By following simulations in the book, I recently tried to understand why [pooling is the process and shrinkage is the result](https://david-salazar.github.io/2020/05/28/simulating-into-understanding-multilevel-models/). In this post, I'll try to do the same for a model where we pool across intercepts and slopes. That is, we will posit a multivariate common distribution for both intercept and slopes to impose adaptive regularization on our predictions. 
+
+# The model 
+
+In the book, Richard proposes the following model for the morning and afternoon waiting times at different cafés. 
+
+$$ W_i \sim Normal(\mu, \sigma) $$
+
+$$ \mu_i = \alpha_{ café_{[i]} } + \beta_{ café_{[i]} } A_i $$
+Intuitively, we expect the waiting time at mornings to be longer than the afternoon waiting times. Therefore, we expect a negative $\beta$. However, the interesting part is **that each café gets its own pair of parameters.** That is what multilevel models are, after all:
+
+> [Multilevel models] are massive interaction machines. They allow every unit in the data to have its own unique response to any treatment... while also improving estimates via pooling. 
+
+That is, each café has its own average waiting time and slope for the afternoon ($A_i$). *We could, after all, perform pooling independently: we would model one common distribution for the intercepts and one common distribution for the slopes*. Note, however, that it would imply that knowing the intercept does not help us to predict the slope. A strong assumption that, in this case, it's wrong: if a café has no lines neither in the morning, it won't have lines in the afternoon: knowing the average waiting time in the morning(the intercept) adjusts our expectations for the waiting time in the afternoon (slope). **There's information that can and should be pooled across parameter types. Therefore, we are better off by setting up a joint common distribution for both the intercepts and slopes**, which means modeling their covariance. 
+
+$$ \begin{bmatrix}
+           \alpha_{café_j} \\
+           \beta_{cafe_j}
+         \end{bmatrix}  =  MVNormal ( \begin{bmatrix}
+           \alpha \\
+           \beta
+         \end{bmatrix} , S)$$
+
+Where $S$ will be the var-cov matrix for the joint common distribution of intercepts and slopes. Intuitively, if the absolute value of the covariance is large, shrinking in one dimension (intercept) will lead to shrinking in the other dimension (slope).  
+
+# Simulating the dataset
+
+## The joint distribution
+
+Remember that "priors are not ontology, but epistemology". Therefore, we never include the priors on our simulations. Let's begin by setting up the parameters of the common joint distribution of intercepts and slopes.
+
+```{r}
+a <- 3.5 # average morning wait time
+b <- -1 # average difference afternoon wait time
+sigma_a <- 1 # std dev in intercepts
+sigma_b <- 0.5 # std dev in slopes
+rho <- -0.7  # correlation between intercepts and slopes
+```
+
+We then construct the var-cov matrix:
+
+```{r}
+Mu <- c(a, b)
+sigmas <- c(sigma_a, sigma_b)
+Rho <- matrix(c(1, rho, rho, 1), nrow = 2) # correlation matrix
+
+Sigma <- diag(sigmas) %*% Rho %*% diag(sigmas)
+Sigma # var-cov
+```
+
+## Simulate for each cafe
+
+```{r}
+N_cafes <- 20
+vary_effects <- mvrnorm(N_cafes, Mu, Sigma) 
+a_cafe <- vary_effects[, 1]
+b_cafe <- vary_effects[, 2]
+glimpse(vary_effects)
+```
+
+That is, for each of the cafés we have one intercept and one slope. Let's check how our simulated intercepts and slopes fit in the overall joint distribution:
+
+```{r fig.width=8}
+contour_level <- function(level) {
+  ellipse::ellipse(Sigma, centre = Mu, level = level) %>% 
+    data.frame() %>% 
+    mutate(level = level)
+} 
+
+title <- TeX("Sampling from a Multivariate Normal ($ \\alpha $, $ \\beta $)")
+
+purrr::map(c(0.1, 0.3, 0.5, 0.8, 0.99), contour_level) %>% 
+  bind_rows() %>% 
+  ggplot(aes(x, y)) +
+  geom_path(aes(group = level, color = level), linetype = 2) + 
+  geom_point(data = data.frame(x = a_cafe, y = b_cafe), alpha = 0.4) +
+  geom_point(data = data.frame(x = a, y = b), color = "red") +
+  labs(title = title,
+       color = "Confidence level",
+       subtitle = "Center of the Distribution in Red",
+       x = expression(alpha),
+       y = expression(beta)) +
+  scale_colour_viridis_c(begin = 1, end = 0) +
+  theme(legend.position = "bottom")
+```
+
+The points that lie in the farthest ellipses are the "outliers". Note that most of the samples surround the center of the distribution. 
+
+## Simulate observations
+
+Once we have an $\alpha, \beta$ for each café, we can simulate the waiting times for each of them:
+
+```{r}
+set.seed(22)
+
+data.frame(cafe_ids = 1:N_cafes, a_cafe, b_cafe) %>% 
+  mutate(N_visits = rep(c(6, 10, 16, 20), times = 5)) %>% 
+  group_by(cafe_ids) %>% 
+  rowwise() %>% 
+  mutate(afternoon = list( rep(0:1, N_visits/ 2) )) %>%  # repeat data for morning and afternoon
+  unnest() -> data_for_simulation
+
+# different visits number of visits for each cafe
+data_for_simulation %>% 
+  count(cafe_ids)
+``` 
+Now, we are ready to simulate:
+
+```{r}
+data_for_simulation %>% 
+  transmute(cafe_ids, mu = a_cafe + b_cafe*afternoon, afternoon) %>% 
+  rowwise() %>% 
+  transmute(cafe_ids, afternoon, wait = rnorm(1, mu, sd = 0.5)) -> model_data
+glimpse(model_data)
+```
+
+In Richard's words:
+
+> Exactly the sort of data that is well-suited to a varying slopes model. There are multiple clusters in the data. These are the cafés. And each cluster is observed under differened conditions. So it's possible to estimate both an individual intercept for each cluster, as well as an individua slope. 
+
+## Fixed effects: Maximal Overfit
+
+**When we do not allow any pooling at all, we maximally overfit**. The prediction for both afternoon and morning, for each café, will be the observed mean at each of the times. 
+
+```{r fig.height=8}
+model_data %>% 
+  group_by(cafe_ids, afternoon) %>% 
+  summarise(avg_wait = mean(wait)) %>%
+  ggplot(aes(factor(afternoon, labels = c("M", "A")), y = avg_wait)) +
+  geom_point() +
+  geom_path(aes(group = cafe_ids), linetype = 2, color = "dodgerblue4") +
+  facet_wrap(~cafe_ids) +
+  hrbrthemes::theme_ipsum_rc(grid = "Y") +
+  labs(title = "Fixed Effects estimates",
+       x = "Time of the day",
+       y = "Average waiting time",
+       subtitle = "Average waiting time per cafe and per time of the day")
+```
+
+## Partial Pooling: Multilevel model
+
+Instead of ignoring the rest of the cafes when doing our predictions, let's pool the information across cafes and across parameter types. To do so, let's finish setting up the model that we had at the beginning:
+
+$$ W_i \sim Normal(\mu, \sigma) $$
+
+$$ \mu_i = \alpha_{ café_{[i]} } + \beta_{ café_{[i]} } A_i $$
+
+$$ \begin{bmatrix}
+           \alpha_{café_j} \\
+           \beta_{cafe_j}
+         \end{bmatrix}  =  MVNormal ( \begin{bmatrix}
+           \alpha \\
+           \beta
+         \end{bmatrix} , S)$$
+
+The only thing left is to posit priors for the parameters. First, we write the var-cov matrix thus:
+
+$$ S = \begin{bmatrix} 
+  \sigma_{\alpha} \  0 \\
+  0 \ \sigma_{\beta}
+\end{bmatrix} R \begin{bmatrix} 
+  \sigma_{\alpha} \  0 \\
+  0 \ \sigma_{\beta}
+\end{bmatrix} $$
+
+We do this to set up the prior for the correlation matrix thus:
+
+$$ R \sim \text{LKJcorr}(2) $$
+
+The rest will be traditional priors. Let's focus for a second on the LKJcorr.
+
+### LKJcorr interlude
+
+For our purposes, what we need to do is to understand how our prior changes with the parameter of the distribution $\eta$:
+
+```{r}
+rlkj <- function(eta) {
+  rlkjcorr(1e4, K = 2, eta = eta)[,,2][,1] %>% 
+    data.frame(value = .) %>% 
+    mutate(sims = 1:1e4, eta = eta)
+}
+
+purrr::map(c(1, 2, 4, 10), rlkj) %>% 
+  bind_rows() %>% 
+  ggplot(aes(value, fill = factor(eta))) +
+  geom_density(aes(group = NA)) +
+  gganimate::transition_states(factor(eta)) +
+  labs(subtitle = "Eta =  {closest_state}",
+       title = "LKJ prior for correlation matrix",
+       fill = expression(eta))
+```
+
+### Fit the model
+
+Finally, we are ready to fit our partial pooling model.
+
+```{r message=FALSE, warning=FALSE}
+model_data_list = list(
+  wait = model_data$wait,
+  cafe_ids = as.integer(model_data$cafe_ids),
+  afternoon = as.integer(model_data$afternoon)
+)
+
+partial_pooling <- ulam(
+  alist(
+    wait ~ normal(mu, sigma),
+    mu <- a_cafe[cafe_ids] + b_cafe[cafe_ids]*afternoon, # each cafe has own intercept and slope
+    # outcome sd prior
+    sigma ~ exponential(1),
+    # adaptive-prior
+    c(a_cafe, b_cafe)[cafe_ids] ~ multi_normal(c(a, b), Rho, sigma_cafe), # joint common distribution, ensures pooling
+    # hyper-priors
+    a ~ normal(5, 2),
+    b ~ normal(-1, 0.5),
+    sigma_cafe ~ exponential(1), # ulam converts it to 2d vector
+    Rho ~ lkj_corr(1.5)
+  ), data = model_data_list,
+  chains = 4, cores = 4, iter = 10000)
+```
+
+Let's check our chains' health:
+
+```{r}
+traceplot_ulam(partial_pooling)
+```
+
+Our chains look healthy enough:
+
+1. They mix well
+1. They are stationary.
+1. Different chains converge to explore the same parameter space. 
+
+Let's look at the $\hat{R}$ values:
+
+```{r}
+precis(partial_pooling, depth = 2) %>% 
+  data.frame() %>% 
+  dplyr::select(Rhat4) %>% 
+  summary()
+```
+
+The $\hat{R}$ values look OK. Let's check our inferences for the joint common distribution:
+
+```{r}
+samples <- extract.samples(partial_pooling)
+precis(partial_pooling) 
+```
+
+It seems that we've been able to recover the common joint distribution's parameters that adaptively regularizes our individual estimates for each café. For example, the marginal distribution of $a$:
+
+```{r}
+data.frame(a = samples$a) %>% 
+  ggplot(aes(a)) +
+  geom_density(fill = "dodgerblue4", alpha = 0.6) +
+  geom_vline(aes(xintercept = 3.5), linetype = 2, color = "red") +
+  labs(title = "Posterior probability for a")
+```
+
+Now for the posterior marginal distribution of b:
+
+```{r}
+data.frame(b = samples$b) %>% 
+  ggplot(aes(b)) +
+  geom_density(fill = "dodgerblue4", alpha = 0.6) +
+  geom_vline(aes(xintercept = -1), linetype = 2, color = "red") +
+  labs(title = "Posterior probability for b")
+```
+
+Finally, we can plot the joint distribution with contours:
+
+```{r}
+Mu_est <- c(mean(samples$a), mean(samples$b))
+rho_est <- mean(samples$Rho[,1,2])
+sa_est <- mean(samples$sigma_cafe[,1])
+sb_est <- mean(samples$sigma_cafe[, 2])
+cov_ab <- sa_est*sb_est*rho_est
+Sigma_est <- matrix(c(sa_est^2, cov_ab, cov_ab, sb_est^2), ncol = 2)
+
+contour_level <- function(level) {
+  ellipse::ellipse(Sigma_est, centre = Mu_est, level = level) %>% 
+    data.frame() %>% 
+    mutate(level = level)
+} 
+
+purrr::map(c(0.1, 0.3, 0.5, 0.8, 0.99), contour_level) %>% 
+  bind_rows() %>% 
+  ggplot(aes(x, y)) +
+  geom_path(aes(group = level), linetype = 2) +
+  geom_point(data = data.frame(x = Mu_est[1]), y = Mu_est[2], color = "red") +
+  labs(title = "Esimated joint common distribution of intercepts and slopes",
+       color = "Confidence level",
+       subtitle = "Center of the Distribution in Red",
+       x = expression(alpha),
+       y = expression(beta))  -> joint_ellipses
+joint_ellipses
+```
+
+As we can see, our joint common distribution captures the negative correlation between intercepts and slopes.
+
+### Visualizing the shrinkage
+
+We've seen how and why it's sensible to pool information across clusters and across parameter types. We've estimated with our multilevel model the common joint distribution. Now it's time to visualize the shrinkage: **how our estimates are pulled towards the estimated joint common distribution toward its mean.**
+
+To do, we must first average our estimates for each café over the posterior distribution. Then, we can compare with our fixed effects estimates from the beginning. 
+
+```{r}
+# fixed effects
+model_data %>% 
+  group_by(cafe_ids, afternoon) %>% 
+  summarise(avg_wait = mean(wait)) %>% 
+  mutate(afternoon = if_else(afternoon == 1, "afternoon", "morning")) %>% 
+  pivot_wider(cafe_ids, names_from = afternoon, values_from = avg_wait) %>% 
+  mutate(b_fixed = afternoon - morning) %>% 
+  dplyr::select(-afternoon) %>% 
+  rename(a_fixed = morning) -> fixed_effects 
+
+# partial pooling
+a_pooled <- apply(samples$a_cafe, 2, mean)
+b_pooled <- apply(samples$b_cafe, 2, mean)
+
+data.frame(cafe_ids = 1:N_cafes, a_partial_pooling = a_pooled) %>% 
+  left_join(fixed_effects %>% 
+              dplyr::select(cafe_ids, a_fixed)) %>% 
+  pivot_longer(-cafe_ids, names_to = "method", names_prefix = "a_", values_to ="intercept") -> comparison_intercepts
+
+data.frame(cafe_ids = 1:N_cafes, b_partial_pooling = b_pooled) %>% 
+  left_join(fixed_effects %>% 
+              dplyr::select(cafe_ids, b_fixed)) %>% 
+  pivot_longer(-cafe_ids, names_to = "method", names_prefix = "b_", values_to = "slope") -> comparison_slopes
+
+comparison_intercepts %>% 
+  left_join(comparison_slopes) -> comparisons
+glimpse(comparisons)
+```
+Finally, we can plot our points over our posterior joint common distribution to visualize how our estimates are pooled over towards the joint common distribution's mean:
+
+```{r fig.height=8}
+joint_ellipses +
+  geom_point(data = comparisons, mapping = aes(x =intercept, y = slope, color = method),
+             inherit.aes = FALSE, size = 3) +
+  geom_path(data = comparisons, mapping = aes(x =intercept, y = slope, group = cafe_ids),
+             inherit.aes = FALSE) +
+  labs(title = "Esimated joint common distribution of intercepts and slopes",
+       color = "Method",
+       subtitle = "Estimates are shrunk towards the grand mean of the common distribution",
+       x = expression(alpha),
+       y = expression(beta),
+       caption = "Lines joint the predictions for predictions that belong to the same café") +
+  scale_colour_viridis_d(begin = 1, end = 0) +
+  theme(legend.position = "bottom")
+```
+
+As we can see, the partial pooling estimates are always closer to the center of the distribution than the fixed effects estimates. **This is the direct result of pooling the information with a joint common distribution that shrinks our estimates towards the grand mean.** Not only that, **shrinking in one dimension entails shrinking in the other dimension**. This is the direct result of the pooling across parameter types.  
+
+
+
+

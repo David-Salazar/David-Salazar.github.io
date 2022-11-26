@@ -1,0 +1,602 @@
+---
+title: 'Statistical Rethinking: Week 6'
+author: ''
+date: '2020-05-20'
+slug: statistical-rethinking-week-6
+categories: []
+tags: []
+aliases: 
+  - ../../2020/05/20/statistical-rethinking-week-6/
+---
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+library(tidyverse)
+library(rethinking)
+library(ggridges)
+library(dagitty)
+extrafont::loadfonts(device="win")
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+Sys.setenv(LOCAL_CPPFLAGS = '-march=corei7 -mtune=corei7')
+set.seed(42)
+```
+
+# Statistical Rethinking: Week 6
+
+## Quick summary of the week
+
+The week was a whirlwind tour of:
+
+1. Maximum entropy and introduction to GLMs.
+1. The problems that come when using link functions.
+1. The perils of relative effects when studying binomial regression and how complicated it is to directly calculate probabilities with GLMs: all the parameters interact among themselves. 
+
+This week was an introduction to GLMs and the principle of Maximum Entropy. Once we adventure outside the Gaussian, things start to become interesting. However, interesting can quickly devolve into chaotic and arbitrary modelling decisions. Against this, Richard started to introduce the principle of Maximum Entropy: when choosing how to approximate an unknown distribution, pick the most conservative distribution that satisfies your assumptions. This guiding principle works just as well for our likelihood choice, our prior choice and the resulting posterior distribution.
+
+Also, once we work with likelihoods other than the normal, we must work with "link" functions: functions that link one of the likelihood's parameters to a linear combination of our predictors. However, this change is not completely benign: prior setting now has become even more unnatural. Flat priors on the parameter space can now imply very different things in the outcome space. Thus, the heightened importance of prior predictive simulation. 
+
+# Homework 6
+
+```{r}
+data("NWOGrants")
+
+grants <- NWOGrants
+grants
+```
+
+> These data have a very similar structure to the UCBAdmit data discussed in Chapter 11. I want you to consider a similar question: What are the total and indirect causal effects of gender on grant awards? Consider a mediation path (a pipe) through discipline. Draw the corresponding DAG and then use one or more binomial GLMs to answer the question.
+
+Let's start by writing the corresponding DAG:
+
+```{r}
+dag <- dagitty( "dag {
+                Gender -> Awards
+                Gender -> Discipline
+                Discipline -> Awards
+                }")
+drawdag(dag)
+```
+
+
+Therefore, to find out the total effect of Gender on awards we must keep the pipe open. That is, do not include Discipline on our analysis. Given that we are dealing with unorder count data, we will use a Binomial regression. 
+
+However, before we fit our statistical model, we will create index variables for both gender and discipline.
+
+```{r}
+grants %>% 
+  mutate(discipline_int = as.integer(discipline),
+         gender_int = as.integer(gender)) -> grant_with_indices
+grant_with_indices %>% 
+  count(gender, gender_int)
+```
+
+```{r}
+grant_with_indices %>% 
+  count(discipline, discipline_int)
+```
+
+Before setting the prior, we know that getting grants is difficult. So we should expect the probability to be pretty low for both genders. A log-odds of 0 is a probability of 1/2. Thus, zero is too large for being the center of our prior.  
+
+```{r}
+inv_logit(0)
+```
+
+```{r}
+inv_logit(-1)
+```
+
+A quarter of a probability seems more plausible.
+
+
+```{r model-gender, cache = TRUE}
+data_model_only_gender <- list(
+  gender = grant_with_indices$gender_int,
+  awards = grant_with_indices$awards,
+  applications = grant_with_indices$applications
+)
+
+
+model_only_gender <- ulam(
+  alist(
+    awards ~ dbinom(applications, p),
+    logit(p) <- g[gender],
+    g[gender] ~ dnorm(-1, 0.5)
+  ),
+  data = data_model_only_gender,
+  chains = 4, cores = 4, iter = 1000,
+  log_lik = TRUE
+)
+```
+
+Before we venture into finding out our chains' health, let's do some prior predictive simulation.
+
+```{r model-only-gender-prior, cache = TRUE}
+prior_simulation <- extract.prior(model_only_gender)
+
+data.frame(sim = 1:1000, prior_simulation$g) %>% 
+  rename(men = X1,
+         women = X2) %>% 
+  pivot_longer(-sim, names_to = "gender", values_to = "log_odds") %>% 
+  mutate(prob = inv_logit(log_odds)) %>% 
+  ggplot(aes(x = prob)) +
+  geom_histogram(aes(fill = gender), alpha = 0.5, color = "black",
+                 binwidth = 0.1) +
+  facet_wrap(~gender) +
+  hrbrthemes::theme_ipsum_rc() +
+  scale_fill_viridis_d() +
+  theme(legend.position = "none")
+```
+
+Which are very mildly regularizing priors after all. Let's check our chains' health:
+
+```{r}
+traceplot(model_only_gender)
+```
+
+The chains look healthy because:
+
+1. They are stationary.
+2. They mix well.
+3. Different chains converge to explore same regions of the parameter space.
+
+```{r}
+precis(model_only_gender, depth = 2)
+```
+
+The Rhat looks OK, too. The parameters seem to be pretty accurately estimated, given their absolute value compare to their standard deviation. Both are negative, reflecting that getting a grant is difficult. 
+
+For the men, the average probability seems to be around:
+
+```{r}
+glue::glue("Average probability of getting a grant across disciplines for men is between: {round(inv_logit(-1.63), 2)} and {round(inv_logit(-1.42), 2)}")
+```
+
+For the women:
+
+```{r}
+glue::glue("Average probability for men is between: {round(inv_logit(-1.86), 2)} and {round(inv_logit(-1.60), 2)}")
+```
+
+Let's compute statistical inference on this difference. The **relative effect** of being a man:
+
+```{r model-only-gender, message=FALSE, warning=FALSE, cache=TRUE}
+posterior_model_only_gender = extract.samples(model_only_gender)
+
+gender <- posterior_model_only_gender$g
+
+women <- 1
+men <- 2
+
+diff_log_odds <- gender[,men] - gender[,women]
+diff_probability <- inv_logit(gender[,men]) - inv_logit(gender[,women])
+
+precis(list(diff_log_odds = diff_log_odds,
+            diff_probability = diff_probability))
+```
+
+On the log odds scale, that is, **in the relative scale**, we estimate that on average, across disciplines, the effect is positive. On the probability scale, that is, **in the absolute scale**, we estimate the difference to be around 1% and 5%. 
+
+```{r}
+tibble(sim = 1:2000,
+  men = inv_logit(gender[, men]),
+  women = inv_logit(gender[, women])
+) %>% 
+  pivot_longer(-sim, values_to = "probability") %>% 
+  ggplot(aes(probability, name, fill = name)) +
+  geom_density_ridges(alpha = 0.5) +
+  hrbrthemes::theme_ipsum_rc(grid = "y") +
+  scale_fill_viridis_d(begin = 0, end = 1) +
+  theme(legend.position = "none") +
+  labs(title = "Average probability of getting a grant",
+       subtitle = "Across departments, men get, on average, more grants",
+       y = "") +
+  scale_x_continuous(labels = scales::percent_format())
+```
+
+```{r}
+tibble(diff_probability) %>% 
+  ggplot(aes(diff_probability)) +
+  geom_density(fill = "dodgerblue4", alpha = 0.5) +
+  scale_x_continuous(labels = scales::percent_format()) +
+  hrbrthemes::theme_ipsum_rc(grid = "X")
+```
+
+Posterior predictions
+
+```{r figure-gender, message=FALSE, warning=FALSE,  fig.width=10, fig.height=10}
+posterior_predictions <- link(model_only_gender, data = data_model_only_gender)
+
+data.frame(sim = 1:2000, posterior_predictions)  %>% 
+  pivot_longer(-sim) %>% 
+  mutate(name = str_extract(name, "\\d+")) %>% 
+  left_join(add_rownames(grants), by = c("name"="rowname")) %>% 
+  ggplot(aes(value, discipline, fill = gender)) +
+  geom_density_ridges(alpha = 0.5) +
+  hrbrthemes::theme_ipsum_rc(grid = "Y") + 
+  scale_fill_viridis_d(begin = 0, end = 1) +
+  theme(legend.position = "bottom") +
+  scale_x_continuous(labels = scales::percent_format()) +
+  labs(title = "Predictions only taking into account gender",
+       subtitle = "Same difference predicted difference across departments",
+       x = "probability")
+```
+
+
+
+
+However, this models helps us answer what is the total effect of gender on grants by answering the statistical question of what is the average probability of getting a grant across. 
+
+Conditional on our DAG, if we want to get the direct effect of gender on grants, we must adjust for the discipline to which the scholars belong to. That is, we must ask a different statistical question: within discipines, what is the average grant assignment for men and women?
+
+```{r model-with-disciplines, cache = TRUE}
+
+data_model_with_disciplines <- list(
+  gender = grant_with_indices$gender_int,
+  awards = grant_with_indices$awards,
+  applications = grant_with_indices$applications,
+  disciplines = grant_with_indices$discipline
+)
+
+
+model_discipline <- ulam(
+  alist(
+    awards ~ dbinom(applications, p),
+    logit(p) <- g[gender] + d[disciplines],
+    g[gender] ~ dnorm(-1, 0.5),
+    d[disciplines] ~ dnorm(-1, 0.5)
+  ),
+  data = data_model_with_disciplines,
+  chains = 4, cores = 4, iter = 1000
+)
+
+traceplot(model_discipline)
+```
+
+The chains seem to be healthy:
+
+1. They are stationary.
+1. They mix well.
+1. Different chains converge well.
+
+Let's fit a single long chain.
+
+```{r}
+
+model_discipline <- ulam(
+  alist(
+    awards ~ dbinom(applications, p),
+    logit(p) <- g[gender] + d[disciplines],
+    g[gender] ~ dnorm(-1, 0.5),
+    d[disciplines] ~ dnorm(-1, 0.5)
+  ),
+  data = data_model_with_disciplines,
+  chains = 1, cores = 4, iter = 4000,
+  log_lik = TRUE
+)
+
+precis(model_discipline, depth = 2)
+```
+
+The Rhat seems to be ok. Also, men's parameter seems to still be larger than the women's parameters. 
+
+```{r}
+posterior_model_discipline = extract.samples(model_discipline)
+
+gender <- posterior_model_discipline$g
+
+women <- 1
+men <- 2
+
+diff_log_odds <- gender[,men] - gender[,women]
+
+precis(list(diff_log_odds = diff_log_odds))
+```
+
+Now, the difference, as measured on the log scale, **the relative effect**, seems to have decreased. However, within departments, men still seem to have a higher chance of receiving a grant. 
+
+However, we cannot directly calculate the difference in the **absolute scale** as readily as we did before. Why? The floor and ceiling effects that Richard discussed in class. That is, the departments influence the difference between genders; the differents base rates of acceptance among departments influence our prediction.
+
+```{r figure1, message=FALSE, warning=FALSE,  fig.width=10, fig.height=10}
+posterior_predictions_discipline <- link(model_discipline, data = data_model_with_disciplines)
+
+data.frame(sim = 1:2000, posterior_predictions_discipline)  %>% 
+  pivot_longer(-sim) %>% 
+  mutate(name = str_extract(name, "\\d+")) %>% 
+  left_join(add_rownames(grant_with_indices), by = c("name"="rowname")) %>% 
+  ggplot(aes(value, discipline, fill = gender)) +
+  geom_density_ridges(alpha = 0.5) +
+  hrbrthemes::theme_ipsum_rc(grid = "Y") + 
+  scale_fill_viridis_d(begin = 0, end = 1) +
+  theme(legend.position = "bottom") +
+  scale_x_continuous(labels = scales::percent_format()) +
+  labs(title = "Taking into account base rates",
+       subtitle = "Predicted difference varies across departments. We predict within departments",
+       x = "probability")
+ggsave("differencevaries.png")
+```
+
+In comparison to our earlier predictions, the predicted difference is, in general, much lower. Let's compare our models:
+
+```{r}
+compare(model_only_gender, model_discipline, func = "LOO")
+```
+
+```{r}
+compare(model_only_gender, model_discipline)
+```
+
+Somewhat surprisingly, the PSIS and the WAIC give different answers. If we check the differences and their standard error, we see that the differences are not precisely estimated. Hinting that the models give somewhat equivalent predictions. 
+
+Finally, let's check the actual observed rates: 
+
+```{r message=FALSE, warning=FALSE}
+grants %>% 
+  mutate(rate = awards/applications) %>% 
+  pivot_wider(id_cols = discipline, names_from =  gender, values_from = rate) %>% 
+  rename(men = m, 
+         women = f) %>% 
+  ggcharts::dumbbell_chart(discipline, men, women) +
+  hrbrthemes::theme_ipsum_rc(grid = "x") +
+  scale_color_viridis_d(begin = 1, end = 0) +
+  labs(title = "Observed grant rate",
+       y = "Acceptance Rate") +
+  scale_y_continuous(labels = scales::percent_format())
+```
+
+In reality, the relationship is not as straightforward as we predicted. That is, model one (that only takes into account gender) indeed is hinting much more to what we observe: a large gap in the acceptance rates between genders, even among departments. 
+
+> . Suppose that the NWO Grants sample has an unobserved confound that influences both choice of discipline and the probability of an award. One example of such a confound could be the career stage of each applicant. Suppose that in some disciplines, junior scholars apply for most of the grants. In other disciplines, scholars from all career stages compete. As a result, career stage influences discipline as
+well as the probability of being awarded a grant. Add these influences to your DAG from Problem 1.
+
+```{r}
+dag <- dagitty( "dag {
+                Gender -> Awards
+                Gender -> Discipline
+                Discipline -> Awards
+                CarrerStage -> Discipline
+                CarrerStage -> Awards
+                }")
+drawdag(dag)
+```
+
+> What happens now when you condition on discipline? 
+
+We are interested on the effect of Gender on Awards. If we only include Gender, there's one backdoor path: the effect of Carrer Stage on Awards that gets picked up by discipline. However, that information won't flow towards gender: Disciplin forms a collider that it is closed as long as we don't adjust our estimates with discipline:
+
+```{r}
+dagitty::adjustmentSets(dag, exposure = "Gender" , outcome = "Awards")
+```
+
+Therefore, according to our DAG, we can estimate the total effect of gender on awards. 
+
+However, once we adjust for discipline, we open the collider. Thus, we cannot reliably estimate the direct effect of Gender on awards unless we adjust for Carrer Stage. 
+
+```{r}
+dagitty::adjustmentSets(dag, exposure = c("Discipline", "Gender"), outcome = "Awards")
+```
+
+> The data in data(Primates301) were first introduced at the end of Chapter 7. In this problem, you will consider how brain size is associated with social learning. There are three parts
+
+```{r}
+data("Primates301")
+primates <- Primates301
+primates
+```
+
+> First, model the number of observations of social_learning for each species as a function of the log brain size. Use a Poisson distribution for the social_learning outcome variable. Interpret the resulting posterior
+
+First, we create the log of brain size and standardize. Thus, we will have an intuitive interpretation for the intercept
+
+```{r}
+primates %>% 
+  mutate(log_brain_size = log(brain)) %>% 
+  drop_na(social_learning, log_brain_size, research_effort) %>% 
+  mutate(log_brain_size = (log_brain_size - mean(log_brain_size)) / sd(log_brain_size)) -> primates_model
+
+data_only_brain <- list(log_brain = primates_model$log_brain_size,
+                        social_learning = primates_model$social_learning)
+```
+
+To fit the model, we must set the priors. However, given that we must ensure that $\lambda$ must be positive, we must use a link function. Therefore, if we use normal priors on the log of $\lambda$, we are acutally saying that $\lambda$ is log normal. 
+
+```{r}
+mu <- 0.5
+sigma <- 0.1
+mean_normal <- exp(mu + sigma^2/2) # using the MGF of the normal
+mean_normal
+```
+
+
+
+```{r only-brain, cache = TRUE}
+model_only_brain <- ulam(
+  alist(
+    social_learning ~ dpois(lambda),
+    log(lambda) <- a + b*log_brain,
+    a ~ dnorm(0, 1),
+    b ~ dnorm(0, 0.5)
+  ),
+  data = data_only_brain,
+  chains = 4, cores = 4,
+  log_lik = TRUE
+)
+
+traceplot(model_only_brain)
+```
+
+The chains look healthy:
+
+1. They are stationary.
+1. They mix well.
+1. Different chains converge to explore the same parameter space. 
+
+```{r}
+precis(model_only_brain)
+```
+
+The Rhat also looks OK. The slope seems very accurately estimating: a whole standard deviation of more brain size seems associated with around 1.98 social_learning observations. Let's use a posterior check:
+
+```{r}
+data_simul_brain <- list(log_brain = seq(min(primates_model$log_brain_size), max(primates_model$log_brain_size), 
+                                         length.out = 100))
+
+lambda <- link_ulam(model_only_brain, data = data_simul_brain)
+mean_lambda <- apply(lambda, 2, mean)
+bounds <- apply(lambda, 2, PI, prob = 0.87)
+lower_bound <- bounds[1,]
+higher_bound <- bounds[2,]
+
+data.frame(log_brain_size =  data_simul_brain$log_brain, social_learning = mean_lambda,
+           lower_bound, higher_bound) -> reg_line
+
+primates_model %>% 
+  ggplot(aes(log_brain_size, social_learning)) +
+  geom_point(alpha = 0.2) +
+  geom_line(data = reg_line) +
+  geom_ribbon(data = reg_line,
+              aes(ymin = lower_bound, ymax = higher_bound), alpha = 0.4) +
+  hrbrthemes::theme_ipsum_rc() +
+  labs(title = "Posterior Check",
+       subtitle = "Posterior fit is not great.")
+```
+
+Clearly, our modelling is off. There are more factors at play here.
+
+> Second, some species are studied much more than others. So the number of reported instances of social_learning could be a product of research effort. Use the research_effort variable, specifically its logarithm, as an additional predictor variable. Interpret the coefficient for log research_effort. Does this model disagree with the previous one?
+
+```{r brain-research, cache=TRUE}
+primates_model %>% 
+  mutate(log_res = log(research_effort),
+         log_res = (log_res - mean(log_res)) / sd(log_res)) -> primates_model_r
+
+
+data_brain_and_research <- list(log_brain = primates_model_r$log_brain_size,
+                        social_learning = primates_model_r$social_learning,
+                        research = primates_model_r$log_res)
+
+model_brain_research <- ulam(
+  alist(
+    social_learning ~ dpois(lambda),
+    log(lambda) <- a + b*log_brain + r*research,
+    a ~ dnorm(0, 1),
+    b ~ dnorm(0, 0.5),
+    r ~ dnorm(0, 0.5)
+  ),
+  data = data_brain_and_research,
+  chains = 4, cores = 4
+)
+
+traceplot(model_brain_research)
+```
+
+The chains look healthy: 
+
+1. They are stationary.
+1. They mix well.
+1. Different chains converge to explore the same paths.
+
+Let's fit a longer chain:
+
+```{r long-chain, cache =TRUE}
+model_brain_research <- ulam(
+  alist(
+    social_learning ~ dpois(lambda),
+    log(lambda) <- a + b*log_brain + r*research,
+    a ~ dnorm(0, 1),
+    b ~ dnorm(0, 0.5),
+    r ~ dnorm(0, 0.5)
+  ),
+  data = data_brain_and_research,
+  chains = 1, iter = 4000,
+  log_lik = TRUE
+)
+```
+
+```{r}
+precis(model_brain_research)
+```
+
+The Rhats look OK, too. Surprisingly, the log of brain size decreased quite a bit. Let's compare the overfitting risk of both models:
+
+```{r}
+compare(model_only_brain, model_brain_research)
+```
+
+```{r}
+compare(model_only_brain, model_brain_research, func = "LOO")
+```
+
+Both WAIC and PSIS agree: the model that incorporates the effect of research effort makes better predictions. Naturally, we are not saying that research effor influences learning; just that it influences the measurement of learning. Given that including it in the model reduced the predicted influence of brain size, it is likely that research effort is positively linked with brain size. That is, reseraches study more the primates with larger brain sizes. 
+
+```{r}
+primates_model_r %>% 
+  ggplot(aes(log_brain_size, log_res)) +
+  geom_point(alpha = 0.5) +
+  hrbrthemes::theme_ipsum_rc() +
+  labs(title = "Relation between predictors",
+       subtitle = "Positive relationship between magnitudes of brain size and research effort",
+       x = "log (brain size)",
+       y = "log (research effort)")
+```
+
+WAIC and LOOk can help us to clarify what is going on here. Essentially, a cluster of species are driving the model: the ones that highly researched. If true, the models should predict equivalent predictions out of sample for each of the observations, except the ones with high research efforts. Both LOO and WAIC give us pointwise overfitting penalties; that is, pointwise measures of where the model is having trouble predicting. If we compare these quantities, we should identify the observations that are driving the difference in predictive performance:
+
+```{r message=FALSE, warning=FALSE, cache=TRUE}
+only_brain <- LOO(model_only_brain, pointwise = TRUE)
+with_research <- LOO(model_brain_research, pointwise = TRUE)
+
+only_brain %>% 
+    add_rownames() %>% 
+    left_join(add_rownames(primates_model_r)) -> pointwise_data
+
+pointwise_data %>%
+  filter(k > 0.5) -> high_leverage
+
+pointwise_data %>% 
+  ggplot(aes(log_brain_size, log_res)) +
+  geom_point(aes(color = k)) +
+  ggrepel::geom_text_repel(data = high_leverage,
+                  aes(label = genus)) +
+  hrbrthemes::theme_ipsum_rc() +
+  scale_color_viridis_c() +
+  labs(title = "Model only considers Brain",
+       subtitle = "Large Research, Large brain is driving inference",
+       x = "log (brain size)",
+       y = "log (research effort)") 
+```
+
+```{r message=FALSE, warning=FALSE}
+only_brain %>% 
+    add_rownames() %>% 
+    left_join(add_rownames(with_research), by = c("rowname" = "rowname")) %>% 
+    mutate(difference_leverage = penalty.x - penalty.y) %>% 
+    select(rowname, difference_leverage) %>% 
+    left_join(add_rownames(primates_model_r)) -> pointwise_data
+
+pointwise_data %>%
+  filter(difference_leverage > 1) -> high_leverage
+
+pointwise_data %>% 
+  ggplot(aes(log_brain_size, log_res)) +
+  geom_point(aes(color = difference_leverage)) +
+  ggrepel::geom_text_repel(data = high_leverage,
+                  aes(label = genus)) +
+  hrbrthemes::theme_ipsum_rc() +
+  scale_color_viridis_c() +
+  labs(title = "Difference between overfitting penalties",
+       subtitle = "Positive values indicate better performance when research effort is taken into account",
+       x = "log (brain size)",
+       y = "log (research effort)") 
+```
+
+The difference in predictions, and in accuracy, is entirely driven by a couple of observations. Finally, the DAG:
+
+```{r}
+dag <- dagitty( "dag {
+                Brain -> SocialLearning
+                Brain -> ResearchEffort
+                ResearchEffort -> SocialLearning
+                }")
+drawdag(dag)
+```
+

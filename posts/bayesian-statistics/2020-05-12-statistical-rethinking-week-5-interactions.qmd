@@ -1,0 +1,350 @@
+---
+title: 'Statistical Rethinking: Week 5 -> Interactions'
+author: ''
+date: '2020-05-12'
+slug: statistical-rethinking-week-5-interactions
+categories: []
+tags: []
+aliases: 
+  - ../../2020/05/12/statistical-rethinking-week-5-interactions/
+---
+
+```{r message=TRUE, warning=TRUE, include=FALSE}
+library(rethinking)
+library(tidyverse)
+extrafont::loadfonts(device="win") 
+set.seed(42)
+```
+
+# Statisical Rethinking: Week 5 -> Interactions
+
+As Richard says in class, interactions are easy to code but incredibly difficult to interpret. By going through the problems in Chapter 8, I hope to gain a bit of practice working with them. 
+
+## Chapter 8 Problems
+
+### Problem 1
+
+Let's run the tulips model but this time with the bed variable. Given that this is a categorical variable, it will create a different intercept for each of the beds in the sample. 
+
+```{r}
+data(tulips)
+
+# pre-processing
+tulips %>% 
+  mutate(blooms_std = blooms / max(blooms),
+         water_cent = water - mean(water),
+         shade_cent = shade - mean(shade),
+         bed_fct = fct_anon(bed)) -> tulips_model
+# fitting the model
+model_bed <- alist(
+    blooms_std ~ dnorm(mu, sigma),
+    mu <- a + a[bed_fct] + bw*water_cent + bs*shade_cent + bws*water_cent*shade_cent,
+    a[bed_fct] ~ dnorm(0.5, 0.25),
+    bw ~ dnorm(0, 0.25),
+    bs ~ dnorm(0, 0.25),
+    bws ~ dnorm(0, 0.25),
+    sigma ~ dexp(1)
+  )
+model_bed <- quap(flist = model_bed, data = tulips_model)
+precis(model_bed, depth = 2)
+```
+
+Our model is swayed by the different intercepts given to each bed, as they seem to capture valuable variation. Now, let's compare it with a model that omits bed. 
+
+```{r}
+# model without bed
+
+model_wo_bed <- quap(alist(
+    blooms_std ~ dnorm(mu, sigma),
+    mu <- a + bw*water_cent + bs*shade_cent + bws*water_cent*shade_cent,
+    a ~ dnorm(0.5, 0.25),
+    bw ~ dnorm(0, 0.25),
+    bs ~ dnorm(0, 0.25),
+    bws ~ dnorm(0, 0.25),
+    sigma ~ dexp(1)
+  ), data = tulips_model)
+
+
+compare(model_bed, model_wo_bed)
+```
+
+Most of the weight seems to go the model with bed. However, given the lack of data, there's too much uncertainty around the difference in WAIC between the 2 models.
+
+### Problem 2
+
+```{r}
+data("rugged")
+
+rugged %>% 
+  mutate(log_gdp = log(rgdppc_2000)) %>% 
+  filter(!is.na(rgdppc_2000)) %>% 
+  mutate(log_gdp_std = log_gdp / mean(log_gdp),
+         rugged_std = rugged / max(rugged),
+         cid = ifelse(cont_africa == 1, 1, 2)) -> rugged_to_model
+
+model_with <- quap(alist(
+  log_gdp_std ~ dnorm(mu, sigma),
+  mu <- a[cid] + b[cid]*(rugged_std- 0.215),
+  a[cid] ~ dnorm(1, 0.1),
+  b[cid] ~ dnorm(0, 0.3),
+  sigma ~ dexp(1)
+), data = rugged_to_model)
+
+model_without <- quap(alist(
+  log_gdp_std ~ dnorm(mu, sigma),
+  mu <- a[cid] + b[cid]*(rugged_std - 0.215),
+  a[cid] ~ dnorm(1, 0.1),
+  b[cid] ~ dnorm(0, 0.3),
+  sigma ~ dexp(1)
+), data = rugged_to_model %>% 
+  filter(country != "Seychelles"))
+
+precis(model_with, depth = 2)
+```
+
+```{r}
+precis(model_without, depth = 2)
+```
+
+As expected, the slope for the african countries decreased. Where its 89% PI went from (0.01, 0.25) to (-0.06, 0.2). Whereas the rest of the parameters are unchanged, as expected. Were we fitting a multi-level model, the slope for non african countries would have also possibly changed.   
+
+Let's plot what this means: 
+
+```{r}
+rugged.seq <- seq(from = -0.1, to = 1.1, length.out = 30)
+
+# with Seychelles
+
+mu <- link(model_with, data = data.frame(cid = 1, rugged_std = rugged.seq))
+mu_mean <-apply(mu, 2, mean)
+mu_ci <- apply(mu, 2, PI, prob = 0.97)
+
+predictions <- data.frame(rugged_std = rugged.seq, mean = mu_mean,
+                          rugged_std = rugged.seq, lower = mu_ci[1,], higher = mu_ci[2,])
+
+## without seychelles 
+
+mu_wo <- link(model_without, data = data.frame(cid = 1, rugged_std = rugged.seq))
+mu_mean_wo <-apply(mu_wo, 2, mean)
+mu_ci_wo <- apply(mu_wo, 2, PI, prob = 0.97)
+
+predictions_wo <- data.frame(rugged_std = rugged.seq, mean = mu_mean_wo,
+                          rugged_std = rugged.seq, lower = mu_ci_wo[1,], higher = mu_ci_wo[2,])
+
+
+rugged_to_model %>% 
+  filter(cid == 1) %>% 
+  ggplot(aes(x = rugged_std, y = log_gdp_std)) +
+    geom_point(aes(color = as.factor(cid)),alpha = 0.8) +
+    geom_line(data = predictions, aes(rugged_std, mean)) +
+    geom_ribbon(data = predictions, aes(x = rugged_std, y = mean, ymin = lower, ymax = higher),
+                alpha = 0.3) +
+    geom_line(data = predictions_wo, aes(rugged_std, mean), color = "deeppink4") +
+    geom_ribbon(data = predictions_wo, aes(x = rugged_std, y = mean, ymin = lower, ymax = higher),
+                alpha = 0.3, fill = "deeppink4") +
+    hrbrthemes::theme_ipsum_rc() + labs(title = "Effect of removing Seychelles",
+                                        subtitle = "Black with, Purple without") +
+    scale_color_viridis_d() +
+  theme(legend.position = "none")
+```
+
+Now let's add europe into the mix for the model without Seychelles:
+
+
+```{r}
+## without seychelles 
+## Prediction for europe
+mu_wo_eu <- link(model_without, data = data.frame(cid = 2, rugged_std = rugged.seq))
+mu_mean_wo_eu <-apply(mu_wo_eu, 2, mean)
+mu_ci_wo_eu <- apply(mu_wo_eu, 2, PI, prob = 0.97)
+
+predictions_wo_eu <- data.frame(rugged_std = rugged.seq, mean = mu_mean_wo_eu,
+                          rugged_std = rugged.seq, lower = mu_ci_wo_eu[1,], higher = mu_ci_wo_eu[2,])
+
+
+rugged_to_model %>% 
+  ggplot(aes(x = rugged_std, y = log_gdp_std)) +
+    geom_point(aes(color = as.factor(cid)),alpha = 0.8) +
+    geom_line(data = predictions_wo_eu, aes(rugged_std, mean), color = "gold1") +
+    geom_ribbon(data = predictions_wo_eu, aes(x = rugged_std, y = mean, ymin = lower, ymax = higher),
+                alpha = 0.3, fill = "gold1") +
+    geom_line(data = predictions_wo, aes(rugged_std, mean), color = "deeppink4") +
+    geom_ribbon(data = predictions_wo, aes(x = rugged_std, y = mean, ymin = lower, ymax = higher),
+                alpha = 0.3, fill = "deeppink4") +
+    hrbrthemes::theme_ipsum_rc() + labs(title = "Effect of removing Seychelles",
+                                        subtitle = "Yellow, rest of the world. Purple: Africa",
+                                        color = "") +
+    scale_color_viridis_d() +
+  theme(legend.position = "none")
+```
+
+Whereas before
+
+```{r}
+rugged_to_model %>% 
+  ggplot(aes(x = rugged_std, y = log_gdp_std)) +
+    geom_point(aes(color = as.factor(cid)),alpha = 0.8) +
+    geom_line(data = predictions_wo_eu, aes(rugged_std, mean), color = "gold1") +
+    geom_ribbon(data = predictions_wo_eu, aes(x = rugged_std, y = mean, ymin = lower, ymax = higher),
+                alpha = 0.3, fill = "gold1") +
+   geom_line(data = predictions, aes(rugged_std, mean), color = "deeppink4") +
+    geom_ribbon(data = predictions, aes(x = rugged_std, y = mean, ymin = lower, ymax = higher),
+                alpha = 0.3, fill = "deeppink4") +
+    hrbrthemes::theme_ipsum_rc() + labs(title = "With Seychelles",
+                                        subtitle = "Yellow, rest of the world. Purple: Africa",
+                                        color = "") +
+    scale_color_viridis_d() +
+  theme(legend.position = "none")
+```
+
+Although the model has lost confidence in the relationship between rugedness and log(gdp) for african countries for high levels of ruggedness, the model still allows us to be confident of a positive relationship between ruggedness and log(gdp) at lower levels. We can see this more clearly with the following plots where we analyze the expected difference between countries at different levels of ruggeddness:
+
+```{r}
+## Counterfactual plot
+rugged.seq <- seq(from = -0.2, to = 1, length.out = 30)
+
+
+## Without Seychelles
+muA <- link(model_without, data = data.frame(cid = 1, rugged_std = rugged.seq))
+muN <- link(model_without, data = data.frame(cid = 2, rugged_std = rugged.seq))
+delta <- muA - muN
+
+delta_mean <- apply(delta, 2, mean)
+delta_interval <- apply(delta, 2, PI, prob = 0.87)
+
+## With Seychelles
+muA <- link(model_with, data = data.frame(cid = 1, rugged_std = rugged.seq))
+muN <- link(model_with, data = data.frame(cid = 2, rugged_std = rugged.seq))
+delta <- muA - muN
+
+delta_mean_with <- apply(delta, 2, mean)
+delta_interval_with <- apply(delta, 2, PI, prob = 0.87)
+
+pred_with <- data.frame(rugged_std = rugged.seq, delta = delta_mean_with, lower = delta_interval_with[1,], 
+                        higher = delta_interval_with[2,])
+
+data.frame(rugged_std = rugged.seq, delta = delta_mean, lower = delta_interval[1,], higher = delta_interval[2,]) %>% 
+  ggplot(aes(rugged_std, delta)) +
+    geom_line() +
+    geom_ribbon(aes(ymin = lower, ymax = higher), alpha = 0.3) +
+    geom_line(data = pred_with, color = "deeppink4") +
+    geom_ribbon(data = pred_with, aes(ymin = lower, ymax = higher), alpha = 0.3,
+                fill = "deeppink4") +
+    hrbrthemes::theme_ipsum_rc() +
+    labs(title = "Expected difference between continents",
+        y = "Expected difference log GDP",
+        subtitle = "Purple with Seychelle. Black without")
+```
+
+Dropping Seychelle shrinks the expected difference between continents at all levels of ruggedness; however, the effect is stronger at the largest levels of ruggeddness.
+
+## Problem 3: Language Diversity
+
+Is language diversity a product of food security?
+
+```{r}
+data("nettle")
+
+nettle %>% 
+  mutate(languages_per_caput = num.lang / k.pop,
+         log_languages_per_caput = log(languages_per_caput),
+         growing_season_std = mean.growing.season / max(mean.growing.season),
+         log_area = log(area),
+         std_growing_season = sd.growing.season / max(sd.growing.season)) -> nettle_to_model
+
+# mean_growing_season_std <- mean(nettle_to_model$growing_season_std)
+
+model_one <- quap(alist(
+  log_languages_per_caput ~ dnorm(mu, sigma),
+  mu <- a + growing*(growing_season_std - 0.58) + c*log_area,
+  a ~ dnorm(-1, 2),
+  growing ~ dnorm(0, 1),
+  c ~ dnorm(0, 0.1),
+  sigma ~ dexp(1)
+), data = nettle_to_model)
+
+precis(model_one)
+
+```
+
+```{r}
+growing_season_std <- seq(min(nettle_to_model$growing_season_std), max(nettle_to_model$growing_season_std),
+                          length.out = 30)
+mu <- link(model_one, data = data.frame(growing_season_std, log_area = mean(nettle_to_model$log_area)))
+
+mean <- apply(mu, 2, mean)
+mean_int <- apply(mu, 2, PI, prob = 0.87)
+
+data.frame(growing_season_std, mean, lower = mean_int[1,], higher = mean_int[2,]) %>% 
+  ggplot(aes(growing_season_std, mean)) +
+    geom_line() +
+  geom_ribbon(aes(ymin = lower, ymax = higher), alpha = 0.1) +
+  geom_point(data = nettle_to_model, aes(growing_season_std, log_languages_per_caput)) +
+  hrbrthemes::theme_ipsum_rc() +
+  labs(title = "Food Security vs Languages per caput",
+       y = "log languages per caput",
+       x = "growing season duration")
+```
+
+
+It seems that the effect of growing seasons length, adjusting for area, is positive. The higher the mean growing season, the larger the log of languages per caput. 
+
+```{r}
+
+# mean(nettle_to_model$std_growing_season)
+
+model_two <- quap(alist(
+  log_languages_per_caput ~ dnorm(mu, sigma),
+  mu <- a + sdgrowing*(std_growing_season - 0.28) + c*log_area,
+  a ~ dnorm(-1, 2),
+  sdgrowing ~ dnorm(0, 1),
+  c ~ dnorm(0, 0.1),
+  sigma ~ dexp(1)
+), data = nettle_to_model)
+
+precis(model_two)
+```
+
+```{r}
+std_growing_season <- seq(min(nettle_to_model$std_growing_season), max(nettle_to_model$std_growing_season),
+                          length.out = 30)
+mu <- link(model_two, data = data.frame(std_growing_season, log_area = mean(nettle_to_model$log_area)))
+
+mean <- apply(mu, 2, mean)
+mean_int <- apply(mu, 2, PI, prob = 0.87)
+
+data.frame(std_growing_season, mean, lower = mean_int[1,], higher = mean_int[2,]) %>% 
+  ggplot(aes(std_growing_season, mean)) +
+    geom_line() +
+  geom_ribbon(aes(ymin = lower, ymax = higher), alpha = 0.1) +
+  geom_point(data = nettle_to_model, aes(std_growing_season, log_languages_per_caput)) +
+  hrbrthemes::theme_ipsum_rc() +
+  labs(title = "Food Insecurity vs Languages per caput",
+       y = "log languages per caput",
+       x = "volatility in growing season")
+```
+
+It also seems that the standard deviation has a negative effect on the logarithm of the languages per caput. However, this effect has a higher level of uncertainty associated to it. 
+
+Now, let's consider the interaction between the volatility in growing season and the mean duration of the growing season. 
+
+```{r}
+model_three <- quap(alist(
+  log_languages_per_caput ~ dnorm(mu, sigma),
+  mu <- a + growing*(growing_season_std - 0.58) + sdgrowing*(std_growing_season - 0.28) + c*log_area + interaction*(growing_season_std - 0.58)*(std_growing_season - 0.28),
+  a ~ dnorm(-1, 2),
+  growing ~ dnorm(0, 1),
+  sdgrowing ~ dnorm(0, 1),
+  c ~ dnorm(0, 0.1),
+  interaction ~ dnorm(0, 0.1),
+  sigma ~ dexp(1)
+), data = nettle_to_model)
+
+precis(model_three)
+```
+
+```{r}
+compare(model_one, model_two, model_three)
+```
+
+The leading variable seems to be mean growing season. As the model that considers it alone seems to capture all importation variation and its predictions are basically equivalent to those of the model that considers all terms (model3).

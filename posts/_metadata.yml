@@ -1,0 +1,24 @@
+# Freeze computed outputs
+freeze: true
+
+# Enable banner style title blocks
+title-block-banner: true
+
+# Enable CC licence appendix
+license: "CC BY"
+
+# Default for table of contents
+toc: true
+toc-title: Table of contents
+toc-location: left
+
+# Default knitr options
+execute:
+  echo: true
+  message: false
+  warning: false
+
+# Default author
+author:
+  - name: David Salazar
+    url: https://david-salazar.github.io/

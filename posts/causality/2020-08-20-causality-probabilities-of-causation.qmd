@@ -1,0 +1,194 @@
+---
+title: 'Causality: Probabilities of Causation'
+author: ''
+date: '2020-08-20'
+slug: causality-probabilities-of-causation
+categories: []
+tags: []
+aliases: 
+  - ../../2020/08/26/causality-mediation-analysis/
+---
+
+## Why read this?
+
+Questions of attribution are everywhere: i.e., did $X=x$ cause $Y=y$? From legal battles to personal decision making, we are obsessed by them. Can we give a rigorous answer to the **problem of attribution**?
+
+One alternative to solve the problem of attribution is to reason in the following manner: if there is *no possible alternative* causal process,  **which does not involve $X$**,that can cause $Y=y$, then $X=x$ is **necessary** to produce the effect in question. Therefore, the effect $Y=y$ *could not* have happened without $X=x$. In causal inference, this type of reasoning is studied by computing the **Probability of Necessity (PN)**
+
+In the above alternative, however, the reasoning is tailored to a specific event under consideration. What if we are interested in studying a general tendency of a given effect? In this case, we are asking **how sufficient** is a *cause*, $X=x$, for the production of the effect, $Y=y$. We answer this question with the **Probability of Sufficiency (PS)**
+
+In this blogpost, we will give [**counterfactual interpretations**](https://david-salazar.github.io/2020/08/10/causality-counterfactuals-clash-of-worlds/) to both probabilities: $PN$ and $PS$. Thereby, we will be able to study them in a systematic fashion using the tools of causal inference. Although we will realize that they are **not generally identifiable** from a causal diagram and data alone, if we are willing to assume *monotonicity*, we will be able to estimate both $PN$ and $PS$ with a *combination* of experimental and observational data.
+
+Finally, we will work through some examples to put what we have learnt into practice. This blogpost follows the notation of [Pearl's Causality](http://bayes.cs.ucla.edu/BOOK-2K/), Chapter 9 and Pearl's [Causal Inference in Statistics: A primer](http://bayes.cs.ucla.edu/PRIMER/). 
+
+## Counterfactual definitions
+
+Let $X$ and $Y$ be two binary variables in causal model. In what follows, we will give counterfactual interpretations to both $PN$ and $PS$.
+
+### Probability of Necessity
+
+The **Probability of Necessity (PN)** stands for the probability that the *event $Y=y$ would not have occurred* in the **absence of event $X=X$**, given that $x$ and $y$ did in fact occur. 
+
+$$
+PN := P(Y_{x'} = false | X = true, Y = true)
+$$
+
+To gain some intuition, imagine Ms. Jones: a former cancer patient that underwent both a lumpectomy and irradiation. She speculates: **do I owe my life to irradiation?** We can study this question by figuring out *how necessary* was the lumpectomy for the remission to occur:
+
+$$
+PN = P(Y_{\text{no irradiation}} = \text{no remission}| X = irradiation, Y = remission)
+$$
+
+If $PN$ is high, then, yes, Ms. Jones owes her life to her decision of having irradiation. 
+
+### Probability of Sufficiency
+
+On the other hand:
+
+> The **Probability of Sufficiency (PS)** measures the capacity of $x$ to produce $y$, and, since "production" implies a transition from absence to presence, we condition $Y_x$ on situations where x and y are absent
+
+Therefore:
+
+$$
+PS := P(Y_x = true | X = false, Y = false)
+$$
+
+The following example may clarify things. Imagine that, contrary to Ms. Jones above, Mrs. Smith had a lumpectomy alone and her tumor recurred. She speculates on her decision and concludes: *I should have gone through irradiation*. Is this regret warranted? We can quantify this by speaking about $PS$:
+
+$$
+PS = P(Y_{irradiation} = remission| X = \text{no irradiation}, Y = \text{no remission})
+$$
+That is, $PS$ computes the probability that remission would have occurred had Mrs. Smith gone through irradiation, given that she did not go and remission did not occur. Thus, it measures the degree to which *the action not taken*, $X=1$, **would have been sufficient for her recovery**.
+
+### Combining both probabilities
+
+We can compute the probability that the cause is necessary and sufficient thus:
+
+$$
+P N S:= P(y_{x}, y'_{x'}) =P(x, y) P N+P\left(x^{\prime}, y^{\prime}\right) P S
+$$
+
+That is, the contribution of $PN$ is amplified or reduced by $P(x, y)$ and likewise for the $PS$'s contribution. 
+
+## Idenitfiability
+
+In the **general case**, when we have a causal diagram and observed (and experimental) data, **neither $PN$ nor $PS$ are identifiable**. This happens due to the relationship between the counterfactual's antecedent and the fact that we are conditioning on $Y$. If we wanted to model this relationship, we would need to know the functional relationship between $X, Pa_y$ and $Y$.
+
+In practice, if we don't know the functional relationship, we *must* at least assume monotonicity of $Y$ relative to $X$ to be able to identify them. Otherwise, we must content ourselves with *theoretically sharp bounds* on the probabilities of causation. 
+
+### What is Monotonicity?
+
+Let $u$ be [the unobserved background variables in a SCM](https://david-salazar.github.io/2020/08/10/causality-counterfactuals-clash-of-worlds/), then, $Y$ is monotonic relative to $X$ if:
+
+$$
+Y_1(u) \geq Y_0 (u)
+$$
+
+That is, exposure to treatment $X=1$ always helps to bring about $Y=1$.
+
+### Identifying the probabilities of causation
+
+If we are willing to assume that Y is monotonic relative to X, then both $PN$ and $PS$ **are identifiable when the causal effects $P(Y| do(X=1)$ and $P(Y| do(X=0)$ are identifiable**. Whether this causal effect is identifiable because we have *experimental evidence*, or because we can identify them by using the Back-Door criterion or *other graph-assisted identification strategy*, it does not matter. Then, we can estimate $PN$ with a combination of do-expressions and observational data thus:
+
+$$
+PN = P(y'_{x'} | x, y) = \frac{P(y) - P(y| do (x'))}{P(x, y)}
+$$
+
+Moreover, if monotonicity does not hold, the above expression becomes a lower bound for $PN$. The [complete bound is the following](https://ftp.cs.ucla.edu/pub/stat_ser/R271-U.pdf):
+
+$$
+\max \left\{0, \frac{P(y)-P\left(y \mid d o\left(x^{\prime}\right)\right)}{P(x, y)}\right\} \leq P N \leq \min \left\{1, \frac{P\left(y^{\prime} \mid d o\left(x^{\prime}\right)\right)-P\left(x^{\prime}, y^{\prime}\right)}{P(x, y)}\right\}
+$$
+
+Equivalently, $PS$ can be estimated thus:
+
+$$
+PS = P(y_x | x', y') = \frac{P(y| do(x)) - P(y)}{P(x', y')}
+$$
+
+Which becomes the lower bound if we are not willing to assume monotonicity:
+
+$$
+\max \left\{\begin{array}{c}
+0,
+\frac{P\left(y | do (x) \right)-P(y)}{P\left(x^{\prime}, y^{\prime}\right)}
+\end{array}\right\} \leq P S \leq \min \left\{\begin{array}{c}
+1, 
+\frac{P\left(y | do(x) \right)-P(x, y)}{P\left(x^{\prime}, y^{\prime}\right)}
+\end{array}\right\}
+$$
+
+Let's use the estimators and the bounds in the following example.
+
+## A first example
+
+> A lawsuit is filed against the manufacturer of a drug X that was supposed to relieve back-pain. Was the drug a necessary cause for the the death of Mr. A?
+
+The experimental data provide the estimates
+\[
+\begin{aligned}
+P(y \mid d o(x)) &=16 / 1000=0.016 \\
+P\left(y \mid d o\left(x^{\prime}\right)\right) &=14 / 1000=0.014
+\end{aligned}
+\]
+whereas the non-experimental data provide the estimates
+\[
+P(y)=30 / 2000=0.015
+\]
+\[
+\begin{array}{l}
+P(x, y)=2 / 2000=0.001 \\
+P(y \mid x)=2 / 1000=0.002 \\
+P\left(y \mid x^{\prime}\right)=28 / 1000=0.028
+\end{array}
+\]
+
+Therefore, assuming that the drug could only cause (but never prevent death), monotonicity holds:
+
+$$
+PN = \frac{0.015-0.014}{0.001} = 1
+$$
+
+> The plaintiff was correct; barring sampling errors, the data provide us with 100% assurance that drug x was in fact responsible for the death of Mr A. 
+
+## A second example
+
+Remember Ms. Jones? Is she right in attributing her recovery to the irradiation therapy. Suppose she gets her hands on the following data:
+
+$$
+\begin{aligned}
+P\left(y^{\prime}\right) &=0.3 \\
+P\left(x^{\prime} \mid y^{\prime}\right) &=0.7 \\
+P(y \mid d o(x)) &=0.39 \\
+P\left(y \mid d o\left(x^{\prime}\right)\right) &=0.14
+\end{aligned}
+$$
+
+We can therefore start to bound $PN$ to figure out whether irradiation was **necessary** for remission:
+
+$$
+\begin{aligned}
+P N & \geq \frac{P(y)-P\left(y \mid d o\left(x^{\prime}\right)\right)}{P(x, y)} \\
+&=\frac{P(y)-P\left(y \mid d o\left(x^{\prime}\right)\right)}{P(y \mid x) P(x)} \\
+&=\frac{P(y)-P\left(y \mid d o\left(x^{\prime}\right)\right)}{\left(1-\frac{P\left(x \mid y^{\prime}\right) P\left(y^{\prime}\right)}{P(x)}\right) P(x)} \\
+&=\frac{P(y)-P\left(y \mid d o\left(x^{\prime}\right)\right)}{P(x)-P\left(x \mid y^{\prime}\right) P\left(y^{\prime}\right)}
+\end{aligned}
+$$
+
+We don't have data for $P(x)$. However, given that we are interested in a lower bound, we can choose the parametrization that yields the smallest bound: $P(x) = 1$. Therefore, the bound becomes:
+
+$$
+\begin{aligned}
+P N & \geq \frac{P(y)-P\left(y \mid d o\left(x^{\prime}\right)\right)}{P(x)-P\left(x \mid y^{\prime}\right) P\left(y^{\prime}\right)} \\
+& \geq \frac{0.7-0.14}{1-(1-0.7) * 0.3} = \\
+& 0.62 > 0.5
+\end{aligned}
+$$
+
+Therefore, irradiation was more likely than not **necessary** for her remission.
+
+# Conclusion 
+
+In this blogpost, we saw how we can analyze **attribution problems** by *giving counterfactual interpretations* to the probability that a cause is **necessary and/or sufficient**. These quantities turn out be generally not identifiable because they are sensitive to the specific functional relationships that connect $X$ and $Y$ in a SCM. 
+
+However, we can give theoretically sharp bounds for them by **combining experimental and observational data**. If we are willing to *assume monotonicity*, the bounds collapse to give a point estimate for both probabilities of causation, $PN$ and $PS$.

@@ -1,0 +1,48 @@
+---
+title: 'BDA Week 9: Large Sample Theory for the Posterior'
+author: ''
+date: '2020-07-13'
+slug: bda-week-9-large-sample-theory-for-the-posterior
+categories: []
+tags: []
+aliases: 
+  - ../../2020/07/13/bda-week-9-large-sample-theory-for-the-posterior/
+---
+
+As Richard McElreath says in his fantastic [Statistics course](https://xcelab.net/rm/statistical-rethinking/), Frequentist statistics is more a framework to evaluate estimators than a framework for deriving them. Therefore, we can use frequentist tools to evaluate the posterior. In particular, what happens to the posterior as more and more data arrive from the same sampling distribution? 
+
+In this blogpost, I'll follow chapter 4 of [Bayesian Data Analysis](http://www.stat.columbia.edu/~gelman/book/) and the material in week 9 of [Aki Vehtari's course](https://github.com/avehtari/BDA_course_Aalto) to study the **Posterior Distribution** under the framework of Large Sample Theory. 
+
+## Asymptotic Normality and Consistency
+
+Suppose then that the true data distribution is $f(y)$. If the true data distribution is included in the parametric family, then, for some $\theta_0$ we have $f(y) = \pi(y |\theta_0)$. *Asymptotic consistency* then, guarantees that as the sample size increases, our posterior distribution will converge to a point mass at the true parameter value $\theta_0$. Both the *median, the mean and the mode* of the posterior are consistent estimators for $\theta_0$.
+
+Indeed, asymptotic normality, in its turn, guarantees that the limiting distribution of the posterior can be approximated with a Gaussian centered at the mode $\widehat \theta$ of the posterior:
+
+$$
+\pi(\theta | y) \approx N(\widehat \theta, [\frac{d^2}{d\theta^2} \log \pi(\theta | y)]_{\theta = \widehat \theta}^{-1} ) 
+$$
+
+Naturally, we can then approximate the posterior by finding the mode by finding the maximum of the posterior and then estimating the curvature at that point. As more and more data arrives, the approximation will be more and more precise.
+
+## Big Data and the Normal Approximation
+
+If more and more data makes the normal approximation better and better, does that mean that the era of **Big Data will usher a new era** where the posterior will be easily and reliably *approximated with a Gaussian*? 
+
+Not quite: as we have more and more data, **so we have more and more questions that we can possibly ask**. We can then create *more complex models with more parameters* to try to answer these more complicated questions. In this scenario, as more and more data arrives, the posterior distribution will not converge to the Gaussian approximation in the expanding parameter space that reflects the increasing complexity of our model. The reason? **The curse of dimensionality**
+
+The more dimensions we have, ceteris paribus, due to **the concentration of measure**, the mode and the area around the mode will be farther and farther way from the typical set. Thus, the Gaussian approximation that concentrates most of the mass around the mode will be a poor substitute of the typical set and thus a poor approximation for the posterior distribution.
+
+## Normal Approximation for the Marginals
+
+Nevertheless, even if we cannot approximate the joint posterior distribution with the Gaussian approximation, the normal approximation is not that faulty if we instead focus on the marginal posterior. The reason? Determining the marginal distribution of a component of $\theta$ is equivalent to averaging over all the other components of $\theta$, and averaging a family of distributions generally brings them closer to normality, by the same logic that underlies the central limit theorem. 
+
+This fact explains why we see so many approximately Gaussian marginals in practice and why can sometimes summarize them with a point estimate and a standard error. 
+
+## Unbiasedness and Hierarchical Models
+
+Frequentist methods place great emphasis on unbiasedness: $E[\widehat \theta] = \theta_0$. However, when parameters are related and partial knowledge of some of the parameter is clearly relevant to the estimation of others, the emphasis on unbiasedness is clearly misplaced: it leads to a naive point in the bias-variance trade-off. 
+
+Indeed, if we have a familiy of parameters $\theta_j$ that are related, a Bayesian would fit a hierarchical model by positing a common distribution from which these parameters are sampled. This procedure leads to pooling of the information and thus to shrink the individual parameters $\theta_j$ toward each other; thereby biasing the individual estimates $\theta_j$ but reducing their variance. 
+
+Thus, this highlights the problem that it is often not possible to estimate several parameters at once in an even approximately unbiased manner: unbiased $\theta_j$ leads to ignoring relevant information about their common distribution, which in turn leads to a biased estimate of the variance of the $\theta_j$. 

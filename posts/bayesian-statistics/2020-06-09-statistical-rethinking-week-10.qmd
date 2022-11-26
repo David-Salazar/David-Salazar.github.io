@@ -1,0 +1,256 @@
+---
+title: Statistical Rethinking Week 10
+author: ''
+date: '2020-06-09'
+slug: statistical-rethinking-week-10
+categories: []
+tags: []
+aliases: 
+  - ../../2020/06/09/statistical-rethinking-week-10/
+---
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+library(rethinking)
+library(tidyverse)
+library(tidybayes.rethinking)
+library(modelr)
+library(latex2exp)
+library(ggridges)
+library(tidybayes)
+
+# rstan stuff
+extrafont::loadfonts(device="win")
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+Sys.setenv(LOCAL_CPPFLAGS = '-march=corei7 -mtune=corei7')
+# set seed
+set.seed(5)
+# set theme
+theme_set(hrbrthemes::theme_ipsum_rc())
+```
+
+This is the final week of the best Statistics course out there. It showed the benefits of being ruthless with conditional probabilities: replace everything you don't know with a distribution conditioned on what you do know. Bayes will do the rest. This holds for both measurement error and missing data. 
+
+# 1st problem 
+
+Consider the relationship between brain volume (brain) and body mass (body) in the data(Primates301). These values are presented as single values for each species. However, there is always a range of sizes in a species, and some of these measurements are taken from very small samples. So these values are measured with some unknown error.
+
+Let's begin by copying Richard's code to simulate a measurement error:
+
+```{r}
+data(Primates301)
+d <- Primates301
+cc <- complete.cases( d$brain , d$body )
+B <- d$brain[cc]
+M <- d$body[cc]
+B <- B / max(B)
+M <- M / max(M)
+
+Bse <- B*0.1
+Mse <- M*0.1
+```
+
+Ignoring measurement error, the model is thus:
+
+```{r}
+dat_list <- list(
+  B = B,
+  M = M 
+  )
+model_no_measurement <- ulam(
+  alist(
+  B ~ dlnorm( mu , sigma ),
+  mu <- a + b*log(M),
+  a ~ normal(0,1),
+  b ~ normal(0,1),
+  sigma ~ exponential(1)
+) , data=dat_list ,
+  log_lik = TRUE)
+```
+
+With the posterior:
+
+```{r}
+precis(model_no_measurement)
+```
+
+
+
+Your job is to add the measurement errors to this model. Use the divorce/marriage example in the chapter as a guide. 
+
+## Solution
+
+To handle measurement error we will state that the observed values for both M and B come from a distribution centered around true unknown  values but with known measurement error (the one that Richard just simulated).
+
+```{r}
+
+dat_list$B_se <- Bse
+dat_list$M_se <- Mse
+
+model_with_measurement <- ulam(
+  alist(
+    B ~ normal(B_true, B_se),
+    vector[182]: B_true ~ dlnorm(mu, sigma),
+    mu <- a + b*log(M_true[i]),
+    vector[182]: M_true ~ dlnorm(0.5, 1),
+    M ~ normal(M_true, M_se),
+    a ~ normal(0,1),
+    b ~ normal(0,1),
+    sigma ~ exponential(1)
+  ),
+  data = dat_list,
+  chains = 4, cores = 4, 
+  start=list( M_est=dat_list$M , B_est=dat_list$B ),
+  log_lik = TRUE
+)
+
+```
+
+Let's check our posterior:
+
+```{r}
+precis(model_with_measurement)
+```
+
+Our inferences have hardly changed now that we have taken into account the measurement error.
+
+```{r}
+compare(model_no_measurement, model_with_measurement)
+```
+
+
+Let's plot the predicted relationship:
+
+
+```{r}
+samples <- extract.samples(model_with_measurement)
+
+B_est <- apply(samples$B_true, 2, mean)
+M_est <- apply(samples$M_true, 2, mean)
+```
+
+
+
+```{r}
+data.frame(dat_list) %>% 
+  add_fitted_draws(model_with_measurement) %>% 
+  mutate(.value = exp(.value)) -> data_for_plot
+data_for_plot %>% 
+  ggplot(aes(M, .value)) +
+  geom_point(aes(y = B), alpha = 0.2) +
+  geom_point(data = data.frame(M_est, B_est),
+             aes(M_est, B_est), color = "red", alpha = 0.2) +
+  stat_lineribbon(fill = "dodgerblue4", alpha = 0.2) +
+  labs(y = "Brain Volume",
+       x = "Body Mass",
+       title = "Brain Volume as a function of Body Mass",
+       subtitle = "Predicted true measurements in red. Observed measurements in black \n 
+       Small animals with small measurement error inform the whole relationship. ")
+```
+
+The regression line is mainly informed by the small animals because they are more numerous and have smaller measurement errors (by assumption). Therefore, the terrible fit for the largest animals in the sample: there's few of them and they have the largest measurement error. 
+
+# Second problem
+
+Now consider missing values—this data set is lousy with them. You can ignore measurement error in this problem. Let’s get a quick idea of the missing values by counting them in each variable:
+
+```{r}
+data(Primates301)
+d <- Primates301
+colSums( is.na(d) )
+```
+
+```{r}
+cc <- complete.cases( d$body )
+M <- d$body[cc]
+M <- M / max(M)
+B <- d$brain[cc]
+B <- B / max( B , na.rm=TRUE )
+dat_list <- list(
+  B = B,
+  M = M 
+  )
+```
+
+You should end up with 238 species and 56 missing brain values among them. First, consider whether there is a pattern to the missing values. Does it look like missing values are associated with particular values of body mass?
+
+
+```{r}
+data.frame(B, M) %>% 
+  mutate(M_groups = cut(M, 20)) %>% 
+  group_by(M_groups) %>% 
+  summarise(na_percentage = sum(is.na(B))) %>% 
+  ggplot(aes(y = M_groups, x = na_percentage)) +
+  geom_point() +
+  labs(title = "Brain Volume's NA count by Mass Values",
+       y = "Mass values",
+       x = "Brain Volume's NA count",
+       subtitle = "NAs are accumulated on animals with small masses") 
+
+```
+
+> Draw a DAG that represents how missingness works in this case. Which type (MCAR, MAR, MNAR) is this?
+
+Therefore, this is indicative that observations for Brain Size are, in the taxonomy of Don Rubin's missingess, "Missing at random". That is, their *missingness* is related to one of the predictor variables: M. 
+
+In DAG form, we say that the missing values arise thus:
+
+```{r}
+dag <- dagitty::dagitty("dag {
+                        M -> B_true
+                        B_true -> B_observed
+                        R_B -> B_observed
+                        M -> R_B
+                        }")
+drawdag(dag)
+```
+
+> Second, impute missing values for brain size.
+
+As always, be ruthless with conditioning. Replace the values that we don't know with their own distribution conditional on what we do know. In this case, our likelihood, the lognormal, will serve simultaneously as the prior for the missing observations. 
+
+```{r}
+model_imputing <- ulam(
+  alist(
+    B ~ dlnorm( mu , sigma ),
+    mu <- a + b*log(M),
+    a ~ normal(0,1),
+    b ~ normal(0,1),
+    sigma ~ exponential(1)
+  ),
+  data = dat_list,
+  chains = 4, cores = 4, 
+  start=list( B_impute = rep(0.5, 56) )
+)
+```
+
+```{r}
+precis(model_imputing)
+```
+
+There's really no difference in our inferences compared to what the inferences that we made when we dropped all the missing values. The answer is simple: most of the imputted variables correspond to animals with small body sizes and therefore were imputted with small brain sizes. Before, our model was already dominated by this type of animals. Now that we have imputed them, it only reinforces this dominance over the regression line. That is, the missing info, once it is accounted for, is redundant: it adds no new information to our model. 
+
+Indeed, let's compare the observed observations to the imputed observations:
+
+```{r message=FALSE, warning=FALSE}
+samples <- extract.samples(model_imputing)
+B_imputed <- apply(samples$B_impute, 2, mean)
+B_imputed_intervals <- apply(samples$B_impute, 2, PI) 
+
+data.frame(B_imputed, low = B_imputed_intervals[1,], high = B_imputed_intervals[2,],
+           M = M[!complete.cases(B)]) %>% 
+  ggplot(aes(x = M, y = B_imputed)) +
+  geom_linerange(aes(ymin = low, ymax = high), linetype = 2, color = "red") +
+  geom_point(color = "red") +
+  geom_point(data = data.frame(M, B),
+             aes(M, B), color = "dodgerblue4", alpha = 0.2) +
+  labs(x = "Body Mass",
+       y = "Brain Volume",
+       title = "Imputed values are redundant information",
+       subtitle = "Imputed values appear in red. They add no new information to the model")
+
+```
+
+
+
+

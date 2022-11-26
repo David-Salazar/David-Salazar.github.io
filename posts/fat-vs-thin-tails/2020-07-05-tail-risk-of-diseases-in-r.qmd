@@ -1,0 +1,394 @@
+---
+title: Tail Risk of diseases in R
+author: ''
+date: '2020-07-05'
+slug: tail-risk-of-diseases-in-r
+categories: []
+tags: []
+output:
+  blogdown::html_page:
+    toc: true
+aliases: 
+  - ../../2020/07/05/tail-risk-of-diseases-in-r/
+---
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+library(tidyverse)
+library(rethinking)
+library(bayesplot)
+library(latex2exp)
+library(tidybayes)
+library(rstan)
+# rstan stuff
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+# set seed
+set.seed(5)
+# set theme
+theme_set(hrbrthemes::theme_ipsum_rc(grid = "Y"))
+```
+
+Pasquale Cirillo and Nassim Taleb published a short, interesting and important paper on the [Tail Risk of contagious diseases](https://arxiv.org/abs/2004.08658). In short, the distribution of fatalities is strongly fat-tailed: thus rendering any forecast, whether is pointwise or a distributional forecast, useless and dangerous. The **distributional evidence is there**: the lack of a characteristic scale makes our uncertainty at any point in the pandemic maximal: we can only say that it can always get worse. 
+
+Read the paper! It's short and packed of ideas. In this blogpost, I'll reproduce the main plots, the main model that uses Extreme Value Theory to model the tail of the distribution of casualties and, finally, I will re-implement the model in a Bayesian framework using Stan. 
+
+## The Data
+
+Taleb and Cirillo collected data for 72 events with more than 1,000 estimated victims. 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+data <- read_csv("taildiseases.csv")
+skimr::skim(data)
+```
+
+The estimates for the number of casualties are in the thousands. The `avg_est` is the estimate for the number of casualities that we are going to be working with. 
+
+## The plots
+
+Taleb and Cirillo begin the paper with a graphical analysis of the properties of the data. In it, they show that the data present all of the traits of fat-tailed random variables. To reproduce most of the figures, I use an [R package](https://github.com/David-Salazar/ggtails/) that I wrote: `ggtails`. 
+
+### Max-to-Sum ratio
+
+Taleb and Cirillo begin by examining the [Max-to-Sum ratio plots](https://david-salazar.github.io/2020/06/02/lln-for-higher-p-moments/). A consequence of the Law of Large Numbers (LLN) is the following:
+
+$$
+E[X^p] < \infty  \iff R_n^p = \dfrac{max(X_1^p, \dots, X_n^p)}{\sum_{i=1}^n X_i^p} \to 0, \ \text{as} \ n \to \infty
+$$
+That is, the theoretical moment $p$ exists if and only if the ratio of the partial max to the partial sum converges to $0$. Neither of the fourth moments converges for neither of the fatalities' estimates
+
+```{r maxtosum, fig.width=8}
+data %>% 
+  ggplot(aes(sample = avg_est)) +
+  ggtails::stat_max_sum_ratio_plot() +
+  scale_y_continuous(limits = c(0, 1), breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1)) +
+  scale_color_brewer(palette = 2, type = "qual") +
+  labs(title = "Max-to-Sum ratio plot",
+       subtitle = "There's no convergence. No finite moment is likely to exist")
+```
+
+Given that none of the moments converges, it is likely that we are dealing with such a fat-tailed random variable that all of the theoretical moments are undefined. Or if the theoretical moments exist, that the Law of Large Numbers works way too slowly for us to use it. In which case any method that relies on any sample moment estimator of the empirical distribution is useless. 
+
+### Histogram 
+
+Let's check what exactly is the range of values that Cirillo and Taleb have collected:
+
+```{r histogram, fig.width=8}
+data %>% 
+  ggplot(aes(avg_est*1000)) +
+  geom_histogram(binwidth = 10^8/80, fill = "dodgerblue4", color = "black", alpha = 0.5) +
+  scale_x_continuous(labels = function(x) scales::number(x, scale = 1/10^8)) +
+  labs(x = TeX("Casualties (x $10^8$)"),
+       title = "Histogram of casualties",
+       subtitle = "The data encodes a huge array of variation. No characteristic scale, typical of fat-tails") 
+```
+
+The data contains an incredible arrange of variation. This is typical for fat-tailed random variables. 
+
+### The Zipf plot
+
+For a Pareto random variable, the slope of the log of the Survival function in log space decays linearly. With the Zipf plot, we compare the decay of the log of the empirical survival function with the linear decay that we expect with a Pareto.
+
+```{r include=FALSE}
+scientific_10 <- function(x) {
+  parse(text=gsub("e", " %*% 10^", scales::scientific_format()(x)))
+}
+```
+
+
+```{r loglogplot, fig.width=8, message=FALSE, warning=FALSE}
+
+data %>% 
+  ggplot(aes(sample = log10(avg_est*1000))) +
+  ggtails::stat_zipf(color = "dodgerblue4", alpha = 0.7)  +
+  scale_x_log10(label=scientific_10) +
+  scale_y_log10() +
+  labs(title = "Zipf plot of casualties",
+       subtitle = "There's the linear decay we expect with fat-tailed variables",
+       x = "log(x)",
+       y = "log(Survival)")
+```
+
+The empirical survival function indeed decays slowly: it's almost linear. Thus, giving us a hint that we are dealing with a fat-tailed random variable. 
+
+### Mean Excess Plot
+
+For a given threshold $v$, the Mean Excess for a random variable $X$ is:
+
+$$
+E[X - v | X > v] 
+$$
+For a Pareto, we expect this mean excess to scale linearly with the threshold.
+
+```{r meplot, fig.width=8}
+data %>% 
+  ggplot(aes(sample = avg_est*1000)) +
+  ggtails::stat_mean_excess()-> p 
+dat <- layer_data(p)
+
+dat %>%
+  filter(y < 3.95e07) %>% 
+  ggplot() +
+  geom_point(aes(x, y), color = "dodgerblue4", alpha = 0.7) +
+  scale_x_continuous(labels = function(x) scales::number(x, scale = 1/10^6)) +
+  scale_y_continuous(labels = function(x) scales::number(x, scale = 1/10^7)) +
+  expand_limits(y = 5e07) +
+  labs(title = "Mean Excess Plot for casualties",
+       subtitle = "There's the linear slope that we expect with fat-tailed variables",
+       caption = "More volatile observations were excluded.",
+       x = TeX("Threshold (x $10^6$)"),
+       y = TeX(" Mean Excess Funtion (x $10^7$)"))
+```
+
+Given that the mean excess plot increases linearly, we are even more convinced that the number of casualties is indeed fat-tailed. 
+
+## Fitting the tail
+
+The graphical analysis tells us that we are likely dealing with a fat-tailed random variable: the survival function decays very slowly. Thus, the fat-tails make a) an extremely large array of possibilities relevant; b) thus, eliminating the possibility of a characteristic scale or "typical" catastrophe; c) and possibly making the theoretical moments undefined.
+
+### Wait a moment: infinite casualties?
+
+We know that the number of casualties is bounded by the total population. Thus, the variable only has the appearance of an infinite mean given its upper bound. Graphically, by ignoring the upper bound, we are positing a continuous tail thus:
+
+![](/images/apparenttail.PNG)
+
+The difference, thus, is only relevant in the vicinity of the upper bound $H$. One could thus keep modeling ignoring the upper bound without too many practical consequences. Nevertheless, it would be epistemologically wrong. To solve this problem, Taleb and Cirillo introduce a log transformation that eliminates the upper bound:
+
+$$
+Z = \varphi(Y)=L-H \log \left(\frac{H-Y}{H-L}\right)
+$$
+
+Taleb and Cirillo call $Z$ the dual observations. $Z$ is the variable that we will model with Extreme Value theory.
+
+```{r}
+L <- 1
+H <- 7700000
+data_to_model <- data %>% 
+  mutate(dual = L -  H* log( (H-avg_est) / (H-L) ) )
+```
+
+### Extreme Value theory on the dual observations
+
+A logical question, then, is how fat-tailed is exactly the tail of casualties from contagious diseases? Extreme Value Theory offers an answer. Indeed, the Pickands–Balkema–de Haan theorem states that tail events (events larger than a large threshold) have as a limiting distribution a Generalized Pareto Distribution (GPD). In math, for large u, the conditional excess function is thus defined and approximated by a GPD:
+
+$$
+G_{u}(z)=P(Z \leq z \mid Z>u)=\frac{G(z)-G(u)}{1-G(u)} \approx GPD(z; \xi, \beta, u)
+$$
+Where $\xi$ is the crucial shape parameter that determines how slowly the tail decays. The larger $\xi$, the more slowly it decays. For example, the variance is only defined for $\xi < 0.5$. For $\xi > 1$, the theoretical mean is not defined.
+
+Crucially, we can approximate the tail of the original distribution $G(z)$ with *a $GPD$ with the same shape parameter* $\xi$. Finally, Taleb and Cirillo use $200,000$ as a threshold $u$. We can check both in the Mean Excess Plot and the Zipf plot that around this value we observe a power-law like behavior.  
+
+### Maximum Likelihood estimate
+
+We can fit the GPD via maximum likelihood. 
+
+```{r}
+fit <- evir::gpd(data_to_model$dual, threshold = 200)
+round(fit$par.ests, 2)
+```
+
+Which are the same estimates as Taleb and Cirillo. The standard errors are thus:
+
+```{r}
+round(fit$par.ses, 2)
+```
+
+Just as we saw with our graphical analysis, the variable is definitely fat-tailed: $\xi > 0$, which thanks to the relationship of the the Pickands–Balkema–de Haan with the Fisher-Tippet theorem, tells us that the Maximum Domain of Attraction is thus a Fréchet. From Taleb and Cirillo's paper:
+
+> As expected $\xi$ > 1 once again supporting the idea of an infinite first moment... Looking at the standard error of $\xi$, one could also argue that, with more data from the upper tail, the first moment could possibly become finite. Yet there is no doubt about the non-existence of
+the second moment, and thus about the unreliability of the sample mean, which remains too volatile to be safely used.
+
+Let's see if we can reproduce this conclusions in a bayesian framework. 
+
+## Bayesian model
+
+I'll sample from the posterior using [Stan's](https://mc-stan.org/users/interfaces/rstan) incredible implementation of Hamiltonian Monte Carlo. Most of the heavy lifting in Stan has already been done by Aki Vehtari in a [case study](https://mc-stan.org/users/documentation/case-studies/gpareto_functions.html) using the GPD.  
+
+Our bayesian model will be thus defined:
+
+$$
+y \sim GPD(\xi, \beta, u = 200) \\
+\xi \sim Normal(1, 1) \\
+\beta \sim Normal(1000, 300)
+$$
+The prior for $\xi$ is weakly informative and yet still opens the opportunity for the data to move our posterior towards a finite mean and finite variance. 
+
+### Simulating fake data
+
+To verify that our code is correctly working, we'll simulate data and assess parameter recovery. 
+
+```{r}
+expose_stan_functions("gpd.stan")
+
+fake_data <- replicate(1e3, gpareto_rng(ymin = 200, 0.8, 1000))
+ds<-list(ymin=200, N=1e3, y=fake_data)
+fit_gpd <- stan(file='gpd.stan', data=ds, refresh=0,
+                     chains=4, seed=100, cores = 4)
+print(fit_gpd, pars = c("xi", "beta"))
+```
+
+The credible intervals are in line with the true parameters. Graphically: 
+
+```{r par-recover, fig.width=8, message=FALSE, warning=FALSE}
+posterior <- as.matrix(fit_gpd, pars = c("xi", "beta"))
+true <- c(0.8, 1000)
+mcmc_recover_hist(posterior, true) +
+  labs(title = "Parameter recovery",
+       subtitle = "We successfully recover the parameters")
+```
+
+We can thus reasonably recover our parameter of interest $\xi$ with our current model. Therefore, we can follow along and fit our model to the real data. 
+
+### Fitting the model
+
+Using the dual observations, we end up with $25/72$ observations, around $34.7$% of the total number of observations
+
+```{r}
+data_to_model %>% 
+  filter(dual > 200) %>% 
+  pull(dual) -> dual_observations
+summary(dual_observations)
+```
+
+Fitting the model is just as simple as fitting it to fake data:
+
+```{r}
+ds<-list(ymin=200, N=25, y=dual_observations)
+fit_gpd <- stan(file='gpd.stan', data=ds,
+                     chains=4, seed=100, cores = 4, iter = 5000)
+print(fit_gpd, pars = c("xi", "beta"))
+```
+
+For know, the $\widehat R$ values look OK, which indicates that there's no much disagreement between the Markov Chains. The credible intervals rule out the possibility that $\xi < 0$.
+
+We can intuitively interrogate the posterior for more precise questions in a Bayesian settings. For example, what is the probability that the theoretical mean is undefined, i.e., that $\xi > 1$:
+
+```{r theoretical_mean, echo=FALSE, fig.height=6, fig.width=8}
+data.frame(xi = rstan::extract(fit_gpd)$xi) -> xi
+
+p <- sum(xi > 1)/dim(xi)[1]
+
+ggplot(xi, aes(xi, fill = after_stat(x > 1))) + 
+  stat_halfeye() +
+  scale_fill_manual(values = c("gray80", "skyblue")) + 
+  geom_vline(aes(xintercept = 1.62), color = "red", linetype = 2) +
+  expand_limits(x = 0) +
+  annotate("text", x = 2, y = 0.9, label = "Paper's estimate", color = "red", 
+           family = theme_get()$text[["family"]]) +
+  labs(title = "Distributional evidence: is the theoretical mean undefined?",
+       subtitle = TeX(glue::glue("Posterior probability for $\\xi>1$ is of {round(p*100, 0)}%")),
+       y = "density",
+       x = TeX("$\\xi$"),
+       fill = TeX("$\\xi > 1$"),
+       caption = " There's no mass below 1/2, thus no chance there's finite variance.") +
+  theme(legend.position = "bottom")
+```
+
+Therefore, we conclude that it is very likely that **the theoretical mean is undefined and we rule out definitely the possibility of a finite second moment**. Thus, we reproduce the paper's conclusions. 
+
+Given the fat-tailedness of the data and the resulting lack of characteristic scale from the huge array of variability that it's possible, there's no *possibility* of forecasting what we may face with either a pointwise prediction or a distributional forecast. 
+
+### Posterior predictive checks 
+
+If the model fits well to the data, the replicated data under the model should look similar to the observed data. We can easily generate data from our model because our model is generative: we draw simulated values from the posterior predictive distribution of replicated data. 
+
+However, with *fat-tailed* data: what exactly does it mean for our replicated data to track our observed data. For example, what about the **replicated maxima**? These definitely should include the observed maxima: **but also much larger values. That is the whole point of being in the MDA of a Fréchet.**
+
+```{r ppc, message=FALSE, fig.width=8}
+yrep <- extract(fit_gpd)$yrep 
+ppc_stat(log(dual_observations), log(yrep), stat = "max") +
+  labs(title = "Posterior predictive check (log scale)",
+       subtitle = "Maxima across replicated datasets track observed maximum and beyond, just like it should",
+       x = "log(maxima)")
+```
+
+And this is exactly what our model does: a difference of 30 in a log-scale is huge. We can just as well expect maxima as large as observed, and even much larger. 
+
+### Convergence diagnostics
+
+One of the main benefits of Stan's implementation of HMC is that it yells at you when things have gone wrong. We can thus check a variety of diagnostics to check for convergence. Above, we examined that the $\widehat R$ values look OK. We can also check trace plots:
+
+```{r traceplot, fig.width=8}
+posterior <- as.array(fit_gpd)
+color_scheme_set("viridis")
+mcmc_trace(posterior, pars = c("xi", "beta")) +
+  labs(title = "Traceplots",
+       subtitle = "Traceplots are stationary, well mixed and the chains converge")
+```
+
+We can check HMC specific diagnostics:
+
+```{r}
+check_divergences(fit_gpd)
+check_treedepth(fit_gpd)
+```
+
+## Stressing the data
+
+Taleb and Cirillo are well aware that they are not working with the more precise of data. Thus, they 'stress' the data and check whether the results still hold. Given that we are working with fat-tailed data, the tail wags the dog: data problems can only modify the results if they are in the tail. 
+
+### Measurement error
+
+To account for measurement error, Taleb and Cirillo recreate 10,000 of their datasets, but this time where each observation is allowed to vary between 80% and 120% of its recorded values. They find that their results are robust to this modification.
+
+In a bayesian setting, we can very easily extend our model to account for uncertainty around the true data. Indeed, in a bayesian model there's no fundamental difference between a *parameter and an observation*: one is observed and the other is not. Thus, we formulate the true casualties being measured as [missing data](https://mc-stan.org/docs/2_18/stan-users-guide/bayesian-measurement-error-model.html). 
+
+Therefore, we specify that the measurement comes a normal with unknown mean, the true number of casualties, and that their standard deviation is 20% of the observed value. 
+
+$$
+y \sim Normal(y_{true}, y*0.2)
+$$
+We fit the model and let Bayes do the rest:
+
+```{r}
+ds<-list(ymin=200, N=25, y=dual_observations, noise = 0.2*dual_observations)
+fit_gpd_m <- stan(file='gpd_measurementerror.stan', data=ds,
+                     chains=4, seed=100, cores = 4, iter = 5000)
+print(fit_gpd_m, pars = c("xi", "beta"))
+```
+
+The model sampled remarkably well. We can thus check whether our inferences still hold:
+
+```{r infer-measurement, echo=FALSE, fig.width=8}
+data.frame(xi = rstan::extract(fit_gpd_m)$xi) -> xi
+
+p <- sum(xi > 1)/dim(xi)[1]
+
+ggplot(xi, aes(xi, fill = after_stat(x > 1))) + 
+  stat_halfeye() +
+  scale_fill_manual(values = c("gray80", "skyblue")) + 
+  geom_vline(aes(xintercept = 1.62), color = "red", linetype = 2) +
+  expand_limits(x = 0) +
+  annotate("text", x = 2, y = 0.9, label = "Paper's estimate", color = "red", 
+           family = theme_get()$text[["family"]]) +
+  labs(title = "Distributional evidence: is the theoretical mean undefined?",
+       subtitle = TeX(glue::glue("Posterior probability for $\\xi>1$ is of {round(p*100, 0)}%")),
+       y = "density",
+       x = TeX("$\\xi$"),
+       fill = TeX("$\\xi > 1$"),
+       caption = " There's no mass below 1/2, thus no chance there's finite variance.") +
+  theme(legend.position = "bottom")
+```
+
+## Influential observations
+
+Taleb and Cirillo also stress their data by recreating the dataset 10,000 times and then eliminating from 1 to 7 of the observations with a jacknife resampling procedure. Thus, they confirm that no single observation is driving the inference. 
+
+In a bayesian setting, we can check for influential observations by *comparing* the **full-data predictive posterior distribution to the Leave-one-out predictive posterior for each left out point**. That is: we compare $p(y_i | y)$ with $p(y_i, | y_{-i})$. 
+
+We can quickly estimate $p(\theta_i, | y_{-i})$ for each $i$ by just sampling from $p(\theta | y)$ using [Pareto Smoothed Importance Sampling LOO](https://mc-stan.org/loo/reference/psis.html). By examining the distribution of the importance weights, we can compare how different the two distributions are. If the weights are too fat-tailed, and the variance is infinite for the $j$th observation, then the $j$th observation is highly [influential observation determining our posterior distribution](https://arxiv.org/pdf/1709.01449.pdf).
+
+```{r}
+loglik <- extract(fit_gpd)$log_lixi
+loopsis <- loo::loo(loglik, loo::relative_eff(exp(loglik)))
+plot(loopsis)
+```
+
+Indeed, no single observation is driving our inference.
+
+# Conclusion
+
+Taleb and Cirillo show that the number of casualties are patently fat-tailed. Thus, there's no typical catastrophe nor characteristic scale: a huge array of possibilities are likely and relevant for any analysis. Thus, there's no *possibility* of forecasting what we may face with either a pointwise prediction or a distributional forecast. 
+
+Indeed, we cannot even use our sample mean to do anything useful. Given the asymmetric risks involved and the huge uncertainty, the whole of Taleb's work is very clear: we must kill the pandemic in the egg. 
+
+

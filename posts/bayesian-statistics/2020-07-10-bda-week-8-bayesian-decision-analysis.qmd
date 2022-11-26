@@ -1,0 +1,19 @@
+---
+title: 'BDA Week 8: Bayesian Decision Analysis'
+author: ''
+date: '2020-07-10'
+slug: bda-week-8-bayesian-decision-analysis
+categories: []
+tags: []
+aliases: 
+  - ../../2020/07/10/bda-week-8-bayesian-decision-analysis/
+---
+
+Many if not most statistical analyses are performed for the ultimate goal of decision making. Bayesian Statistics has the advantage of direct use of probability to quantify the uncertainty around unobserved quantities of interest: whether those are parameters or predictions, we end up with a posterior distribution. 
+
+Indeed, our posterior predictions interact uniquely for each possible action $d$ we can take to create a unique distribution of our utility $U(x)|d$. Then, it amounts to compare which of these distributions benefits of the most. For example, we can choose the action $d$ with the highest expected utility. With the help of Mathematica, I go over the following toy problem:
+
+> Widgets cost $2 each to manufacture and you can sell them for $3. Your forecast for the market for widgets is (approximately) normally distributed with mean 10,000 and standard deviation 5,000. How many widgets should you manufacture in order to maximize your expected net profit?
+
+Which action, production number, leads to maximize our expected profit? Read [this post](https://www.wolframcloud.com/obj/c888fd64-0372-4531-af70-94a53cafe364) to find out. 
+

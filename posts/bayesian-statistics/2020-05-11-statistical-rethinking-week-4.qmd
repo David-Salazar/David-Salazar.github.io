@@ -1,0 +1,288 @@
+---
+title: 'Statistical Rethinking: Week 4'
+author: David Salazar
+date: '2020-05-11'
+slug: statistical-rethinking-week-4
+categories: []
+tags: []
+aliases: 
+  - ../../2020/05/11/statistical-rethinking-week-4/
+---
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+library(rethinking)
+library(tidyverse)
+library(forcats)
+library(dagitty)
+extrafont::loadfonts(device="win") 
+set.seed(42)
+```
+
+# Statistical Rethinking: Week 4
+
+This week was a marathon of content. Richard introduced beautifully the trade-off between overfitting and underfitting and prescribed two complimentary methods to help us navigate this trade-off:
+
+1. Regularizing priors
+2. Information criteria and Cross-Validation estimates of the risk of overfitting. 
+
+Regularizing priors reduces the risk of overfitting of any model by introducing skepticisim into the priors. Whereas information criteria and Cross-Validation help us to estimate whether we have overfitted or not. 
+
+## Homework
+
+###  Consider 3 fictional Polynesian Islands...
+
+```{r}
+# Read the data
+islands <- list()
+islands[[1]] <- c(0.2, 0.2, 0.2, 0.2, 0.2)
+islands[[2]] <- c(0.8, 0.1, 0.05, 0.025, 0.025)
+islands[[3]] <- c(0.05, 0.15, 0.7, 0.05, 0.05)
+names(islands) <- c("Island 1", "Island 2", "Island 3")
+```
+
+> First, compute the entropy of each island's bird distribution:
+
+```{r}
+information_entropy <- function(distribution) {
+  # -expected value of log (p)
+  return(-sum(distribution * log(distribution)))
+}
+
+islands %>% 
+  map_df(information_entropy) %>%
+  mutate(x = "o") %>% 
+  pivot_longer(cols = -x, names_to = "island", values_to = "information_entropy") %>% 
+  ggplot(aes(y = fct_reorder(island, information_entropy), x = information_entropy)) +
+  geom_col(aes(fill = island),alpha = 0.8) +
+  scale_fill_viridis_d() +
+  labs(y = "", 
+       subtitle = "Island 1 has the highest entropy",
+       title = "Information Entropy by Island") +
+  hrbrthemes::theme_ipsum_rc(grid = "x") +
+  theme(legend.position = "none")
+```
+
+Island 1, having an uniform probability of each bird, encodes the highest amount of uncertainity of all the three islands. Both island 2 and 3, having 0.8 and 0.7, respectively, in only one type of bird, enconde much lower levels of uncertainty in their distributions. 
+
+> Second, use each island's bird distribution to predict the other two.
+
+```{r}
+divergence <- function(p, q) {
+  return(sum(p*log(p/q)))
+}
+
+divergece_wrt_one <- map_df(islands[c(2, 3)], ~ divergence(p = islands[[1]], q = .x)) %>% mutate(used = "Island 1") %>% pivot_longer(-used)
+divergence_wrt_two <- map_df(islands[c(1, 3)], ~ divergence(p = islands[[2]], q = .x)) %>% mutate(used = "Island 2") %>% pivot_longer(-used)
+divergece_wrt_three <- map_df(islands[c(1, 2)], ~ divergence(p = islands[[3]], q = .x)) %>% mutate(used = "Island 3")  %>% pivot_longer(-used)
+
+rbind(divergece_wrt_one, divergence_wrt_two, divergece_wrt_three) %>% 
+  rename(predicted = name,
+         divergence = value) %>% 
+  ggplot(aes(x = predicted, y = divergence,
+             fill = used)) +
+  geom_bar(position = "dodge", stat = "identity",
+           alpha = 0.8) +
+  hrbrthemes::theme_ipsum_rc(grid = "Y") +
+  scale_fill_viridis_d() +
+  labs(subtitle = "Island 1, which has the highest entropy, is the best predictor",
+       title = "Divergence by predicted island",
+       fill = "Island used to predict") +
+  theme(legend.position = "bottom")
+```
+
+Two facts arise:
+
+1. Predicting "Island 1" is relatively easy. It already encodes so much uncertainty that the extra uncertainty induced by using any other distribution is relatively low. Nevertheless, it is better to use "Island 3", which encodes the highest uncertainty.
+
+2. To predict either "Island 2" or "Island 3", it is markedly better to use the distribution with the highest entropy: "Island 1". It encodes so much uncertainty in itself, that, when we see the true distribution, it is hardly surprised: it expects almost anything.
+
+## Recall the marriage... 
+
+> Recall the marriage age, and happiness collider bias example from Chapter 6. Run models m6.9 and m6.10 again. Compare these two models using WAIC (or LOO, they will produce identical results). Which model is expected to make better predictions? Which model provides the correct causal inference about the influence of age on happiness? Can you explain why the answers to these two questions disagree?
+
+Let's load the data:
+
+```{r}
+# reproduce textbook
+data <- sim_happiness(seed = 1977, N_years = 1000)
+```
+
+Before fitting the model, let's remember our assumed DAG. 
+
+```{r}
+dag <- dagitty("dag {
+              Happiness -> Marriage
+              Age -> Marriage
+               }")
+drawdag(dag)
+```
+
+Thus, Age and Happiness are independent. However, if we condition on Marriage, we open a collider which will make our statistical model to identify and information flow between age and happiness. 
+
+
+```{r}
+data %>% 
+  filter(age > 17) %>% 
+  mutate(A = (age - 18)/ (65-18),
+         mid = married + 1) -> data_for_model
+
+m6.9 <- quap(
+  alist(
+    happiness ~ dnorm(mu, sigma),
+    mu <- a[mid] + bA*A,
+    a[mid] ~ dnorm(0, 1),
+    bA ~ dnorm(0, 2),
+    sigma ~ dexp(1)
+  ),
+  data = data_for_model
+)
+
+m6.10 <- quap(
+  alist(
+    happiness ~ dnorm(mu, sigma),
+    mu <- a + bA*A,
+    a ~ dnorm(0, 1),
+    bA ~ dnorm(0, 2),
+    sigma ~ dexp(1)
+  ),
+  data = data_for_model
+)
+
+compare(m6.10, m6.9)
+```
+
+Considering our DAG, the model that correctly identifies the causal relationship between happiness and age is m6.10. Whereas m6.9 opens a collider and thus its coefficient estimates are confounded.
+
+Nevertheless, by examing the difference in WAIC (the smaller the better), we estimate that the model that will predict happiness better out of sample is m6.9: the confounded model. This only highlights the difference between the different goals of prediction and causal inference. Why? Because the information that flows once we open the collider, although causally incorrectly attributed to age, is valuable information that can be used to predict happiness. 
+
+> Reconsider the urban fox analysis from last week’s homework. Use WAIC or LOO based model comparison on five different models, each using weight as the outcome, and containing these sets of predictor variables:
+
+1. avgfood + groupsize + area
+2. avgfood + groupsize 
+3. groupsize + area
+4. avgfood
+5. area
+
+Let's draw the data and remember our DAG:
+
+```{r}
+data("foxes")
+
+foxes %>% 
+  mutate(avgfood = (avgfood - mean(avgfood))/ sd(avgfood),
+         groupsize = (groupsize - mean(groupsize)) / sd(groupsize),
+         area = (area - mean(area)) / sd(area),
+         weight = (weight - mean(weight)) / sd(weight)) -> foxes_scaled
+
+dag_foxes <- dagitty("dag {
+                     area -> avgfood
+                     avgfood -> groupsize
+                     avgfood -> weight
+                     groupsize -> weight
+}")
+
+drawdag(dag_foxes)
+```
+
+1. avgfood + groupsize + area
+
+Given our DAG, using area and avgfood simultaneously blocks the pipe that goes from area to weight. However, it correctly estimates the effect of groupsize on weight. 
+
+```{r}
+model_1 <- quap(
+  alist(
+    weight ~ dnorm(mu, sigma),
+    mu <- alpha + beta_area * area + beta_groupsize *groupsize + beta_avgfood * avgfood ,
+    alpha ~ dnorm(0, 0.2),
+    beta_area ~ dnorm(0, 0.5),
+    beta_groupsize ~ dnorm(0, 0.5),
+    beta_avgfood ~ dnorm(0, 0.5),
+    sigma ~ dexp(1)
+  ),
+  data = foxes_scaled
+)
+```
+
+
+2. avgfood + groupsize 
+
+Given this model, we will estimate the effect of groupsize on weight correctly. 
+
+```{r}
+model_2 <- quap(
+  alist(
+    weight ~ dnorm(mu, sigma),
+    mu <- alpha + beta_groupsize *groupsize + beta_avgfood * avgfood ,
+    alpha ~ dnorm(0, 0.2),
+    beta_groupsize ~ dnorm(0, 0.5),
+    beta_avgfood ~ dnorm(0, 0.5),
+    sigma ~ dexp(1)
+  ),
+  data = foxes_scaled
+)
+```
+
+3. groupsize + area
+
+Given our DAG, controlling by groupsize and including avgfood should be equivalent as including avgfood. 
+
+
+```{r}
+model_3 <- quap(
+  alist(
+    weight ~ dnorm(mu, sigma),
+    mu <- alpha + beta_area * area + beta_groupsize *groupsize ,
+    alpha ~ dnorm(0, 0.2),
+    beta_area ~ dnorm(0, 0.5),
+    beta_groupsize ~ dnorm(0, 0.5),
+    sigma ~ dexp(1)
+  ),
+  data = foxes_scaled
+)
+```
+
+4. avgfood
+
+Given our DAG, this model estimates correctly the total effect of avgfood on weight. 
+
+```{r}
+model_4 <- quap(
+  alist(
+    weight ~ dnorm(mu, sigma),
+    mu <- alpha + beta_avgfood * avgfood ,
+    alpha ~ dnorm(0, 0.2),
+    beta_avgfood ~ dnorm(0, 0.5),
+    sigma ~ dexp(1)
+  ),
+  data = foxes_scaled
+)
+```
+
+5. area
+
+```{r}
+model_5 <- quap(
+  alist(
+    weight ~ dnorm(mu, sigma),
+    mu <- alpha + beta_area * area,
+    alpha ~ dnorm(0, 0.2),
+    beta_area ~ dnorm(0, 0.5),
+    sigma ~ dexp(1)
+  ),
+  data = foxes_scaled
+)
+```
+
+This model correctly estimates the total effect of area on weight. 
+
+Now, it's time to compare the out-of-sample prediction accuracy of the different models:
+
+```{r}
+compare(model_1, model_2, model_3, model_4, model_5)
+```
+
+Given our DAG, if we include groupsize, the information flowing from either area or avgfood should be the same in the 3 models. Thus, it makes sense that we get equivalent predictions with either way. 
+
+Finally, given that the total effect of avgfood and area are the same, the information flows from either of those in the models 4 and 5 should also be the same. Thus, we get equivalent predictions for both models. 
+

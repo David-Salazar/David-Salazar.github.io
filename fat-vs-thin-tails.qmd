@@ -1,0 +1,12 @@
+---
+title: "Series: Fat Tails vs Thin Tails"
+listing:
+  contents: posts/fat-vs-thin-tails
+  sort: "date desc"
+  type: default
+  categories: false
+  sort-ui: false
+  filter-ui: false
+  fields: [date, title, reading-time, description]
+page-layout: full
+---

@@ -1,0 +1,399 @@
+---
+title: 'Statistical Rethinking: Week 9'
+author: ''
+date: '2020-06-03'
+slug: statistical-rethinking-week-9
+categories: []
+tags: []
+aliases: 
+  - ../../2020/06/03/statistical-rethinking-week-9/
+---
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+library(rethinking)
+library(tidyverse)
+library(tidybayes.rethinking)
+library(modelr)
+library(latex2exp)
+library(ggridges)
+library(tidybayes)
+
+# rstan stuff
+extrafont::loadfonts(device="win")
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+Sys.setenv(LOCAL_CPPFLAGS = '-march=corei7 -mtune=corei7')
+# set seed
+set.seed(5)
+# set theme
+theme_set(hrbrthemes::theme_ipsum_rc())
+```
+
+
+Week 9 was all about fitting models with multivariate distributions in them. For example, a multivariate likelihood helps us use an instrumental variable to estimate the true causal effect of a predictor. But also as an adaptive prior for some of the predictors. In both cases, we found out that the benefit comes from modelling the resulting var-cov matrix. In the [instrumental variable](2020-06-03-bayesian-instrumental-variable-regression.html) case, the resulting joint distribution for the residuals was the key to capture the statistical information of the confounding variable. In the adaptive prior case, it helps understand the relationship between different parameter types. 
+
+# Homework
+
+# 1st question
+
+Revisit the Bangladesh fertility data,`data(bangladesh)`. Fit a model with both varying intercepts by district_id and varying slopes of urban (as a 0/1 indicator variable) by district_id. You are still predicting use.contraception. Inspect the correlation between the intercepts and slopes. Can you interpret this correlation, in terms of what it tells you about the pattern of contraceptive use in the sample? It might help to plot the varying effect estimates for both the intercepts and slopes, by district. Then you can visualize the correlation and maybe more easily think through what it means to have a particular correlation. Plotting predicted proportion of women using contraception, in each district, with urban women on one axis and rural on the other, might also help.
+
+```{r}
+data("bangladesh")
+
+# Fix the district id
+bangladesh %>% 
+  mutate(district_id = as.integer( as.factor(district) ) ) -> bangladesh
+glimpse(bangladesh)
+```
+
+Let's fit the varying effects models for each district to have its average contraception use its own the differential between urban and rural areas. 
+
+```{r message=FALSE, warning=FALSE}
+data_varying <- list(
+  contraception = bangladesh$use.contraception,
+  district_id = bangladesh$district_id,
+  urban = bangladesh$urban
+)
+
+
+model_varying <- ulam(
+  alist(
+    contraception ~ binomial(1, p),
+    logit(p) <- alpha[district_id] + beta[district_id] * urban,
+    
+    # adaptive priors
+    c(alpha, beta)[district_id] ~ multi_normal(c(a, b), Rho, sigma),
+    
+    # hyper-priors
+    a ~ normal(-0.5, 1),
+    b ~ normal(0, 1),
+    sigma ~ exponential(1),
+    Rho ~ lkj_corr(2)
+  ),
+  data = data_varying,
+  chains = 4, cores = 4,
+  iter = 2000
+)
+```
+
+Let's check our chains' health:
+
+```{r}
+traceplot_ulam(model_varying)
+```
+The chains look healthy enough. They are:
+
+1. They are stationary
+1. They mix well across the parameter space.
+1. Different chains converge to explore the same parameter space.
+
+Let's check the $\hat{R}$ values:
+
+```{r}
+results <- precis(model_varying, depth = 3)
+results %>% 
+  data.frame() %>% 
+  select(Rhat4) %>% 
+  summary()
+```
+
+The $\hat{R}$ look OK, indicating that the Markov chains are in close agreement with each other. Let's check the parameters:
+
+```{r}
+precis(model_varying, depth = 2, pars = c("sigma", "a", "b"))
+```
+
+The contraceptive use is not that likely, thus the negative (in log-odds scale) average value in the adaptive prior for $a$. The positive value for $b$, on the other hand, indicates that the average distribution of slopes is positive. That is, women in urban areas are, on average, more likely to use contraception. Finally, the variances. Both indicate quite a bit of variation in the multivariate population for intercepts and slopes.   
+
+
+```{r}
+precis(model_varying, pars = "Rho", depth = 3)
+```
+
+There's a negative correlation between the parameter types: i.e., for districts with higher contraceptive usage overall, the correlation informs us that we should predict a lower than average differential in the use of contraceptives between rural and urban areas. 
+
+We can follow Richard's advice and plot both types of parameters for each district. We can even overlay the ellipses that determine the levels of the multivariate adaptive prior: 
+
+```{r}
+samples <- extract.samples(model_varying)
+
+Mu_est <- c(mean(samples$a), mean(samples$b))
+rho_est <- mean(samples$Rho[,1,2])
+sa_est <- mean(samples$sigma[,1])
+sb_est <- mean(samples$sigma[, 2])
+cov_ab <- sa_est*sb_est*rho_est
+Sigma_est <- matrix(c(sa_est^2, cov_ab, cov_ab, sb_est^2), ncol = 2)
+
+contour_level <- function(level) {
+  ellipse::ellipse(Sigma_est, centre = Mu_est, level = level) %>% 
+    data.frame() %>% 
+    mutate(level = level)
+} 
+
+purrr::map(c(0.1, 0.3, 0.5, 0.8, 0.99), contour_level) %>% 
+  bind_rows() -> data_elipses
+data_elipses %>% 
+  ggplot(aes(x, y)) +
+  geom_path(aes(group = level), linetype = 2) +
+  geom_point(data = data.frame(x = Mu_est[1]), y = Mu_est[2], color = "red")
+```
+
+Finally, we can plot the points:
+
+```{r fig.width=8}
+samples$alpha %>% 
+  as_tibble() %>% 
+  pivot_longer(everything(), names_to = "district_id_", names_prefix = "V", values_to = "alpha") %>% 
+  bind_cols(samples$beta %>% 
+  as_tibble() %>% 
+  pivot_longer(everything(), names_to = "district_id", names_prefix = "V", values_to = "beta")) %>% 
+  group_by(district_id) %>% 
+  median_qi(alpha, beta) %>% 
+  select(district_id, alpha, beta) %>% 
+  ggplot(aes(alpha, beta)) +
+  geom_point(alpha = 0.6) +
+  geom_path(data = data_elipses,
+            inherit.aes = F,
+            mapping = aes(x, y, group = level), linetype = 2, color = "dodgerblue4") +
+  geom_point(data = data.frame(x = Mu_est[1]), y = Mu_est[2], color = "red",
+             inherit.aes = FALSE,
+             mapping = aes(x, y)) +
+  labs(title = "Negative correlation between intercepts and slopes per district",
+       subtitle = "Districts with higher overall use have lower differentials between urban and rural",
+       x = expression(alpha),
+       y = expression(beta))
+```
+
+# 2nd question
+
+Now consider the predictor variables age.centered and living.children, also contained in data(bangladesh). Suppose that age influences contraceptive use (changing attitudes) and number of children (older people have had more time to have kids). Number of children may also directly influence contraceptive use. Draw a DAG that reflects these hypothetical relationships. Then build models needed to evaluate the DAG. You will need at least two models. Retain district and urban, as in Problem 1. What do you conclude about the causal influence of age and children?
+
+```{r}
+dag <- dagitty::dagitty(" dag {
+                        Age -> N_children
+                        Age -> contraception
+                        N_children -> contraception
+                        }")
+drawdag(dag)
+```
+
+Conditional on this DAG, the total causal effect of Age on contraception is mediated (pipe) with Number of Children. Thus, to get the total effect we must not control by number of children.
+
+Let's fit this model:
+
+```{r}
+data_varying <- list(
+  contraception = bangladesh$use.contraception,
+  district_id = bangladesh$district_id,
+  urban = bangladesh$urban,
+  age = bangladesh$age.centered, 
+  kids = bangladesh$living.children
+)
+model_only_age <- ulam(
+  alist(
+    contraception ~ dbinom(1, p),
+    logit(p) <- alpha[district_id] + beta[district_id] * urban + gamma*age,
+    
+    # traditional priors
+    gamma ~ normal(0, 1),
+    
+    # adaptive priors
+    c(alpha, beta)[district_id] ~ multi_normal(c(a, b), Rho, sigma),
+    
+    # hyper-priors
+    a ~ normal(-0.5, 1),
+    b ~ normal(0, 1),
+    sigma ~ exponential(1),
+    Rho ~ lkj_corr(2)
+  ),
+  chains = 4, cores = 4,
+  data = data_varying,
+  iter = 2000
+)
+```
+
+Let's check our chains' health:
+
+```{r}
+traceplot_ulam(model_only_age)
+```
+
+The chains look healthy enough. They are:
+
+1. They are stationary
+1. They mix well across the parameter space.
+1. Different chains converge to explore the same parameter space.
+
+Let's check the $\hat{R}$ values:
+
+```{r}
+precis(model_only_age, depth = 3) %>% 
+  data.frame() %>% 
+  select(Rhat4) %>% 
+  summary()
+```
+
+The $\hat{R}$ look OK, indicating that the Markov chains are in close agreement with each other. Let's check the parameters:
+
+```{r}
+precis(model_only_age, depth = 3, pars = c("a", "b", "gamma", "sigma", "Rho"))
+```
+
+The distribution of intercepts and slopes looks completely unchanged. For the $\gamma$, our estimated effect has much of its probability mass around zero and 0.02. Therefore, we conclude that the total causal effect of age on the use of contraception is small. For example, let's take the woman from the first district and predict our expected probability that they use contraception, across both urban and rural areas, as  function of age:
+
+```{r fig.width=8}
+data.frame(data_varying) %>% 
+  group_by(urban) %>% 
+  data_grid(age, district_id = 1) %>% 
+  add_fitted_draws(model_only_age) %>% 
+  ggplot(aes(age, .value)) +
+  stat_lineribbon(fill = "dodgerblue4", alpha = 1/4) +
+  scale_fill_brewer(palette = "Greys") +
+  facet_wrap(~factor(urban, labels = c("Rural", "Urban"))) +
+  labs(title = "Predicted prob of using contraception as function of age",
+       subtitle = "Age has a positive small effect. No statistical adjustment by # of kids ",
+       y = "predicted prob")
+```
+
+
+Now for the model that takes into account the number of children each woman has:
+
+```{r}
+model_age_kids <- ulam(
+  alist(
+    contraception ~ dbinom(1, p),
+    logit(p) <- alpha[district_id] + beta[district_id] * urban + gamma*age + delta*kids,
+    
+    # traditional priors
+    gamma ~ normal(0, 1),
+    delta ~ normal(0, 1),
+    
+    # adaptive priors
+    c(alpha, beta)[district_id] ~ multi_normal(c(a, b), Rho, sigma),
+    
+    # hyper-priors
+    a ~ normal(-0.5, 1),
+    b ~ normal(0, 1),
+    sigma ~ exponential(1),
+    Rho ~ lkj_corr(2)
+  ),
+  chains = 4, cores = 4,
+  data = data_varying,
+  iter = 2000
+)
+```
+
+Let's look at our $\hat{R}$:
+
+```{r}
+precis(model_age_kids, depth = 3) %>% 
+  data.frame() %>% 
+  select(Rhat4) %>% 
+  summary()
+```
+
+The $\hat{R}$ look OK, indicating agreement between chains. Let's check our posterior's parameters:
+
+```{r}
+precis(model_age_kids,  depth = 3, pars = c("a", "b", "gamma", "sigma", "Rho", "delta"))
+```
+Our population distribution for slopes and parameters has shifted: the average probability of using contraception, for a woman with 1 kids, is much lower. That can be explained as our parameters for the number of children, $\delta$, is clearly positive with an 87% compatibility interval between (0.33, 0.50) in the log-odds. Notice also that the effect of age has changed signs and it's mass is around (-0.04, -0.02) in the log odds scale. That is, older women, adjusting by the number of children they have, are less likely to use contraception. 
+
+Let's plot the effect of having children for the women of the district 20 of average age:
+
+```{r}
+data.frame(data_varying) %>% 
+  group_by(urban) %>% 
+  data_grid(kids, district_id = 20, age = 0) %>% 
+  add_fitted_draws(model_age_kids) %>% 
+  ggplot(aes(kids, .value)) +
+  stat_lineribbon(fill = "dodgerblue4", alpha = 1/4) +
+  scale_fill_brewer(palette = "Greys") +
+  facet_wrap(~factor(urban, labels = c("Rural", "Urban"))) +
+  labs(title = "Predicted prob of using contraception as function of # of kids",
+       subtitle = "Women with more kids are more likely to use contraception")
+```
+
+Now, for age:
+
+```{r fig.width=8}
+data.frame(data_varying) %>% 
+  group_by(urban) %>% 
+  data_grid(age, district_id = 1, kids = 1) %>% 
+  add_fitted_draws(model_age_kids) %>% 
+  ggplot(aes(age, .value)) +
+  stat_lineribbon(fill = "dodgerblue4", alpha = 1/4) +
+  scale_fill_brewer(palette = "Greys") +
+  facet_wrap(~factor(urban, labels = c("Rural", "Urban"))) +
+  labs(title = "Predicted prob of using contraception as function of age",
+       subtitle = "Age has a negative effect. Statistically adjusting by # of kids",
+       y = "predicted prob")
+```
+
+**Going back to our DAG**, our findings are in accordance with it. **The total causal effect of age is less than the direct causal effect due to the pipe that goes through number of kids**. That is, older women have lower probabilities to use contraception once we statistically adjust by the number of kids they have. However, older women also tend to have more children and the direct effect of having more children is to be less likely to use contraception. Therefore, the mixed signal that we get from the total effect. 
+
+# 3rd question
+
+Modify any models from Problem 2 that contained that children variable and model the variable now as a monotonic ordered category, like education from the week we did ordered categories. Education in that example had 8 categories. Children here will have fewer (no one in the sample had 8 children). So modify the code appropriately. What do you conclude about the causal influence of each additional child on use of contraception?
+
+Almost inadvertently, in our previous model we assumed that the additional effect of each kid in the log odds of using contraception was constant. By modelling as an ordered category, we let the data decide whether it should be so.
+
+```{r}
+data_varying <- list(
+  contraception = bangladesh$use.contraception,
+  district_id = bangladesh$district_id,
+  urban = bangladesh$urban,
+  age = bangladesh$age.centered, 
+  kids = as.integer(bangladesh$living.children),
+  alpha = rep(2, 3)
+)
+
+model_age_kids_ord <- ulam(
+  alist(
+    contraception ~ dbinom(1, p),
+    logit(p) <- alp[district_id] + beta[district_id] * urban + gamma*age + bks*sum(delta_j[1:kids]),
+    
+    # traditional priors
+    gamma ~ normal(0, 1),
+    bks ~ normal(0, 1),
+    # adaptive priors
+    c(alp, beta)[district_id] ~ multi_normal(c(a, b), Rho, sigma),
+    
+    # hyper-priors
+    a ~ normal(-0.5, 1),
+    b ~ normal(0, 1),
+    sigma ~ exponential(1),
+    Rho ~ lkj_corr(2),
+    vector[4]: delta_j <<- append_row(0, delta),
+    simplex[3]: delta ~ dirichlet(alpha)
+  ),
+  chains = 4, cores = 4,
+  data = data_varying,
+  iter = 2000
+)
+```
+
+Let's look at our $\hat{R}$:
+
+```{r}
+precis(model_age_kids_ord, depth = 3) %>% 
+  data.frame() %>% 
+  select(Rhat4) %>% 
+  summary()
+```
+
+The $\hat{R}$ values look OK, indicating that the chains are in close agreement with each other. Let's check our parameters:
+
+```{r}
+precis(model_age_kids_ord,  depth = 3, pars = c("a", "b", "gamma", "sigma", "Rho", "bks"))
+```
+The overall effect of the children variable, when a woman has 4 children, has the same sign and roughly the same magnitude as previous inferences. Let's look at the effect splitted by the number of children:
+
+```{r}
+precis(model_age_kids_ord, depth = 3, pars = "delta")
+```
+
+Remember that these are percentages of the total effect. That is, around 73% of the total effect comes from having the second child. Therefore, we conclude that most of the effect that having children increases the chances of using contraception comes from having a second child. 
+
+

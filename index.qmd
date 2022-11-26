@@ -1,0 +1,19 @@
+---
+title: "About"
+image: booglee.jpeg
+about:
+  template: jolla
+  links:
+    - icon: twitter
+      text: Twitter
+      href: https://twitter.com/DavidSalazarVir
+    - icon: linkedin
+      text: LinkedIn
+      href: https://linkedin.com
+    - icon: github
+      text: Github
+      href: https://github.com/David-Salazar
+
+---
+
+I am David Salazar and I am a Machine Learning Engineer dilettantin' Data Science.

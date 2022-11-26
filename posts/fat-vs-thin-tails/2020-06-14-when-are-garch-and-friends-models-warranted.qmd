@@ -1,0 +1,127 @@
+---
+title: When are GARCH (and friends) models warranted?
+author: ''
+date: '2020-06-14'
+slug: when-are-garch-and-friends-models-warranted
+categories: []
+tags: []
+aliases: 
+  - ../../2020/06/14/when-are-garch-and-friends-models-warranted/
+---
+
+```{r, message=FALSE, warning=FALSE, include=FALSE}
+library(tidyverse)
+library(tidyquant)
+library(gganimate)
+library(ggtails)
+library(gt)
+# Roboto-Condensed
+extrafont::loadfonts(device="win")
+# set seed
+set.seed(464988)
+# set theme
+theme_set(hrbrthemes::theme_ipsum_rc())
+```
+
+In this blogpost, I'll answer the question, following Nassim Taleb's latest [technical book: Statistical Consequences of Fat Tails](https://www.researchers.one/media/documents/260-m-Technical%20Incerto%20Vol%201.pdf), **when can we use GARCH (and firends) models?** As an example, also following Taleb, I'll check the resulting conditions with the S&P500.
+
+## What are the obstacles?
+
+The Generalized Autoregressive Conditional Heteroskedasticity (GARCH) family of models attempt to model a given time series by exploiting  "volatility" clustering (i.e., for some periods volatility is consistently high, for other periods is consistently low). When is this warranted? 
+
+1. The theoretical variance *must* exist. 
+1. We must be able to *reliably* estimate the variance **with the amount of data we have**.
+
+Of course, neither of the conditions may be satisfied with fat-tailed data. For example, the theoretical mean *may exist* but [the sample mean estimator](2020-04-17-fat-vs-thin-does-lln-work.Rmd) may suffer from **persistent small-sample effect**: the Law of Large Numbers (LLN) just works *way too slowly*. Thus, we **cannot reliably** estimate the mean. 
+
+The exact *same thing* happens for the variance, just that the problem compounds: higher moments are more fat-tailed than the original random variable and [thus the LLN works even more slowly](2020-06-02-lln-for-higher-p-moments.html). That is, the theoretical variance *may exist* but it may be **impossible to estimate it** with the amount of data we have. A heuristic to know the reliability of the sample variance is the existence of the third and fourth moment. As Taleb says:
+
+> In a situation of infinite third moment, the observed second moment will fail to be informative as it will almost never converge to its value
+
+**That is, belonging to the class of Power Law tails with ($\alpha \leq 4$) cancels the use of the sample variance in any method**
+ 
+## Are the conditions satistified for the S&P 500?
+
+Therefore, we could possibly attempt to model the S&P 500's returns if:
+
+1. The theoretical variance exists
+1. The LLN works fast enough for the variance: i.e., the fourth moment is finite. 
+
+Both conditions relate to the fat-tailedness of the returns. If they are fat-tailed, how fat-tailed are them? Could we justify positing an $\alpha > 4$? Following Taleb's explanation, I'll conduct a battery of tests to diagnose exactly how fat-tailed the returns are and what may be the tail exponent of their tail. 
+
+I'll use all the available data from 1948 to the present day
+
+```{r}
+c("^GSPC") %>% 
+  tq_get(from = "1948-01-09") -> sp_data
+```
+
+## Zipf Plot 
+
+[The Zipf-plot](2020-05-19-understanding-the-tail-exponent.html), or the log-log plot, is a great way to diagnose if the tails of a distribution decay as a Power Law. For Power Laws, we expect a linear decay at the tail and a variation of several order of magnitudes in the x-axis. The zipf plot for the absolute daily returns of the S&P is thus: 
+
+```{r zipf, echo=FALSE, message=FALSE, warning=FALSE, fig.width=8}
+sp_data %>% 
+   tq_transmute(select     = adjusted,
+                 mutate_fun = periodReturn,
+                 type = "log",
+                 period     = "daily",
+                 col_rename = "daily.returns") -> daily_returns
+
+daily_returns %>% 
+  mutate(daily.returns = abs(daily.returns)) %>% 
+  ggplot(aes(sample = daily.returns)) +
+  ggtails::stat_zipf(alpha = 0.2, color = "dodgerblue4") +
+  scale_y_log10() +
+  scale_x_log10(labels = scales::percent) +
+  labs(title = "Zipf plot for S&P500 daily returns",
+       subtitle = "Linear decay at the tail, just as expected in a Power Law",
+       x = "Absolute Returns",
+       y = "Log of Survival Function")
+```
+
+Indeed, we see a linear decay of the tail and a variation of several orders of magnitude in the x-axis. Both signs of fat-tailedness for the day returns.
+
+## Mean excess plots
+
+Mean excess plots are also a test of fat-tailedness. For a given threshold $v$, they estimate:
+
+$$ E[X - v | X > v] $$
+
+That is, how the conditional expectation increases as the threshold increases. For a power-law, we expect a linear increase:
+
+```{r me-excess, echo=FALSE, fig.width=8}
+daily_returns %>% 
+  mutate(negative = if_else(daily.returns < 0, "Negative (abs.) returns", "Positive Returns")) %>% 
+  ggplot(aes(sample = abs(daily.returns), 
+             color = negative)) +
+  facet_wrap(~negative) +
+  scale_color_brewer(palette = "Set1") +
+  stat_mean_excess(alpha = 0.2) +
+  theme(legend.position = "none") +
+  labs(title = "Mean Excess function for S&P returns",
+       subtitle = "Linear increase for negative returns (at the tail) is consistent with a power law distribution") 
+```
+
+## Max-to-Sum Ratios
+
+Max-to-Sum ratio plots are a way to check the existence of higher moments. If a given moment exists, the ratio of the max-to-sum should eventually converge to zero:
+
+```{r max-to-sum, echo=FALSE, fig.width=10, warning=FALSE}
+daily_returns %>% 
+  ggplot(aes(sample = daily.returns)) +
+  stat_max_sum_ratio_plot() +
+  scale_colour_viridis_d() +
+  transition_reveal(stat(x)) +
+  scale_x_continuous(labels = scales::comma) +
+  labs(y = "Max / Sum ratio",
+       title = "Max to Sum ratio for S&P500 daily returns",
+       subtitle = "A single data-point rejects any clear convergence for the 3rd or 4th moments")
+```
+
+Indeed, neither the third nor the fourth moment seem to converge. No Gaussian variable would ever behave like this: a single discontinuous jump in the ratio allows us to deny it. Indeed, the returns clearly follow a power-law in the tail that **curbs any convergence for both the skeweness and the kurtosis**. Thus, we can say that the tail follows a power law around $\alpha \approx 3$. 
+
+## Conclusion
+
+The tails of the daily returns behave like a power law. Thus, the tails wag the dog, as Taleb says. Given the data, only the first two moments seem to converge. Neither the third nor fourth converge. Thus, we posit a power law of around 3 to describe the tails of the daily returns. This power law is so fat-tailed, that it is just not possible to use the sample variance estimate with the amount of available data. **Therefore, the use of any model that tries to estimate the variance of the daily returns is not warranted.**
+

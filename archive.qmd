@@ -1,0 +1,31 @@
+---
+title: "Posts"
+page-layout: full
+listing:
+  contents: posts/**/*.qmd
+  type: default
+  fields: [date, title]
+  sort: 'date desc'
+---
+
+# Series
+
+## Bayesian Statistics Series
+
+The [Bayesian Statistics Series are blogposts](bayesian-statistics.html) that walk you through the awesome homeworks in the Statistical Rethinking book, by Richard McElreath, and the classic Bayesian
+Data Analysis, by Gelman et. al. The code is all fully reproducible R Code.
+
+## Fat vs Thin tails and the different nature of risk
+
+Following the work by Nassim Nicholas Taleb, [this series of blogposts](fat-vs-thin-tails.html) goes over his work showcasing
+his main results and intuition through code and visualizations.
+
+## Causal Inference Series
+
+Following the work of Judea Pearl, I go [over his main contributions to Causal Inference using code, a bit of math, and visualizations.](causality.html)
+
+
+## All blogposts in one place
+
+
+

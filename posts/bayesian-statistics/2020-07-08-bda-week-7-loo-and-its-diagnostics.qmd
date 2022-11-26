@@ -1,0 +1,63 @@
+---
+title: 'BDA week 7: LOO and its diagnostics'
+author: ''
+date: '2020-07-08'
+slug: bda-week-7-loo-and-its-diagnostics
+categories: []
+tags: []
+aliases: 
+  - ../../2020-07-08-bda-week-7-loo-and-its-diagnostics.Rmd
+---
+
+Once Stan's implementation of HMC has run its magic, we finally have samples from the posterior distribution $\pi (\theta | y))$. We can then run posterior predictive checks and hopefully our samples looks plausible under our posterior. Nevertheless, this is just an internal validation check: **we expect more from our model**. We expect it to hold under an external validation check: never seen observations, once predicted, should also look plausible under our posterior. 
+
+**Leave-One-Out (LOO) log pointwise predictive density** is the preferred Bayesian way to do this. In this blogpost, I'll explain how we can **approximate** this metric *without the need of refitting the model $n$ times* with **LOO Pareto Smoothed Importance Sampling (PSIS)**. Also, I'll explain how PSIS diagnostics tells us, not unlike HMC, when the algorithm is a poor approximation. As a byproduct, we can also derive a metric to identify if there are influential observations that are driving the inference. Finally, I'll simulate data to show how we can perform all this with real data. 
+
+All of this is based on this [great paper](https://arxiv.org/abs/1507.04544) by Vehtari, Gelman and Gabry. 
+
+## What is our metric? Log pointwise predictive density
+
+Given an observation $y_i$, we define our metric to evaluate how well we have predicted $y_i$ as its log likelihood according to our model. Given our uncertainty over the parameters, we integrate over our posterior distribution for our model. We call this the **log pointwise predictive density (lpd)**:
+
+$$
+lpd = \log \int \pi (y_i | \theta) \pi (\theta | y) d\theta
+$$
+
+The fundamental problem comes when we use $y_i$ to compute the full posterior $\pi (\theta | y)$: we are performing an internal check, not an external validation. A solution is to use the resulting posterior without using the observation $y_i$ in the fitting. **This is the Leave-One-Out (LOO) posterior**: $\pi(\theta, y_{-i})$
+
+The problem is that evaluating the LOO posterior is just as computationally expensive as fitting the model all over again. If we then want to use all our observations to perform the external validation check, this amounts to fitting the probability model $n$ times. 
+
+## Approximating the LOO posterior
+
+Not being able to compute from a distribution is an awfully familiar problem in Bayesian Statistics. Which in this case comes in handy. We can use [Importance Sampling](https://david-salazar.github.io/2020/06/27/bayesian-data-analysis-week-4-importance-sampling/) to use **the samples from the full posterior to approximate the LOO posterior**. Thus, our Importance Weights for each sample $s$ from the posterior is the ratio of the densities. 
+
+$$
+r_i^s = \frac{\pi (\theta^s | y_{-i})}{\pi(\theta^s|y_i)}
+$$
+
+If we correct, then, our original full posterior samples by these weights, we get equivalent samples from the LOO posterior. Thus, we can compute the **log pointwise predictive density (lpd)** that can track the out-of-sample performance of our model.
+
+## The approximation is likely to fail
+
+Sadly, this approximation to the LOO posterior using the full posterior is likely to fail. Importance Sampling only works when all of the weights are roughly equal. When the weights are very small with a large probability, and very, very large with a small probability, Importance Sampling fails: our computations end up *effectively* using **only the large weights samples**, thus drastically reducing our **effective number of samples from the LOO posterior**. That is, Importance Sampling is likely to **fail when the distribution of the weights is fat-tailed**. 
+
+Sadly, this is very likely to happen with our approximation: the LOO posterior is likely to have a *larger variance and fatter tails* than the full posterior. Thus, samples from the tails of the full posterior will have large weights to compensate for this fact. Therefore, the distribution of importance weights is likely gonna be fat-tailed. 
+
+## Correcting the approximation with PSIS
+
+Vehtari, Gelman and Gabry correct the distribution of Importance Weights and thereby improve the approximation to the LOO posterior. First, they use Extreme Value Theory to fit the tail of the distribution with a Generalized Pareto Distribution with tail shape parameter $k$ ($GPD(k)$). 
+
+Secondly, they replace the large weights with smoothed over versions of the weights according to expected order statistics of the fitted $GPD(k)$. This in turn gives the name to the method: **Pareto Smoothed Importance Sampling (PSIS)**  Thirdly, they truncate large weights at $\dfrac{3}{4}$ of the mean of the smoothed weights. 
+
+Therefore, we arrive at a new vector of importance weights $w_i^s$ which, in general, behaves better than the original importance weights $r_i^s$ and thus allow us to perform a better approximation of the LOO posterior. 
+
+### It's about the diagnostics we made along the way
+
+The great thing about PSIS, besides creating better importance weights, it's the diagnostics that it creates along the way. By fitting a $GPD(k)$, the tail shape parameter becomes a diagnostic to assess the reliability of our approximation. When is Pareto Smoothed Importance Sampling (PSIS) a valid approximation to the LOO posterior? 
+
+The smoothing and the truncating can only do so much. If $k > 0.7$, the importance weights are probably too fat-tailed to begin with and PSIS-LOO will be a poor approximation the LOO posterior. Not only that, it is also a diagnostic that tells us about a fundamental disagreement bewteen the full posterior and the LOO posterior: that is, **about observations that are highly influential in determining the posterior.** 
+
+Therefore, by performing PSIS-LOO, we also arrive at a diagnostic for highly influential observations that are driving our inference and are thus surprising observations to our model. 
+
+
+

@@ -1,0 +1,176 @@
+---
+title: Bayesian Instrumental Variable Regression
+author: ''
+date: '2020-06-03'
+slug: bayesian-instrumental-variable-regression
+categories: []
+tags: []
+aliases: 
+  - ../../2020/06/03/bayesian-instrumental-variable-regression/
+---
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+library(rethinking)
+library(tidyverse)
+library(tidybayes.rethinking)
+library(modelr)
+library(MASS)
+library(latex2exp)
+library(tidybayes)
+
+# rstan stuff
+extrafont::loadfonts(device="win")
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+Sys.setenv(LOCAL_CPPFLAGS = '-march=corei7 -mtune=corei7')
+# set seed
+set.seed(5)
+# set theme
+theme_set(hrbrthemes::theme_ipsum_rc())
+```
+
+[Statistical Rethinking](https://xcelab.net/rm/statistical-rethinking/) is a fabulous course on Bayesian Statistics (and much more). In what follows, I'll give a succinct presentation of Instrumental Variable Regression in a Bayesian setting using simulated data.
+
+I had already seen the traditional econometrics formulation and yet found Richard's presentation both illuminating and fun. It's a testament of his incredible achievement with this book. 
+
+# The problem
+
+The start of every instrumental variable setting is the following. We want to estimate the causal effect of $X$ on $Y$. However, there's a fork between $X$ and $Y$: an unobserved variable $U$ that has an effect on both of them. In DAG form:
+
+```{r}
+dag_confound <- dagitty::dagitty('dag{
+                        X -> Y
+                        X <- U
+                        U -> Y
+                        }')
+drawdag(dag_confound)
+```
+
+Therefore, there's a backdoor path from $X$, through $U$, toward $Y$ that will bias our estimates. One alternative would be to statistically adjust by $U$; however, we don't observe $U$. 
+
+# Creating a collider as a solution
+
+Colliders are dangerous and scary, as Richard has said a many times. However, they can also be useful. They can create statistical relationships between certain variables that allows us to introduce certain otherwise unavailable statistical information into our models. This is the case with an instrument, $I$, that is only related to $X$ in this DAG. 
+
+```{r}
+dag_instrument <- dagitty::dagitty('dag{
+                        X -> Y
+                        X <- U
+                        U -> Y
+                        I -> X
+                        }')
+drawdag(dag_instrument)
+```
+
+Noticed that we've created a collider out of $X$. Therefore, if we open the collider by statistically adjusting simultaneously by $X$ and $I$, there will be a statistical relationship (not causal) between $I$ and $U$. Thus, a collider opens a path that can help us adjust by $U$. **Our goal, then, is to create a model that simultaneously opens the collider and estimates the effefct of $X$ on $Y$.** 
+
+## Opening collider and estimating simultaneously
+
+The model then must be simultaneous. It must open the collider **and** regress $Y$ on $X$. The solution is thu:
+
+$$ \begin{bmatrix} 
+Y_i \\
+X_i
+\end{bmatrix} \sim MVNormal(\begin{bmatrix} 
+\mu_{Y,i} \\
+\mu_{X, y}
+\end{bmatrix}, S) $$
+
+$$ \mu_{Y,i} = \alpha_y + \beta X_i $$
+
+$$ \mu_{X, i} = \alpha_x + \gamma I $$
+
+We are modelling $X, Y$ simultaneously with a joint error structure represented by $S$. Notice, then, that at both linear models we should be adjusting by $U$. Therefore, the errors of our each of our linear regressions, represented by $S$, will be correlated; this is what a fork does and what creates the original bias in our estimates. **However, we are opening simultaneously the collider on $X$ by adjusting with $I$. Therefore, statistical information about $U$ is entering into our model in the form of a correlated error structure (represented by $S$) between the two linear regressions**. This statistical information of $U$ will then allow us to causally estimate the effect of $X$ on $Y$.
+
+Note that, given a DAG, we can algorithmically compute if there is an instrument that we can use. 
+
+```{r}
+instrumentalVariables(dag_instrument, exposure = 'X', outcome = 'Y')
+```
+
+# Simulated data
+
+In this case we will simulate data where the true effect of $X$ on $Y$ is null. 
+
+```{r}
+N <- 1000
+U <- rnorm(N)
+I <- rnorm(N)
+X <- rnorm(N, U + I)
+Y <- rnorm(N, U)
+
+data_sim <- list(
+  Y = standardize(Y),
+  X = standardize(X),
+  I = standardize(I)
+)
+```
+
+## Naive regression
+
+A naive regression won't account by the confounding effect of $U$:
+
+```{r}
+model_naive <- ulam(
+  alist(
+    Y ~ normal(mu, sigma),
+    mu <- alpha + beta*X,
+    alpha ~ normal(0, 1),
+    beta ~ normal(0, 1),
+    sigma ~ exponential(1)
+  ),
+  chains = 4, cores = 4,
+  data = data_sim
+)
+precis(model_naive)
+```
+
+Indeed, we have an estimate with a 87% compatibility interval of (0.40, 0.49) when we know that the true effect is zero. We can plot the expected relationship:
+
+```{r}
+data.frame(data_sim) %>% 
+  data_grid(X = seq_range(X, 50)) %>% 
+  add_predicted_draws(model_naive) %>% 
+  ggplot(aes(X, Y)) +
+  stat_lineribbon(aes(y = .prediction), alpha = 1/4, fill = "dodgerblue4") +
+  geom_point(data = data.frame(data_sim), alpha = 0.4) +
+  scale_fill_brewer(palette = "Greys") +
+  labs(title = "Naive model finds a relationship",
+       subtitle = "Confounding effect is unaccounted for. True effect of X on Y is null")
+```
+
+## Instrumental Variable Regression
+
+Given our DAG and our data, we can do better. We can fit a multivariate model that, by virtue of opening a collider on $X$, will allows us to statistical adjust by the confounding factor $U$.
+
+```{r}
+model_instrumental <- ulam(
+  alist(
+    c(Y, X) ~ multi_normal(c(muY, muX), Rho, Sigma),
+    muY <- alphaY + beta*X,
+    muX <- alphaX + gamma*I,
+    c(alphaY, alphaX) ~ normal(0, 0.2),
+    c(beta, gamma) ~ normal(0, 0.5),
+    Rho ~ lkj_corr(2),
+    Sigma ~ exponential(1)
+  ),
+  data = data_sim, chains = 4, cores = 4
+)
+precis(model_instrumental)
+```
+Whereas before we posited a positive and relatively large effect of $X$ on $Y$, now we correctly infer that the true effect is null. Because $\beta$ has lots of its mass around zero. 
+
+```{r}
+model_instrumental %>% 
+  spread_draws(beta) %>% 
+  ggplot(aes(beta)) +
+  geom_histogram(color = "black", fill = "dodgerblue4", alpha = 4/10,
+                 binwidth = 0.05) +
+  geom_vline(aes(xintercept = 0), linetype = 2, color = "red") +
+  labs(title = "Instrumental Variable Regression",
+       subtitle = "Accounting for the confounding through IV, finds true null effect")
+```
+
+
+
+

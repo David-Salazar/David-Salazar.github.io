@@ -1,0 +1,313 @@
+---
+title: Extreme Value Theory for Time Series
+author: ''
+date: '2020-06-17'
+slug: extreme-value-theory-for-time-series
+categories: []
+tags: []
+aliases: 
+  - ../../2020-06-17-extreme-value-theory-for-time-series.Rmd
+---
+
+```{r setup, message=FALSE, warning=FALSE, include=FALSE}
+library(tidyverse)
+library(gganimate)
+library(latex2exp)
+library(tidyquant)
+library(patchwork)
+library(evd)
+# Roboto-Condensed
+extrafont::loadfonts(device="win")
+# set seed
+set.seed(25)
+# set theme
+theme_set(hrbrthemes::theme_ipsum_rc())
+
+addUnits <- function(n) {
+  labels <- ifelse(n < 1000, n,  # less than thousands
+                   ifelse(n < 1e6, paste0(round(n/1e3), 'k'),  # in thousands
+                          ifelse(n < 1e9, paste0(round(n/1e6), 'M'),  # in millions
+                                 ifelse(n < 1e12, paste0(round(n/1e9), 'B'), # in billions
+                                        ifelse(n < 1e15, paste0(round(n/1e12), 'T'), # in trillions
+                                               'too big!'
+                                        )))))
+  return(labels)
+}
+```
+
+The Fisher-Tippet theorem ([a type of CLT for the tail events](2020-06-10-fisher-tippet-th-a-clt-for-the-sample-maxima.html)) rests on the assumption that the observed values are independent and identically distributed. However, in any non trivial example, time series will reflect an **underlying structure** that will create dependence among the observations. Indeed, tail events *tend* **to occur in clusters**. Does this mean that we cannot use the Extreme Value Theory (EVT) to model the maxima of a time series? 
+
+*The answer?* Not necessarily. We can only use EVT if the maxima of the time series behave *like* they are independent. In this blogpost, I'll give:
+
+1. An intuitive explanation of the conditions we need to set on the time series to be able to use EVT.
+1. Show how we can test whether these conditions hold for real data: S&P500 returns
+1. How, once the conditions hold, we can generalize the Fisher-Tippet theorem by replacing the independence assumption. 
+
+Note that thorought the blogpost I assume that the time series is stationary. 
+
+## The D-Condtions
+
+The **D-conditions limit the dependence structure** between the maxima of a time series, thereby allowing us to *use EVT*. There are two of them:
+
+1. The *$D$* condition **limits the long-range dependence** between the maxima of a time series. That is, separate the time series into two intervals: the $D$ condition states that **the maxima of the two separated intervals are approximately independent**. 
+
+2. The $D'$ condition **limits the local dependence** structure between the maxima of a time series. That is, separate the time series into *small blocks*. Count as an exceedance an observation that exceeds a given large threshold. The $D'$ condition postulates that **the probability of observing more than one exceedance in a block is negligible**.
+
+If both $D$ and $D'$ are satisfied, then the dependence between far-apart maxima and local maxima is largely limited. Therefore, we can generalize the Fisher-Tippet Theorem to work with these type of time series. However, **how would one check these conditions with real data**?
+
+## Record breaking observations
+
+We can **compare** the number of *record-breaking observations* in our time series with **the expected number** of record-breaking observations for **independent observations**. If they are roughly similar, we can conclude that both the $D$ conditions hold for our time series. Let's begin defining how we count the number of record-breaking of observations:
+
+$$
+N_n=1+\sum_{k=2}^n1_{X_k>M_{k-1}}, \quad n\geq2
+$$
+Then, it can be shown that if the observations are independent, the expected number of record-breaking observations is:
+
+$$
+E[N_n]=\sum_{k=1}^n \frac{1}{k} \approx \log n +\gamma
+$$
+Where $\gamma$ is Euler's constant. Therefore, for independent observations, the number of record-breaking observations grows very slowly. We can also check the variance of the number of record-breaking observations for independent observations:
+
+$$ 
+var(N_n)= \sum_{k=1}^n \left(\frac{1}{k} - \frac{1}{k^2} \right)
+$$
+Let's try to get some intuition for how these formulas bound the number of record breaking observations when independence holds. 
+
+### A Monte-Carlo proof
+
+To prove this statement, I'll perform a Monte-Carlo experiment with $10^4$ different independent time series with marginal distribution Cauchy. For each time series, I'll simulate 1,000 observations. Then, we can compare the Monte Carlo distribution of the number of observed record-breaking observations with the expected number.
+
+```{r number-records, echo=FALSE, fig.width=8}
+number_of_records <- function(data) {
+  data <- as.numeric(data)
+  record <- cummax(data)
+  trial <- (1:length(data))[!duplicated(record)]
+  trial <- c(trial, length(data))
+  record <- unique(record)
+  number <- 1:length(record)
+  max(number)
+}
+n = 1000
+
+crossing(experiment = 1:10^4,
+         sample_size = n) %>% 
+  mutate(data = map(sample_size, ~ rt(., df = 1)),
+         records = map(data, ~ number_of_records(.))) %>% 
+  unnest(records) %>% 
+  select(records) -> observed_records
+
+expected_number_records <- sum(1/(1:n))
+se_number_records <- sqrt(expected_number_records - sum(1/((1:n)^2)))
+ci <- qnorm(0.5 + 0.95/2)
+upper <- expected_number_records + ci * se_number_records
+lower <- expected_number_records - ci * se_number_records
+
+observed_records %>% 
+  ggplot(aes(records)) +
+  geom_histogram(binwidth = 1, color = "black", fill = "dodgerblue4", alpha =0.5) +
+  geom_vline(aes(xintercept = expected_number_records), linetype = 2,
+             color = "red") +
+  geom_vline(aes(xintercept = upper), linetype = 2,
+             color = "red") +
+  geom_vline(aes(xintercept = lower), linetype = 2,
+             color = "red") +
+  labs(title = "Monte Carlo Distribution of the # of Records across simulations",
+       subtitle = "Most of the distribution falls around 1 standard deviation around the mean",
+       x = "Observed Number of Records")
+
+```
+
+### SP500 tail returns: independent?
+
+We can divide the returns of the S&P500 in positive and negative returns. Can we model the tail returns for either of them with EVT? As we've seen, the answer depends on the $D$ conditions: are the maxima too clustered? are far-apart maxima related? If the answer to both questions is no, then we can use EVT.
+
+To test it out, we will compare the number of record breaking returns (both positive and negative) with the expected number of record breaking returns if the returns where independent. In this analysis, I use all the data from 1948 up to the present day and I'll model the log returns: 
+
+```{r echo=FALSE, warning=FALSE}
+c("^GSPC") %>% 
+  tq_get(from = "1948-01-09") -> sp_data
+sp_data %>% 
+   tq_transmute(select     = adjusted,
+                 mutate_fun = periodReturn,
+                 type = "log",
+                 period     = "daily",
+                 col_rename = "daily.returns") -> daily_returns
+```
+
+
+```{r sp5200, echo=FALSE, fig.width=10, fig.height=7}
+get_records <- function(data, conf.level = 0.95) {
+  data <- as.numeric(data)
+  record <- cummax(data)
+  expected <- cumsum(1/(1:length(data)))
+  se <- sqrt(expected - cumsum(1/((1:length(data))^2)))
+  trial <- (1:length(data))[!duplicated(record)]
+  trial <- c(trial, length(data))
+  expected <- expected[trial]
+  se <- se[trial]
+  record <- unique(record)
+  number <- 1:length(record)
+  number <- c(number, max(number))
+  record <- c(record, max(record))
+  ci <- qnorm(0.5 + conf.level/2)
+  upper <- expected + ci * se
+  lower <- expected - ci * se
+  lower[lower < 1] <- 1
+  d <- data.frame(number_of_records = number, record, trial, expected, se,
+                  upper, lower)
+  d
+}
+
+
+negative_returns <- daily_returns %>% 
+  filter(daily.returns < 0) %>% 
+  mutate(daily.returns = abs(daily.returns))
+
+get_records(negative_returns$daily.returns) %>% 
+  ggplot(aes(trial, number_of_records)) +
+  geom_step() +
+  geom_point() +
+  geom_line(aes(trial, expected), color = "dodgerblue4") +
+  geom_line(aes(trial, lower), linetype = 2, color = "red") +
+  geom_line(aes(trial, upper), linetype = 2, color = "red") +
+  scale_x_continuous(labels = addUnits) +
+  labs(subtitle = "Negative returns",
+       y = "# of records", 
+       x= "# of negative returns") -> gumbel_negative
+
+positive_returns <- daily_returns %>% 
+  filter(daily.returns >= 0)
+
+get_records(daily_returns$daily.returns) %>% 
+  ggplot(aes(trial, number_of_records)) +
+  geom_step() +
+  geom_point() +
+  geom_line(aes(trial, expected), color = "dodgerblue4") +
+  geom_line(aes(trial, lower), linetype = 2, color = "red") +
+  geom_line(aes(trial, upper), linetype = 2, color = "red") +
+  scale_x_continuous(labels = addUnits) +
+  labs(subtitle = "Positive returns",
+       y = "# of records", 
+       x= "# of positive returns") -> gumbel_positive
+
+gumbel_negative + gumbel_positive +
+  plot_annotation(title = "Only the # of negative record returns behave as if they were independent",
+                  subtitle = "Blue line is expected. Red lines show 95 % interval of expected number of record returns")
+```
+
+## Generalizing the Fisher-Tippet Theorem
+
+If both $D$ conditions hold, we can generalize the Fisher-Tippet Theorem. Crucially, the maxima of the time series will still converge to one of the $GEV_{\xi}$ distributions. However, it will converge to a transformed version of the $GEV$ thus:
+
+Let \( \left\{X_{i}\right\} \) be a dependent time series and let \( \left\{\tilde{X}_{i}\right\} \) be independent variables with the same marginal distribution. Set \( M_{n}=\max \left\{X_{1}, \ldots, X_{n}\right\} \) and \( \tilde{M}_{n}=\max \left\{\tilde{X}_{1}, \ldots, \tilde{X}_{n}\right\} . \) If the $D$ conditions hold, then:
+\[
+\mathrm{P}\left\{\left(\tilde{M}_{n}-b_{n}\right) / a_{n} \leq z\right\} \rightarrow {GEV_{\xi}}(z), \quad n \rightarrow \infty
+\]
+ if and only if
+\[
+\mathrm{P}\left\{\left(M_{n}-b_{n}\right) / a_{n} \leq z\right\} \rightarrow G(z)
+\]
+where \( G(z)={GEV_{\xi}}^{\theta}(z) \) for some constant \( \theta \in[0,1] \) which is called the **extremal index** of the time series. 
+
+### Consequences 
+
+- The $\theta$ is a measure of the clustering of the maxima. The lower the theta, the more clustered are the maxima. 
+
+- If the observations are independent, $\theta = 1$. Thus, the extremal index is a measure of dependence between the data. The smaller the extremal index, the more dependent are the maxima of the time series.  In particular:
+
+$$
+P(M_n < x) \approx F(x)^{n\theta}
+$$
+
+Therefore, we can consider these maxima arising from a dependent time series as *equivalently* arising **from $n\theta$ independent observations** with the same marginal distribution.
+
+- Using the independence assumption leads us **to underestimate the quantiles** of the possible maxima. Indeed, for a large probability p:
+
+$$
+F^{-1}(p) \approx GEV^{-1}\left(p^{n \theta}\right)>GEV^{-1}\left(p^{n}\right)
+$$
+Indeed, when considering the dependence of the data, the VaR risk (for say 99%) measure will decrease. The probability of none of the extreme events ever happening decreases. However, as we will see, when it rains, it pours. 
+
+- Crucially, both ${GEV_{\xi}}^{\theta}(z), {GEV_{\xi}}(z)$ *share* the same shape ($xi$) parameter: thus, **they share the same tail behavior**. Indeed, by raising the distribution to the power of $\theta$, the parameters of the distribution change thus:
+
+$$
+\tilde{\mu}=\mu-\frac{\sigma}{\xi}\left(1-\theta^{-\xi}\right), \quad \tilde{\sigma}=\sigma \theta^{\xi}, \quad \tilde{\xi}=\xi
+$$
+
+That is, when $\xi > 0$ and the MDA of the distribution is the Fréchet, the location and scale parameters change thus:
+
+```{r frechet, echo=FALSE, fig.width=8}
+new_mean <- function(theta, mu = 0, sigma = 1, xi = 2) {
+  mu - (sigma/xi)*(1-theta^(-xi))
+}
+
+new_sigma <- function(theta, mu = 0, sigma = 1, xi = 2) {
+  sigma*theta^(xi)
+}
+
+possible_theta <- seq(0.1, 1, length.out = 50)
+
+data.frame(possible_theta, mean = new_mean(possible_theta), sigma = new_sigma(possible_theta)) %>% 
+  pivot_longer(-possible_theta, names_to = "variable") %>% 
+  ggplot(aes(possible_theta, value, color = variable)) +
+  geom_point() +
+  facet_wrap(~factor(variable, labels = c("location", "scale")), scales = "free") +
+  labs(title = "Fréchet: how the parameters change as theta changes?",
+       subtitle = TeX("The location parameter $\\mu$ decreases. The scale parameter $\\sigma$ increases"),
+       caption = "xi = 2, underlying location = 0, and underlying scale = 1",
+       x = TeX("$\\theta$")) +
+  scale_color_brewer(type = "qual") +
+  hrbrthemes::theme_ipsum_rc(grid = "Y") +
+  theme(legend.position = "none") 
+```
+
+Why does the mean increase so much when the maxima are $\theta$ is small? The answer is in the dependence of the maxima: when $\theta$ is small, the maxima are dependent. Thus, when one of them happens, all the other events also tend to happen. **When it rains, it pours**.
+
+To show this, I'll simulate observations from an Autoregressive(1) Cauchy Sequence: 
+
+$$
+X_t = \rho X_{t-1} + (1-\rho) Z_t \\
+Z_t \sim Cauchy
+$$
+
+The larger $\rho$, the more dependent the data. Indeed, it can be shown^[Calculating the extremal index of a class of stationary sequences] that $\theta = 1 - \rho$. Therefore, 
+
+```{r cauchy-rho, echo=FALSE, fig.height=10, fig.width=12}
+set.seed(25)
+ar_cauchy <- function(n, rho) {
+    
+  iidcauchy <- rt(n, df = 1)
+  results <- vector(length = n)
+  results[1] <- iidcauchy[1]
+  for (time in 2:n) {
+    results[time] = results[time-1]*rho + (1-rho)*iidcauchy[time] 
+  }
+  data.frame(t = 1:n, xt = results)
+}
+
+labels = unlist(map(seq(0.1,1, length.out = 10), ~ glue::glue("theta = {.}")))
+
+crossing(theta = seq(0.1,1, length.out = 10),
+         experiment = 1:10) %>% 
+  mutate(data = map(theta, ~ ar_cauchy(500, rho = 1-.) ) )  %>% 
+  unnest(data) -> ar_data
+ar_data %>% 
+  ggplot(aes(t, xt, color = theta)) +
+  geom_point(alpha = 0.3) +
+  scale_colour_viridis_c() +
+  facet_wrap(~factor(theta, labels = labels), scales = "free", nrow = 2) +
+  hrbrthemes::theme_ipsum_rc(grid = "") +
+  theme(axis.title.y = element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank()) +
+  theme(legend.position = "none") +
+  labs(title = "When it rains it pours: The smaller the theta, the more clustered are the maxima",
+       subtitle = "Clusters appear as string of succesive large points. Lower the theta, the more dependent the maxima and the more likely is this to happen",
+       caption = "The y-axes differ across values of theta. What matters in this plot are not the different range of variation but the correlation between the maxima.")
+```
+
+# Conclusion
+
+The serial dependence present in a time series *invalidates* the independence assumption in the traditional Fisher-Tippet Theorem. Nevertheless, **we can still use Extreme Value Theory** to model the maxima of a time series provided that the $D$ conditions hold. The $D$ conditions limit both the long-range and the local dependence between the maxima. We can test whether these *conditions hold in real data* by comparing the **number of record breaking observations** in the data with the expected number of record breaking observations if the observations were independent. Once these conditions hold, we can generalize the Fisher-Tippet theorem to model the maxima of time series. Indeed, the same Maximum Domain of Attractions still hold: however, we raise these distributions to the power of $\theta$: the extremal index. The extremal index is a measure of dependence in the data. The smaller $\theta$, the more clustered will be the maxima of the time series.  
+

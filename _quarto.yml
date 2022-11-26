@@ -1,0 +1,23 @@
+project:
+  type: website
+
+website:
+  title: "David Salazar"
+  site-url: https://david-salazar.github.io/
+  description: "This is David's Salazar personal blogpost."
+  navbar:
+      right:
+      - text: Posts
+        href: archive.qmd
+      - icon: github
+        href: https://github.com/David-Salazar
+      - icon: twitter
+        href: https://twitter.com/DavidSalazarVir
+
+format:
+  html:
+    theme: litera
+    css: styles.css
+
+
+

@@ -1,0 +1,410 @@
+---
+title: 'Statistical Rethinking: Week 1'
+author: ''
+date: '2020-04-19'
+slug: statistical-rethinking-week-1
+categories: []
+tags: []
+aliases: 
+  - ../../2020/04/19/statistical-rethinking-week-1/
+---
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+library(ggplot2)
+library(purrr)
+options(scipen=999)
+```
+
+# Week 1
+
+Week 1 tries to go as deep as possible in the intuition and the mechanics of a very simple model. As always with McElreath, he goes on with both clarity and erudition.
+
+> Suppose the globe tossing data had turned out to be 8 water in 15 tosses.
+Construct the posterior distribution, using grid approximation. Use the
+same flat prior as before.
+
+```{r}
+# define grid
+
+p_grid <- seq(from = 0, to = 1, length.out = 1000)
+
+# define prior
+
+prior <- rep(1, 1000)
+
+# compute likelihood at each value in grid
+
+likelihood <- dbinom(8, size = 15, prob = p_grid)
+
+# compute product of likelihood and prior
+
+unstd.posterior <- likelihood * prior
+
+# standardize the posterior, so its sums to 1
+
+posterior <- unstd.posterior / sum(unstd.posterior)
+
+samples_uniform <- sample(p_grid, prob = posterior, size = 10000, 
+                           replace = TRUE)
+
+data.frame(samples_uniform) %>% 
+  ggplot(aes(samples_uniform)) +
+    geom_histogram(alpha = 0.6, fill = "dodgerblue4", color = "black",
+                   binwidth = 0.01) +
+   hrbrthemes::theme_ipsum_rc() +
+  scale_x_continuous(labels = scales::percent) +
+  labs(x = "probability of water",
+       title = "Samples from the Posterior probability",
+       subtitle = "8 water out of 15 tosses. Binwidth of 1 p.p") +
+  geom_vline(xintercept = 0.7, linetype = 2, color = "red") +
+  annotate("text", label = " True percentage of water", x = 0.8, y = 250)
+```
+
+```{r}
+mean(samples_uniform)
+```
+
+
+> Start over in 1, but now use a prior that is zero below p = 0.5 and a constant above p = 0.5. This corresponds to prior information that a majority
+of the Earth’s surface is water. What difference does the better prior make?
+If it helps, compare posterior distributions (using both priors) to the true
+value p = 0.7.
+
+```{r}
+# define prior
+
+prior <- ifelse(p_grid < 0.5, 0, 2)
+  
+# compute product of likelihood and prior
+
+unstd.posterior <- likelihood * prior
+
+# standardize the posterior, so its sums to 1
+
+posterior_new <- unstd.posterior / sum(unstd.posterior)
+
+samples_new <- sample(p_grid, prob = posterior_new, 10000, replace = TRUE)
+samples_new <- data.frame(samples_new)
+
+data.frame(samples_uniform) %>% 
+  ggplot(aes(samples_uniform)) +
+    geom_histogram(alpha = 0.6, fill = "dodgerblue4", color = "black",
+                   binwidth = 0.01) +
+  geom_histogram(data = samples_new, mapping = aes(samples_new), alpha = 0.6, fill = "red", color = "black",
+                 binwidth = 0.01) +
+   hrbrthemes::theme_ipsum_rc() +
+  scale_x_continuous(labels = scales::percent) +
+  labs(x = "probability of water",
+       title = "Samples from Posterior",
+       subtitle = "2 different priors",
+       caption = "8 water out of 15 tosses. Binwidth of 1 p.p") +
+  geom_vline(xintercept = 0.7, linetype = 2, color = "red")
+```
+
+By rejecting altogether from the beginning the possibility of having less than the half of the world covered with water, the model with the new prior piles on more plausibility on the values closer to the true value. Thus, the more informative prior helps our inference. 
+
+> This problem is more open-ended than the others. Feel free to collaborate on the solution. Suppose you want to estimate the Earth’s proportion of
+water very precisely. Specifically, you want the 99% percentile interval of the
+posterior distribution of p to be only 0.05 wide. This means the distance between the upper and lower bound of the interval should be 0.05. How many
+times will you have to toss the globe to do this? I won’t require a precise
+answer. I’m honestly more interested in your approach.
+
+## Practice from Chapter 3
+
+### Easy
+
+```{r}
+p_grid <- seq(from = 0, to = 1, length.out = 1000)
+prior <- rep(1, 1000)
+likelihood <- dbinom(6, size = 9, prob = p_grid)
+posterior <- likelihood * prior
+posterior <- posterior / sum(posterior)
+set.seed(100)
+samples <- sample(p_grid, prob = posterior, size = 1000, replace = TRUE)
+```
+
+> How much posterior probability lies below p = 0.2?
+
+```{r}
+prob <- sum(samples < 0.2)/ length(samples)
+glue::glue("The probability below p = 0.2 is {prob*100}%")
+```
+
+> How much posterior probability lies above p = 0.8?
+
+```{r}
+prob <- sum(samples > 0.8) / length(samples)
+glue::glue("The probability above p = 0.8 is {prob * 100}%")
+```
+
+> How much posterior probability lies between p = 0.2 and p = 0.8
+
+```{r}
+prob <- sum(samples < 0.8 & samples > 0.2) / length(samples)
+glue::glue("The probability is {prob * 100}%")
+```
+
+> 20% of the posterior probability lies below which value of p?
+
+```{r}
+percentile <- quantile(samples, 0.2)
+percentile
+```
+
+> 20% of the posterior probability lies above which value of p?
+
+```{r}
+percentile <- quantile(samples, 0.8)
+percentile
+```
+
+> Which values of p contain the narrowest interval equal to 66% of the posterior probability?
+
+```{r}
+rethinking::HPDI(samples, 0.66)
+```
+
+> Which values of p containt 66% of the posterior probability, assuming equal posterior probability both below and above the interval?
+
+```{r}
+rethinking::PI(samples, 0.66)
+```
+
+### Medium
+
+```{r}
+p_grid <- seq(from = 0, to = 1, length.out = 1000)
+prior <- rep(1, 1000)
+likelihood <- dbinom(8, size = 15, prob = p_grid)
+posterior <- likelihood * prior
+posterior <- posterior / sum(posterior)
+set.seed(100)
+samples <- sample(p_grid, prob = posterior, size = 10000, replace = TRUE)
+```
+
+> HPDI 90% for p
+
+```{r}
+rethinking::HPDI(samples, 0.9)
+```
+
+> Posterior predictive check. 8 tosses in 15, prediction averaged over our posterior distribution.
+
+```{r}
+posterior_predictions <- rbinom(10000, size = 15, prob = samples)
+sum(posterior_predictions == 8) / length(posterior_predictions)
+```
+ 
+> Using the posterior distribution contracted from the 8/15 data, now calculate the probability of observing 6 water in 9 tosses.  
+ 
+```{r}
+posterior_predictions <- rbinom(10000, size = 9, prob = samples)
+sum(posterior_predictions == 6) / length(posterior_predictions)
+```
+
+#### Different prior
+
+```{r}
+p_grid <- seq(from = 0, to = 1, length.out = 1000)
+prior <- (c(rep(0, 500), rep(1, 500)))
+likelihood <- dbinom(8, size = 15, prob = p_grid)
+posterior <- likelihood * prior
+posterior <- posterior / sum(posterior)
+set.seed(100)
+samples <- sample(p_grid, prob = posterior, size = 10000, replace = TRUE)
+```
+
+> HPDI 90% for p
+
+```{r}
+rethinking::HPDI(samples, 0.9)
+```
+
+> Posterior predictive check. 8 tosses in 15, prediction averaged over our posterior distribution.
+
+```{r}
+posterior_predictions <- rbinom(10000, size = 15, prob = samples)
+sum(posterior_predictions == 8) / length(posterior_predictions)
+```
+ 
+> Using the posterior distribution contracted from the 8/15 data, now calculate the probability of observing 6 water in 9 tosses.  
+ 
+```{r}
+posterior_predictions <- rbinom(10000, size = 9, prob = samples)
+sum(posterior_predictions == 6) / length(posterior_predictions)
+```
+
+> Number of tosses have a 99% percentile interval to be only 0.05 wide. 
+
+We know the true value of our problem: $p = 0.7$. We will simulate data for many Ns and find out how precisely we can estimate the interval for each of these values. We will repeat these simulations for each value of N 100 times. Then, we plot the different bounds that we get. 
+
+```{r}
+simulate <- function(N) {
+
+  water <- rbinom(1, size = N, 0.7)
+  p_grid <- seq(from = 0, to = 1, length.out = 1000)
+  prior <- (c(rep(0, 500), rep(1, 500)))
+  likelihood <- dbinom(water, size = N, prob = p_grid)
+  posterior <- likelihood * prior
+  posterior <- posterior / sum(posterior)
+  samples <- sample(p_grid, prob = posterior, size = 10000, replace = TRUE)
+  interval <- rethinking::PI(samples, 0.99)
+  bound <- (interval[2] - interval[1])
+  as.numeric(bound)
+}
+
+simulate_repeated <- function(n_value) {
+  
+  rerun(100, simulate(n_value)) %>% 
+    unlist() %>% 
+    data.frame(bounds = ., tosses = n_value)
+  
+}
+
+n_values <- seq(1000, 4000, 100)
+
+n_values %>% 
+  map_df(simulate_repeated) %>% 
+  ggplot(aes(tosses, bounds)) +
+    geom_point(alpha = 0.2) +
+  hrbrthemes::theme_ipsum_rc() +
+  scale_x_continuous(labels = scales::comma) +
+  labs(title = "Simulated width of 89% PI ",
+       subtitle = "Decreasing marginal return of more data.",
+       x = "width",
+       y = "# of tosses")
+```
+
+It seems we would have to toss the worldarround 2000 times to get a bound close to 0.05. The marginal benefit that we get, in terms of tighting our estimated bound, decreases as we toss more and more. The greates benefits of increasing the data seem to be at the beginning. 
+
+
+## Hard 
+
+```{r message=FALSE, warning=FALSE}
+library(rethinking)
+data(homeworkch3)
+
+birth1
+```
+
+```{r}
+birth2
+```
+
+> Using grid approximation, compute the posterior distribution for the probability of a birth being a boy. Assume a uniform probability...
+
+
+So, set up a binomial likelihood with $n, k$: 
+
+```{r}
+n <- length(birth1) + length(birth2)
+k <- sum(birth1) + sum(birth2)
+print(c(n, k))
+```
+
+```{r}
+# set up the grid points for the parameter p
+p_grid <- seq(from = 0, to = 1, length.out = 100)
+
+# set an uniform prior
+prior <- rep(1, 100)
+
+# compute likelihood for all possible values of p
+likelihood <- dbinom(k, n, prob = p_grid)
+
+# compute unstandardised posterior
+posterior <- likelihood * prior
+
+# standardise prior
+posterior <- posterior/sum(posterior)
+
+# which parameter value maximizes the posterior probability
+max_posterior <- p_grid[which.max(posterior)]
+glue::glue("Maximum posterior probability is obtained at {round(max_posterior, 2)}")
+```
+
+A logical answer, considering the slight majority of boys at the sample. 
+
+> Draw 10000 random samples from the posterior distribution... HPDI for 50%, 89%, and 97%
+
+```{r}
+samples <- sample(p_grid, 10000, prob = posterior, replace = TRUE)
+HPDI(samples, prob = c(0.5, 0.89, 0.97))
+```
+
+> Check that the model's implied predictions fit the actual count
+
+```{r}
+implied_predictions = rbinom(10000, n, prob = samples)
+
+implied_predictions %>% 
+  tibble::tibble(predicted_counts = .) %>% 
+  ggplot(aes(predicted_counts)) +
+    geom_histogram(binwidth = 1, color = "black", fill = "dodgerblue4",
+                   alpha = 0.6) +
+  hrbrthemes::theme_ipsum_rc() +
+  scale_y_continuous(labels = scales::comma) +
+  geom_vline(xintercept = k, linetype = 2, color = "red") +
+  labs(title = "Implied predictions by posterior distribution",
+       caption = "Observed value: red line. Binwidth = 1 count value",
+       subtitle = "Posterior fits the data well")
+  
+```
+
+> Now compare 10,000 counts of boys from 100 simulated first borns only to the number of boys in the first births. How does the model look in this light
+
+
+```{r}
+boys_one <- sum(birth1)
+
+
+implied_predictions = rbinom(10000, 100, prob = samples)
+
+implied_predictions %>% 
+  tibble::tibble(predicted_counts = .) %>% 
+  ggplot(aes(predicted_counts)) +
+    geom_histogram(binwidth = 1, color = "black", fill = "dodgerblue4",
+                   alpha = 0.6) +
+  hrbrthemes::theme_ipsum_rc() +
+  scale_y_continuous(labels = scales::comma) +
+  geom_vline(xintercept = boys_one, linetype = 2, color = "red") +
+  labs(title = "Implied predictions by posterior distribution",
+       caption = "Observed value: red line. Binwidth = 1 count value",
+       subtitle = "Posterior fits the distribution of first borns inadequately.")
+```
+
+Now the model seems to be underperforming. It's implied prediction for 100 boys is way larger thatn the actual observed value. 
+
+> The model assumes that sex of first and second births are independent. Validate this assumption. 
+
+If the sex of first and second births are independent, after condintioning on the first being a girl, the probability of being a boy should be the same as in the whole sample. Let's predict with our model conditioning on the boy having an older sister. 
+
+```{r}
+# second births that followed female first borns
+
+n = sum(birth1 == 0)
+k = sum(birth2[birth1 == 0])
+
+implied_predictions = rbinom(10000, n, prob = samples)
+
+implied_predictions %>% 
+  tibble::tibble(predicted_counts = .) %>% 
+  ggplot(aes(predicted_counts)) +
+    geom_histogram(binwidth = 1, color = "black", fill = "dodgerblue4",
+                   alpha = 0.6) +
+  hrbrthemes::theme_ipsum_rc() +
+  scale_y_continuous(labels = scales::comma) +
+  geom_vline(xintercept = k, linetype = 2, color = "red") +
+  labs(title = "Implied predictions by posterior distribution",
+       caption = "Observed value: red line. Binwidth = 1 count value",
+       subtitle = "Posterior fit to the distribution of boys after girls is terribly wrong.")
+```
+
+```{r}
+prob <- sum(implied_predictions == 39)/ length(implied_predictions)
+glue::glue("Our model only assumes a {prob*100}% to the observed value")
+```
+
+The model under predicts the number of boys that have older sisters. It seems that, in our sample, the sex of the first and second births are not independent. It may be that our sample is biased. Or maybe people keep having babies until they have a boy. Who knows, right?
+
+

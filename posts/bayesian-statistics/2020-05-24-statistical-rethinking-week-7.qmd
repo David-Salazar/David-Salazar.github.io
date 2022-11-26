@@ -1,0 +1,514 @@
+---
+title: 'Statistical Rethinking: Week 7'
+author: ''
+date: '2020-05-24'
+slug: statistical-rethinking-week-7
+categories: []
+tags: []
+aliases: 
+  - ../../2020/05/24/statistical-rethinking-week-7/
+---
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+library(tidyverse)
+library(rethinking)
+library(ggridges)
+library(glue)
+library(dagitty)
+extrafont::loadfonts(device="win")
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+Sys.setenv(LOCAL_CPPFLAGS = '-march=corei7 -mtune=corei7')
+set.seed(42)
+```
+
+# Statistical Rethinking: Week 7
+
+This week paid off. All the hard work of understanding link functions, HMC flavored Monte-Carlo, and GLM allowed to study more complex models. To keep using Richard's metaphor: it allowed us to study monsters: models with different parts made out of different models. In particular, Zero Inflated Models and Ordered Categories. 
+
+# Homework
+
+> In the Trolley data—data(Trolley)—we saw how education level (modeled as
+an ordered category) is associated with responses. Is this association causal? One plausible confound is that education is also associated with age, through a causal process: People are older when they finish school than when they begin it.
+Reconsider the Trolley data in this light. Draw a DAG that represents hypothetical causal relationships among response, education, and age. Which statical model or models do you need to evaluate the causal influence of education on responses? Fit these models to the trolley data. What do you conclude about the causal relationships among these three variables?
+
+Let's begin by drawing the DAG
+
+```{r}
+dag <- dagitty(" dag {
+              Age -> Education
+              Education -> Response
+              Age -> Response
+               }")
+drawdag(dag)
+```
+
+According to our assumptions, we cannot evaluate the causal effect of Education on response without first performing statistical adjustments on our models by including Age. Otherwise, Education will pick up some of the effect of Age on response, thereby biasing our estimates. That is, there is a backdoor leading back to Education. To close it, we must include Age in our estimates. Our computer can confirm our reasoning: 
+
+```{r}
+dagitty::adjustmentSets(dag, exposure = "Education", outcome = "Response")
+```
+
+```{r}
+data("Trolley")
+trolley_data <- Trolley 
+glimpse(trolley_data)
+```
+
+Let's begin by preparing our variables: 
+
+- age. We will model it as a continuous parameter. 
+
+```{r}
+trolley_data %>% 
+  mutate(age_std = (age - mean(age))/sd(age)) -> trolley_data
+trolley_data %>% 
+  ggplot(aes(age_std)) +
+  geom_histogram(binwidth = 1, color = "black", alpha = 0.5) +
+  hrbrthemes::theme_ipsum_rc() +
+  labs(title = "Age distribution in the data")
+```
+
+- education. We will model it as an ordered category. 
+
+```{r}
+levels(trolley_data$edu)
+```
+
+However, R has read automatically order the factors in alphabetical order. Let's order them in the order we need
+
+```{r}
+trolley_data %>% 
+  mutate(edu_releveled = fct_relevel(edu, c("Elementary School", "Middle School", "Some High School",
+                                            "High School Graduate", "Some College", "Bachelor's Degree",
+                                            "Master's Degree", "Graduate Degree"))) -> trolley_data_education_releveled
+levels(trolley_data_education_releveled$edu_releveled)
+```
+
+Now, we can turn them into integers and we'll know they will be kept in the order we need them to be:
+
+```{r}
+trolley_data_education_releveled %>% 
+  mutate(edu_int = as.integer(edu_releveled)) -> trolley_data_model
+trolley_data_model %>% 
+  count(edu_int, edu_releveled, edu)
+```
+
+Before we use the model, let's verify that we haven't missing values:
+
+```{r}
+trolley_data_model %>% 
+  nrow()
+```
+
+```{r}
+trolley_data_model %>% 
+  drop_na(response, intention, contact, action, edu_int) %>% 
+  nrow()
+```
+
+There are no missing obs to worry about. As a last step, let's see what we would get if weren't performing statistical adjustments by the type of questions nor by the education level of the respondents:
+
+```{r}
+trolley_data_model %>% 
+  mutate(age = cut(age, 5)) %>% 
+  ggplot(aes(response, fill = age)) +
+  geom_bar(position = "dodge") +
+   hrbrthemes::theme_ipsum_rc(grid = "Y") +
+  scale_fill_viridis_d() +
+  labs(title = "Responses across age groups")
+```
+
+Let's code and fit the model:
+
+```{r, cache = TRUE}
+# data 
+data_list_model_age_edu <- list(
+  R = trolley_data_model$response,
+  action = trolley_data_model$action,
+  intention = trolley_data_model$intention,
+  contact = trolley_data_model$contact,
+  E = as.integer(trolley_data_model$edu_int),
+  age = trolley_data_model$age_std,
+  alpha = rep(2.1, 7)
+)
+# model
+
+model_edu_age <- ulam(
+  alist(
+    R ~ ordered_logistic(phi, kappa),
+    phi <- bE*sum( delta_j[1:E] ) + bA*action + BI*intention + bC*contact + bAge*age,
+    BI <- bI + bIC*contact + bIA*action,
+    kappa ~ normal(0, 0.5),
+    c(bA, bC, bE, bAge, bI, bIA, bIC) ~ normal(0, 0.5),
+    vector[8]: delta_j <<- append_row(0, delta),
+    simplex[7]: delta ~ dirichlet(alpha)
+),
+  data = data_list_model_age_edu,
+chains = 5, cores = 5
+)
+```
+
+
+```{r}
+traceplot_ulam(model_edu_age)
+```
+
+The chains look healthy enough; although the number of effective samples seems terribly slow for the total effect of education. Also, there's the Stan warning message. Maybe one should try to run the model a bit longer. Note that the paths, during warmup exclusively, wander around in some chains on some presumably not typical set parts of the parameter space. However, this transient like behavior quickly stops and it is never present during sampling. 
+
+```{r}
+precis(model_edu_age, depth = 2)
+```
+
+Compared to the model that had no adjustment by age, the Education coefficient has changed. Whereas before the coefficient was negative, here it is positive. Thus, we conclude: 1) Due to change in the coefficient, we believe that indeed there is a path between education and age. 2) Indicating that higher education leads to respond higher in the scale, indicating that they see the moral actions as more permissible. 3) Also, older people seem to respond lower in the scale and thus considering the actions less morally permisible. 
+
+Let's plot the predicted differences:
+
+```{r}
+samples <- extract.samples(model_edu_age)
+str(samples)
+```
+
+Let's add the zero to the delta:
+
+```{r}
+samples$delta <- cbind(rep(0, 2500), samples$delta)
+```
+
+Now, let's write some functions to work with the samples from the posterior:
+
+```{r}
+
+calculate_phi <- function(action, intention, contact, E, age, samples) {
+  
+  number_samples <- 2500
+  
+  BI <- vector(mode="numeric", length=number_samples)
+  for ( i in 1:number_samples ) {
+    BI[i] = samples$bI[i] + samples$bIC[i] * contact + samples$bIA[i] * action
+  }
+  
+  phi <- vector(mode="numeric", length=number_samples)
+  
+  for ( i in 1:number_samples ) {
+    
+        phi[i] = samples$bE[i] * sum(samples$delta[i, 1:E]) + samples$bA[i] * action  + BI[i] * intention + 
+          samples$bC[i] * contact + samples$bAge[i] * age
+  }
+  phi
+}
+
+
+predict_model_per_obs <- function(action, intention, contact, E, age, samples) {
+  
+  number_samples <- 2500
+  
+  phi <- calculate_phi(action, intention, contact, E, age, samples)
+  
+  predicted_response <-  matrix(0, nrow = number_samples, ncol = 7)
+  
+  for ( i in 1:number_samples ) {
+    
+    for (col in 1:7) {
+      predicted_response[i, col] <- pordlogit(col, phi = phi[i], samples$kappa[i,])
+    }
+
+  }
+  predicted_response
+}
+
+simulate_model_per_obs <- function(action, intention, contact, E, age, samples) {
+  
+  number_samples <- 2500
+  
+  sims <- vector(mode="numeric", length=number_samples)
+  
+  phi <- calculate_phi(action, intention, contact, E, age, samples)
+  
+  
+  for (i in 1:number_samples) {
+    
+    sims[i] <- rordlogit(1, phi[i], samples$kappa[i,])
+    
+  }
+  
+  sims
+  
+}
+```
+
+```{r}
+ages <- -2:2
+names(ages) <- -2:2
+
+ages %>% 
+  map_df(~simulate_model_per_obs(action = 1, intention = 1, contact = 0, E = 5, age = .x, samples)) %>% 
+  cbind(data.frame(sims = 1:2500)) %>% 
+  pivot_longer(-sims, names_to = "age", values_to = "response") %>% 
+  mutate(age = factor(age, levels = -2:2),
+         response = factor(response)) %>% 
+  ggplot(aes(response, fill = age)) +
+  geom_bar(position = "dodge") +
+  hrbrthemes::theme_ipsum_rc(grid = "Y") +
+  scale_fill_viridis_d() +
+  labs(title = "Simulated responses across age groups",
+       subtitle = "Older people respond lower on the scale",
+       fill = "s.d. away from the mean",
+       caption = "Question with both action and intention, but no contact") +
+  theme(legend.position = "bottom")
+```
+
+As we gauged from the coefficient, we predict that, on average, older people respond lower lower on the response scale. Above, for an action with both intention and contact, the difference is very clear: older people respond more often with lower values of moral permissibility, whereas younger people respond more often with higher values of moral permissibility. 
+
+Let's check the difference across education levels:
+
+```{r}
+education_levels <- 1:8
+names(education_levels) <- 1:8
+
+education_levels %>% 
+  map_df(~simulate_model_per_obs(action = 1, intention = 1, contact = 0, E = .x, age = 0, samples)) %>% 
+  cbind(data.frame(sims = 1:2500)) %>% 
+  pivot_longer(-sims, names_to = "education_level", values_to = "response") %>%
+  mutate(education_level = factor(education_level, labels = c("Elementary School", "Middle School", "Some High School",
+                                            "High School Graduate", "Some College", "Bachelor's Degree",
+                                            "Master's Degree", "Graduate School")),
+         response = factor(response)) %>% 
+  ggplot(aes(response, fill = education_level)) +
+  geom_bar(position = "dodge") +
+  hrbrthemes::theme_ipsum_rc(grid = "Y") +
+  scale_fill_viridis_d() +
+  theme(legend.position = "bottom") +
+  labs(title = "Simulated responses across education levels",
+       subtitle = "More educated people tend to respond higher levels of moral permissibility")
+```
+
+To conclude the question:
+
+- Older people tend to assign lower levels of moral permissibility. 
+- More educated people tend to assign higher levels of moral permisibility. 
+- Age and education level seem correlated. Thus, without accounting for age, education level will pick up some of the effects of age on responses. 
+
+> Consider one more variable in the Trolley data: Gender. Suppose that gender might influence education as well as response directly. Draw the DAG now that includes response, education, age, and gender. Using only the DAG, is it possible that the inferences from Problem 1 are confounded by gender? If so,define any additional models you need to infer the causal influence of education on response. What do you conclude?
+
+```{r}
+dag <- dagitty(" dag {
+              Age -> Education
+              Education -> Response
+              Age -> Response
+              Gender -> Education
+              Gender -> Response
+               }")
+drawdag(dag)
+```
+
+Yes, according to our current DAG, inferences from problem 1 are confounded. By including Education in our statistical adjustments, we are conditioning on a collider and thereby opening a backdoor: Education will pick up the effect of gender on response. Therefore, if we wish to infer the influence of education on response, we must perform a statistical adjustment with Gender.
+
+```{r}
+dagitty::adjustmentSets(dag, exposure = "Education", outcome = "Response")
+```
+
+We will include gender with an index variable:
+
+```{r}
+trolley_data_model %>% 
+  mutate(gender_id = factor(male + 1)) -> trolley_data_model
+
+data_list_model_age_edu <- list(
+  R = trolley_data_model$response,
+  action = trolley_data_model$action,
+  intention = trolley_data_model$intention,
+  contact = trolley_data_model$contact,
+  E = as.integer(trolley_data_model$edu_int),
+  age = trolley_data_model$age_std,
+  gender_id = trolley_data_model$gender_id,
+  alpha = rep(2.1, 7)
+)
+
+```
+
+Let's first try to gauge what we would get if we weren't performing statistical adjustment by other covariates:
+
+```{r}
+trolley_data_model %>%
+  mutate(gender_id = factor(gender_id, labels = c("Women", "Men"))) %>% 
+  ggplot(aes(factor(response), fill = gender_id)) +
+  geom_bar(position = "dodge") +
+  hrbrthemes::theme_ipsum_rc(grid = "Y") +
+  scale_fill_viridis_d() +
+  theme(legend.position = "bottom") +
+  labs(title = "Distribution of responses across Men and Women",
+       subtitle = "Men do seem to response more often higher values",
+       fill = "Gender")
+```
+
+Now, let's fit the model:
+
+```{r cache=TRUE}
+model_edu_age_gender <- ulam(
+  alist(
+    R ~ ordered_logistic(phi, kappa),
+    phi <- bE*sum( delta_j[1:E] ) + bA*action + BI*intention + bC*contact + bAge*age + bGender[gender_id],
+    BI <- bI + bIC*contact + bIA*action,
+    kappa ~ normal(0, 0.5),
+    c(bA, bC, bE, bAge, bI, bIA, bIC) ~ normal(0, 0.5),
+    bGender[gender_id] ~ normal(0, 0.5),
+    vector[8]: delta_j <<- append_row(0, delta),
+    simplex[7]: delta ~ dirichlet(alpha)
+),
+  data = data_list_model_age_edu,
+chains = 5, cores = 5
+)
+```
+
+Let's check the traceplots of our chains:
+
+```{r}
+traceplot(model_edu_age_gender)
+```
+
+
+```{r}
+precis(model_edu_age_gender, depth = 2, omit = "kappa")
+```
+
+It seems that the coefficient for men is considerably higher than the coefficient for women. That is, on the relative scale, women are more likely to give lower moral permissibility to the different situations. Interestingly, the coefficient for Education has greatly reduced, and now it encompasses zero right in the middle. Therefore, by performing statistical adjustment with gender, the Education coefficient has greatly decreased.
+
+Indeed, let's check the difference across education levels.
+
+Let's modify our functions to simulate from our model now including a gender intercept:
+
+```{r}
+calculate_phi <- function(action, intention, contact, E, age, samples, gender) {
+  
+  number_samples <- 2500
+  
+  BI <- vector(mode="numeric", length=number_samples)
+  for ( i in 1:number_samples ) {
+    BI[i] = samples$bI[i] + samples$bIC[i] * contact + samples$bIA[i] * action
+  }
+  
+  phi <- vector(mode="numeric", length=number_samples)
+  
+  for ( i in 1:number_samples ) {
+    
+        phi[i] = samples$bE[i] * sum(samples$delta[i, 1:E]) + samples$bA[i] * action  + BI[i] * intention + 
+          samples$bC[i] * contact + samples$bAge[i] * age + samples$bGender[i, gender]
+  }
+  phi
+}
+
+simulate_model_per_obs <- function(action, intention, contact, E, age, samples, gender) {
+  
+  number_samples <- 2500
+  
+  sims <- vector(mode="numeric", length=number_samples)
+  
+  phi <- calculate_phi(action, intention, contact, E, age, samples, gender)
+  
+  
+  for (i in 1:number_samples) {
+    
+    sims[i] <- rordlogit(1, phi[i], samples$kappa[i,])
+    
+  }
+  
+  sims
+  
+}
+```
+
+
+Let's extract samples:
+
+```{r}
+samples <- extract.samples(model_edu_age_gender)
+samples$delta <- cbind(rep(0, 2500), samples$delta)
+```
+
+And finally simulate:
+
+```{r}
+education_levels <- 1:8
+names(education_levels) <- 1:8
+
+education_levels %>% 
+  map_df(~simulate_model_per_obs(action = 1, intention = 1, contact = 0, E = .x, age = 0, samples, gender = 1)) %>% 
+  cbind(data.frame(sims = 1:2500)) %>% 
+  pivot_longer(-sims, names_to = "education_level", values_to = "response") %>%
+  mutate(education_level = factor(education_level, labels = c("Elementary School", "Middle School", "Some High School",
+                                            "High School Graduate", "Some College", "Bachelor's Degree",
+                                            "Master's Degree", "Graduate School")),
+         response = factor(response)) %>% 
+  ggplot(aes(response, fill = education_level)) +
+  geom_bar(position = "dodge") +
+  hrbrthemes::theme_ipsum_rc(grid = "Y") +
+  scale_fill_viridis_d() +
+  theme(legend.position = "bottom") +
+  labs(title = "Simulated responses across education levels: Women",
+       subtitle = "Adjusting by gender, education's influence is negligible")
+
+```
+
+As expected, now that we are performing a statistical adjustment by Gender, the influence of education level on response has greatly reduced. In fact, it has reduced so much that our model predicts barely any difference response levels across educations. Let's do the same plot but for men:
+
+```{r}
+education_levels %>% 
+  map_df(~simulate_model_per_obs(action = 1, intention = 1, contact = 0, E = .x, age = 0, samples, gender = 2)) %>% 
+  cbind(data.frame(sims = 1:2500)) %>% 
+  pivot_longer(-sims, names_to = "education_level", values_to = "response") %>%
+  mutate(education_level = factor(education_level, labels = c("Elementary School", "Middle School", "Some High School",
+                                            "High School Graduate", "Some College", "Bachelor's Degree",
+                                            "Master's Degree", "Graduate School")),
+         response = factor(response)) %>% 
+  ggplot(aes(response, fill = education_level)) +
+  geom_bar(position = "dodge") +
+  hrbrthemes::theme_ipsum_rc(grid = "Y") +
+  scale_fill_viridis_d() +
+  theme(legend.position = "bottom") +
+  labs(title = "Simulated responses across education levels: Men",
+       subtitle = "Adjusting by gender, education's influence is negligible",
+       caption = "Question with both action and intention but w/o no contact")
+```
+
+It seems that Gender is driving the variation in responses in the sample. To see this, let's simulate the differnce by gender for the most highly educated and older people in the sample:
+
+```{r}
+gender <- 1:2
+names(gender) <- c("Women", "Men")
+
+gender %>% 
+  map_df(~simulate_model_per_obs(action = 1, intention = 1, contact = 0, E = 8, age = 2, samples, gender = .x)) %>% 
+  cbind(data.frame(sims = 1:2500)) %>% 
+  pivot_longer(-sims, names_to = "gender", values_to = "response") %>% 
+  mutate(gender = factor(gender)) %>% 
+  ggplot(aes(factor(response), fill = gender)) +
+  geom_bar(position = "dodge") +
+  hrbrthemes::theme_ipsum_rc(grid = "Y") +
+  scale_fill_viridis_d() +
+  theme(legend.position = "bottom") +
+  labs(title = "Simulated predictions across Genders",
+       subtitle = "Women tend to give lower responses. Men higher responses",
+       caption = "Question with action and intention but no contact")
+```
+
+Let's plot our simulations for yet another situation, this time a situation with both action, intent and contact:
+
+```{r}
+gender %>% 
+  map_df(~simulate_model_per_obs(action = 1, intention = 1, contact = 1, E = 8, age = 2, samples, gender = .x)) %>% 
+  cbind(data.frame(sims = 1:2500)) %>% 
+  pivot_longer(-sims, names_to = "gender", values_to = "response") %>% 
+  mutate(gender = factor(gender)) %>% 
+  ggplot(aes(factor(response), fill = gender)) +
+  geom_bar(position = "dodge") +
+  hrbrthemes::theme_ipsum_rc(grid = "Y") +
+  scale_fill_viridis_d() +
+  theme(legend.position = "bottom") +
+  labs(title = "Simulated predictions across Genders",
+       subtitle = "Women tend to give lower responses. Men higher responses",
+       caption = "Question with action,intention and contact")
+```
+
+Therefore, we can conclude that, among the covariates studied, the greatest variation across responses is found on gender. Regardless of education level, women, on average, regard the different acts as much less morally permissible than men. 
+
