@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.262">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="">
+<meta name="dcterms.date" content="2020-07-18">
+
+<title>David Salazar - Causality: Bayesian Networks and Probability Distributions</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">David Salazar</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../archive.html">
+ <span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/David-Salazar"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/DavidSalazarVir"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Causality: Bayesian Networks and Probability Distributions</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">July 18, 2020</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#motivation" id="toc-motivation" class="nav-link active" data-scroll-target="#motivation">Motivation</a></li>
+  <li><a href="#bayesian-networks" id="toc-bayesian-networks" class="nav-link" data-scroll-target="#bayesian-networks">Bayesian Networks</a>
+  <ul class="collapse">
+  <li><a href="#an-example" id="toc-an-example" class="nav-link" data-scroll-target="#an-example">An example</a></li>
+  <li><a href="#probability-connections-markov-compatibility" id="toc-probability-connections-markov-compatibility" class="nav-link" data-scroll-target="#probability-connections-markov-compatibility">Probability connections: Markov Compatibility</a></li>
+  </ul></li>
+  <li><a href="#d-separation-blocking-the-information-flows" id="toc-d-separation-blocking-the-information-flows" class="nav-link" data-scroll-target="#d-separation-blocking-the-information-flows">d-separation: blocking the information flows</a></li>
+  <li><a href="#open-paths" id="toc-open-paths" class="nav-link" data-scroll-target="#open-paths">Open paths</a>
+  <ul class="collapse">
+  <li><a href="#of-chains-and-forks" id="toc-of-chains-and-forks" class="nav-link" data-scroll-target="#of-chains-and-forks">Of chains and forks</a></li>
+  <li><a href="#chains" id="toc-chains" class="nav-link" data-scroll-target="#chains">Chains</a></li>
+  <li><a href="#forks" id="toc-forks" class="nav-link" data-scroll-target="#forks">Forks</a></li>
+  <li><a href="#of-colliders" id="toc-of-colliders" class="nav-link" data-scroll-target="#of-colliders">Of Colliders</a></li>
+  <li><a href="#the-probabilistic-implications-of-the-d-separation-criterion" id="toc-the-probabilistic-implications-of-the-d-separation-criterion" class="nav-link" data-scroll-target="#the-probabilistic-implications-of-the-d-separation-criterion">The probabilistic implications of the d-separation criterion</a></li>
+  <li><a href="#putting-the-d-separation-criterion-to-the-test" id="toc-putting-the-d-separation-criterion-to-the-test" class="nav-link" data-scroll-target="#putting-the-d-separation-criterion-to-the-test">Putting the d-separation criterion to the test</a></li>
+  </ul></li>
+  <li><a href="#can-we-distinguish-models-from-data-alone" id="toc-can-we-distinguish-models-from-data-alone" class="nav-link" data-scroll-target="#can-we-distinguish-models-from-data-alone">Can we distinguish models from data alone?</a></li>
+  <li><a href="#identifying-models" id="toc-identifying-models" class="nav-link" data-scroll-target="#identifying-models">Identifying models</a></li>
+  </ul>
+</nav>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="motivation" class="level2">
+<h2 class="anchored" data-anchor-id="motivation">Motivation</h2>
+<p>Stats people know that <strong>correlation coefficients do not imply causal effects</strong>. Yet, very often, <em>partial correlation</em> coefficients from <strong>regressions with an ever growing set of ‘control variables’</strong> are unequivocally interpreted as a step in the <em>right direction</em> toward estimating a <strong>causal effect</strong>. This mistaken intuition was aptly named by Richard McElreath, in his fantastic <a href="https://xcelab.net/rm/statistical-rethinking/">Stats course</a>, as <em>Causal Salad</em>: people toss a bunch of control variables and hope to get a casual effect out of it.</p>
+<p>In his fantastic course, Richard offers a clear and intuitive <em>antidote</em> for the Causal Salad: <strong>Graph Models for Causality</strong>. In these series of blogposts, I’ll explore the work of <a href="http://bayes.cs.ucla.edu/jp_home.html">Judea Pearl</a>, the father of the Graphical approach toward Causality. In particular, I’ll share what I learn from his book <a href="http://bayes.cs.ucla.edu/jp_home.html">Causality: Models, Reasoning and Inference</a></p>
+<p>In this blogpost, I’ll explore Bayesian Networks: the simplest of probability networks to represent a joint distribution and how we can derive testable implications from them using the <strong>d-separation</strong> criterion. Thorough the blopost, I’ll be using the excellent packages <code>dagitty</code> and <code>ggdag</code>.</p>
+</section>
+<section id="bayesian-networks" class="level2">
+<h2 class="anchored" data-anchor-id="bayesian-networks">Bayesian Networks</h2>
+<p><em>Joint probability distributions</em> are tricky objects to represent: both in our heads and in our computers. They can imply an unworldly number of relationships. Probability theory gives us in the chain rule of probability a tool to <strong>decompose</strong> a joint probability distribution.</p>
+<p>Suppose we have a distribution ( P ) defined on ( n ) discrete variables, which we may <strong>order</strong> arbitrarily as ( X_{1}, X_{2}, , X_{n} . ) The chain rule of probability calculus always permits us to decompose ( P ) as a product of ( n ) <strong>conditional distributions</strong>:</p>
+<p><span class="math display">\[
+P\left(x_{1}, \ldots, x_{n}\right)=\prod_{j} P\left(x_{j} \mid x_{1}, \ldots, x_{j-1}\right)
+\]</span></p>
+<p>Given <em>structural knowledge</em> about the problem at hand, we can <em>simplify this decomposition</em> given the <strong>conditional independence</strong> we posit in our model of the joint distribution. That is, it is not always necessary to condition on all the other variables: it <em>suffices</em> to control in a minimal set of variables to render <strong>other predecessor variables independent</strong>. For a given variable <span class="math inline">\(x_j\)</span> let’s name this set of variables <span class="math inline">\(pa_j\)</span>: the parents of the variable <span class="math inline">\(x_j\)</span>.</p>
+<p>We can then start constructing a graph (a Bayesian Network): each node will be a random variable; for any node, the arrows that enter into it represent the fact that <em>conditional on its parents</em>, <strong>the variable is conditionally independent of all other preceding variables</strong>. That is, at the <span class="math inline">\(j\)</span>th stage of construction, we only draw an incoming arrow into <span class="math inline">\(x_j\)</span> from its parents; conditional on its parents, all other predecessors are independent. Therefore, a <strong>missing arrow</strong> between any two nodes means that they are independent, once we know the values of their parents.</p>
+<section id="an-example" class="level3">
+<h3 class="anchored" data-anchor-id="an-example">An example</h3>
+<p>Let’s say we’re looking at the relationship between smoking and cardiac arrest. We might assume that smoking causes changes in cholesterol, which causes cardiac arrest. We start assuming that unhealthy lifestyle is the only <strong>‘Parent’</strong> for both smoking and weight:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-07-18-causality-bayesian-networks_files/figure-html/first-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Then, we assume that the <strong>‘Parents’</strong> of cholesterol are Smoking and Weight:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-07-18-causality-bayesian-networks_files/figure-html/second-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Finally, we assume that Cholesterol is the only <em>‘Parent’</em> of Cardiac Arrest</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-07-18-causality-bayesian-networks_files/figure-html/third-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Therefore, the arrows, by specifying what are the conditional independencies that hold in our model, tell us that what is the <em>recursive decomposition</em> of the joint probability distribution implied by the model. In this case, thus:</p>
+<p><span class="math display">\[
+P\left(x_{1}, x_2, x_3, x_4, x_{5}\right) = p(x_1) p(x_2 | x_1) p (x_3 | x_1) p(x_4| x_2, x_3) p (x_5 | x_4)
+\]</span></p>
+</section>
+<section id="probability-connections-markov-compatibility" class="level3">
+<h3 class="anchored" data-anchor-id="probability-connections-markov-compatibility">Probability connections: Markov Compatibility</h3>
+<p>Whenever a joint probability distribution <span class="math inline">\(P\)</span> admits the decomposition posited by our graphical model <span class="math inline">\(G\)</span>, we say that <span class="math inline">\(P\)</span> is Markov Relative to <span class="math inline">\(G\)</span>. That is, it means that <span class="math inline">\(G\)</span> can explain the generation of the data represented by <span class="math inline">\(P\)</span>.</p>
+<p>Once we know the probabilistic connection between our Graph and a probability distribution, we may be interested in deriving the <strong>testable implications</strong> of our graphical model <span class="math inline">\(G\)</span>. What other conditions does it imply about the probability distribution P?</p>
+<p>In particular, in deriving which variables are independent and dependent, both marginally and conditional on other variables. Thanks to our graphical representation, we can derive an algorithm that returns all <em>implied independencies</em> that the model expects that will hold in the <em>data</em>: <strong>the d-separation criterion</strong>.</p>
+</section>
+</section>
+<section id="d-separation-blocking-the-information-flows" class="level2">
+<h2 class="anchored" data-anchor-id="d-separation-blocking-the-information-flows">d-separation: blocking the information flows</h2>
+<p>Deriving testable implications from our assumptions is not as easy as it looks. Take the following example:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-07-18-causality-bayesian-networks_files/figure-html/example-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Can we make <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> conditionally dependent? The answer is not evident. To answer this question, we must understand how the <strong>statistical information moves</strong> through our graph.</p>
+</section>
+<section id="open-paths" class="level2">
+<h2 class="anchored" data-anchor-id="open-paths">Open paths</h2>
+<p>In our Graph <span class="math inline">\(G\)</span>, the information moves across variables <em>regardless</em> of the direction of the arrows. If there is an open path between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, then, the information will flow and thus make the two variables dependent. The question, then, is what is an open path? The d-criterion answers precisely this question:</p>
+<p>( A ) path ( p ) is said to be blocked (or ( d ) -separated) by a set of nodes ( Z ) if and only if any of the following conditions hold:</p>
+<ol type="1">
+<li><p>if ( p ) contains a chain ( i m j ) or a fork ( i m j ) such that the middle node ( m ) is in ( Z ).</p></li>
+<li><p>if ( p ) contains a collider ( i m j ) such that the middle node ( m ) is not in ( Z ) and such that no descendant of ( m ) is in ( Z ).</p></li>
+</ol>
+<p>Let’s examine why is that both conditions guarantee that the path is closed.</p>
+<section id="of-chains-and-forks" class="level3">
+<h3 class="anchored" data-anchor-id="of-chains-and-forks">Of chains and forks</h3>
+<p>In both chains and forks, <em>the extreme variables</em> are <strong>marginally dependent</strong>. However, once we <em>adjust by the middle variable</em> they become <strong>marginally independent</strong>. That is, the information between the extreme variables that was previously flowing stops flowing altogether. Why?</p>
+</section>
+<section id="chains" class="level3">
+<h3 class="anchored" data-anchor-id="chains">Chains</h3>
+<p>Let’s look at an example of the chain where addictive behavior causes the person to smoke which causes Cancer. If we don’t adjust by any variable, the information flows freely: knowing whether some has an addictive behavior can tell us whether they smoke, and thus tells us something about the probability that they have cancer.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-07-18-causality-bayesian-networks_files/figure-html/mediation-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>However, if we adjust by a particular level of smoking (as in the above figure), knowing the addictive behavior of someone tells us nothing about the probability that they have cancer: the level of smoking says it all already. Thus, addictive behavior and cancer are d-separated by smoking.</p>
+</section>
+<section id="forks" class="level3">
+<h3 class="anchored" data-anchor-id="forks">Forks</h3>
+<p>With forks, the story is extremely similar: the middle variable is a common cause for both of the extreme variables. Thus, they are marginally dependent. For example, let’s say that addictive behavior causes both smoking and drinking coffee.</p>
+<p>If we don’t know whether someone has an addictive behavior or not, the fact that they drink lots of coffee tells us that they are likely to have an addicting behavior and thus are more likely to smoke.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-07-18-causality-bayesian-networks_files/figure-html/fork, coffee-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>However, once we adjust by a specific value of addictive behavior (as in the above figure), drinking coffee does not say anything about smoking, the value of addictive behavior has said it all already: <strong>they are independent conditional on addictive behavior</strong>.</p>
+<p>It is only in the absence of knowing addictive behavior that they capture information from one another. That is, they are only dependent when we don’t adjust by addictive behavior.</p>
+<p>Therefore, whenever a <strong>path has either a fork or a chain, we can block that path by conditioning on the middle variable</strong>.</p>
+</section>
+<section id="of-colliders" class="level3">
+<h3 class="anchored" data-anchor-id="of-colliders">Of Colliders</h3>
+<p>Whereas before we spoke of open paths that were closed once we adjust, a collider starts being a closed path an only is opened once we adjust by the middle variable. The middle variable is a common consequence of two marginally independent causes: if we adjust by the consequence, we render the common causes dependent.</p>
+<p>Take the following example: being a hollywood actor results from either being attractive or being talented. Being attractive and being talented are independent; however, once we know whether someone is a hollywood actor, knowing one of the characteristics tells us about the other. e.g., if the actor is not talented, it tells us that the actor, to be in hollywood, then must be attractive.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-07-18-causality-bayesian-networks_files/figure-html/collider-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Therefore, if a path has a collider it will remained closed unless we adjust by the middle variable or one of its descendants.</p>
+</section>
+<section id="the-probabilistic-implications-of-the-d-separation-criterion" class="level3">
+<h3 class="anchored" data-anchor-id="the-probabilistic-implications-of-the-d-separation-criterion">The probabilistic implications of the d-separation criterion</h3>
+<p>Once we have understood our d-separation criterion, we can connect this graphical analysis with a counterpart probability implication:</p>
+<p>If ( X ) and ( Y ) are ( d ) -separated by ( Z ) in a DAG ( G, ) then ( X ) is independent of ( Y ) conditional on ( Z ) in every distribution compatible with ( G ). Conversely, if ( X ) and ( Y ) are not ( d ) -separated by ( Z ) in a DAG ( G ), then ( X ) and ( Y ) are dependent conditional on ( Z )</p>
+</section>
+<section id="putting-the-d-separation-criterion-to-the-test" class="level3">
+<h3 class="anchored" data-anchor-id="putting-the-d-separation-criterion-to-the-test">Putting the d-separation criterion to the test</h3>
+<p>Armed with the d-separation criterion, we can ask ourselves, given our earlier that I reproduce below, how can we make <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> conditionally dependent?</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-07-18-causality-bayesian-networks_files/figure-html/example-repe-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>The answer, of course, is the d-separation criterion: can we open the path from <span class="math inline">\(X\)</span> to <span class="math inline">\(Y\)</span> by conditioning on some variable? Armed with what we just learned, the answer is now clear: <span class="math inline">\(z_1\)</span> is a collider that lies in the path. To open it, we must condition on it. Therefore, <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are dependent conditional on <span class="math inline">\(z_1\)</span>. We can easily check our logic with <code>dagitty::dconnected</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dconnected</span>(example, <span class="st">"X"</span>, <span class="st">"Y"</span>, <span class="st">"Z1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
+<p>We can repeat this exercise for <strong>every pair of variables</strong> and check whether they are <em>conditionally (or marginally) independent</em> given some set of controlling variables. The set of variables that are conditionally independent, then, constitute the <strong>set of testable implications</strong> of our model. Therefore, we can check whether our Graphical model is consistent with a given dataset by <em>comparing</em> the <strong>implied conditional independence</strong> with the <strong>observed conditional independence</strong> in our data.</p>
+<p>For the above model, then, the implied conditional independencies are:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">impliedConditionalIndependencies</span>(example)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>X _||_ Y
+X _||_ Z2
+X _||_ Z3
+Y _||_ Z1 | Z2
+Y _||_ Z1 | Z3
+Y _||_ Z2 | Z3
+Z1 _||_ Z3 | Z2</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="can-we-distinguish-models-from-data-alone" class="level2">
+<h2 class="anchored" data-anchor-id="can-we-distinguish-models-from-data-alone">Can we distinguish models from data alone?</h2>
+<p>We finally have an strategy to test whether our model implications are in accordance with our observed values. However, it stands to reason that our model is not unique in this regard: there are other models that imply the same conditional independencies. We say, thus, that the two graphical models <span class="math inline">\(G_1\)</span> and <span class="math inline">\(G_2\)</span> are <strong>observationally equivalent</strong> when they imply the same conditional independencies. The set of all the models with indistinguishable implications is called an equivalence class.</p>
+<p>That is, if two models are observationally equivalent, we cannot use data alone to distinguish from them. We must use our structural knowledge about the problem at hand to decide which model is the right one. Therefore, <strong>Observational equivalence</strong> places a <em>limit</em> on our ability to <strong>infer directionality from probabilities alone</strong>.</p>
+<p>For <em>simple models</em>, the <strong>limitations are draconian</strong>. Let’s take as an example the fork we just analyzed where addictive behavior is a fork between drinking coffee and smoking:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-07-18-causality-bayesian-networks_files/figure-html/fork-repeated-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Let’s check what are this model’s testable implications:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">impliedConditionalIndependencies</span>(<span class="fu">dagify</span>(x <span class="sc">~</span> f,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>       y <span class="sc">~</span> f,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"x"</span> <span class="ot">=</span> <span class="st">"Coffee"</span>, </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"y"</span> <span class="ot">=</span> <span class="st">"Smoking"</span>, <span class="st">"f"</span> <span class="ot">=</span> <span class="st">"Addictive </span><span class="sc">\n</span><span class="st">Behavior"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>x _||_ y | f</code></pre>
+</div>
+</div>
+<p>Not surprisingly, the only conditional implication implied is that drinking coffee is independent on smoking once we condition on the addictive behavior. That is, <strong>that coffee is d-separated from smoking by addictive behavior</strong>.</p>
+</section>
+<section id="identifying-models" class="level2">
+<h2 class="anchored" data-anchor-id="identifying-models">Identifying models</h2>
+<p>Suppose for a moment that the arrows in our Graph are now endowed with causal meaning: there’s an arrow from <span class="math inline">\(X\)</span> to <span class="math inline">\(Y\)</span> if <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span>. For the moment, it will suffice your intuitive understanding of what this means.</p>
+<p>The Causal Graph will still have all the characteristics of a simple Bayesian Graph. Then, we can ask: What <em>other causal models</em> have only this <strong>testable implication</strong>? That is, with only observational data, can we distinguish between causal (interventional) models?</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-07-18-causality-bayesian-networks_files/figure-html/equivalent-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Thus, <strong>from data-alone we cannot infer the directionality of any of three posited causal relationships</strong>. That is, data alone cannot settle the issue of whether the appropriate model is a fork or a chain that begins at either coffee or smoking. As Pearl says, <strong>data are fundamentally dumb</strong>: if we rely only in data to inform our models, we are extremely limited on what we can learn from them. Therefore, we must extend our theory beyond <strong>conditional probabilities</strong>.</p>
+<p>That is, we cannot predict the consequences of intervening in one of the variables with only observational data. That is, <strong>we cannot gain causal understanding with only observational data</strong>: we must assume a causal model to predict the the consequences of any intervention (i.e., the causal effects).</p>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

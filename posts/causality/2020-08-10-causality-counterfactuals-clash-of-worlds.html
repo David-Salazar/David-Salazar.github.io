@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.262">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="">
+<meta name="dcterms.date" content="2020-08-10">
+
+<title>David Salazar - Causality: Counterfactuals - Clash of Worlds</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">David Salazar</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../archive.html">
+ <span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/David-Salazar"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/DavidSalazarVir"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Causality: Counterfactuals - Clash of Worlds</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">August 10, 2020</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#motivation" id="toc-motivation" class="nav-link active" data-scroll-target="#motivation">Motivation</a></li>
+  <li><a href="#game-plan" id="toc-game-plan" class="nav-link" data-scroll-target="#game-plan">Game Plan</a></li>
+  <li><a href="#we-change-by-taking-the-road-less-traveled-by" id="toc-we-change-by-taking-the-road-less-traveled-by" class="nav-link" data-scroll-target="#we-change-by-taking-the-road-less-traveled-by">We change by taking the road less traveled by</a></li>
+  <li><a href="#the-ladder-of-causation" id="toc-the-ladder-of-causation" class="nav-link" data-scroll-target="#the-ladder-of-causation">The Ladder of Causation</a></li>
+  <li><a href="#defining-counterfactuals" id="toc-defining-counterfactuals" class="nav-link" data-scroll-target="#defining-counterfactuals">Defining Counterfactuals</a>
+  <ul class="collapse">
+  <li><a href="#connecting-different-worlds-through-background-variables" id="toc-connecting-different-worlds-through-background-variables" class="nav-link" data-scroll-target="#connecting-different-worlds-through-background-variables">Connecting different worlds through background variables</a></li>
+  <li><a href="#after-abduction-comes-action-and-prediction" id="toc-after-abduction-comes-action-and-prediction" class="nav-link" data-scroll-target="#after-abduction-comes-action-and-prediction">After abduction comes action and prediction</a></li>
+  </ul></li>
+  <li><a href="#probabilities-for-the-dead" id="toc-probabilities-for-the-dead" class="nav-link" data-scroll-target="#probabilities-for-the-dead">Probabilities for the dead</a></li>
+  <li><a href="#conclusions" id="toc-conclusions" class="nav-link" data-scroll-target="#conclusions">Conclusions</a></li>
+  </ul>
+</nav>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="motivation" class="level2">
+<h2 class="anchored" data-anchor-id="motivation">Motivation</h2>
+<p>We’ve seen how the language of causality require an exogenous intervention on the values of <span class="math inline">\(X\)</span>; so far we’ve studied interventions on all the population, represented by the expression <span class="math inline">\(do(X)\)</span>. Nevertheless, with this language, there are plenty of interventions that remain outside our realm: most notably, <strong>counterfactual expressions where the antecedent is in contradiction with the observed behavior</strong>: there’s a <em>clash</em> between the observed world and the <strong>hypothetical world of interest</strong>.</p>
+<p>To solve this conundrum we will need to set up a more elaborate language whereby we leverage the <strong>invariant information</strong> from the observed world into the <em>hypothetical world</em>.</p>
+<p>These type of counterfactual queries are fundamental in our study of causality; as they enable us to answer such questions as: interventions on sub-populations; additive interventions; mediation analysis through ascertaining direct and indirect effects; and to study probability of causation (sufficient and necessary causes).</p>
+<p>In this post, all citations come from Pearl’s book: Causality.</p>
+</section>
+<section id="game-plan" class="level2">
+<h2 class="anchored" data-anchor-id="game-plan">Game Plan</h2>
+<p>In this blogpost, we will define <strong>Structural Causal Models</strong> (SCM) and explore how they encapsulate all the information we need in order to <em>study counterfactuals</em>. First, we’ll analyze why we cannot use the do-calculus to study counterfactuals where the antecedent contradicts the observed world. Secondly, we will define counterfactuals as <strong>derived properties</strong> of SCM and realize how interventional data undetermines counterfactual information. Thirdly, we will formulate a SCM to put what we have learned into action.</p>
+</section>
+<section id="we-change-by-taking-the-road-less-traveled-by" class="level2">
+<h2 class="anchored" data-anchor-id="we-change-by-taking-the-road-less-traveled-by">We change by taking the road less traveled by</h2>
+<p>Let’s play with Frost’s famous poem:</p>
+<blockquote class="blockquote">
+<p>Two roads diverged in a wood, and I— I took the one less traveled by, And that has made all the difference.</p>
+</blockquote>
+<p>What if Frost <strong>hadn’t taken</strong> the road less traveled by? Let’s say that by taking the road less traveled by, it took Frost <span class="math inline">\(Y=1\)</span> hour of driving time. Given how long it took him on the road less traveled by, how long would it had taken him on the other road?</p>
+<p><span class="math display">\[
+E[ Y| \  \text{do(Other road)}, Y = 1]
+\]</span> There’s a <strong>clash</strong> between the <span class="math inline">\(Y\)</span> we are trying to estimate and the observed <span class="math inline">\(Y = 1\)</span>. Unfortunately, the do-operator does not offer us the possibility of distinguishing between the two variables themselves: one standing for the <span class="math inline">\(Y\)</span> if we take the road less traveled by, the other <span class="math inline">\(Y\)</span> for the <strong>hypothetical</strong> <span class="math inline">\(Y\)</span> if Frost had taken the other road. That is, the <strong>different <span class="math inline">\(y\)</span>’s are events occurring in different worlds</strong>.</p>
+<p>Because the do-calculus offers <em>no way of connecting the information across the different worlds</em>, it means that <strong>we cannot use interventional experiments to estimate the counterfactuals</strong>. Indeed, the Frost <em>after</em> taking the road less traveled by is a very different Frost <em>than he was before</em> taking any of the roads.</p>
+</section>
+<section id="the-ladder-of-causation" class="level2">
+<h2 class="anchored" data-anchor-id="the-ladder-of-causation">The Ladder of Causation</h2>
+<p>Before, we had seen that observational information <a href="https://david-salazar.github.io/2020/07/22/causality-invariance-under-interventions/">is not enough to distinguish between different causal diagrams</a>. We’ll show that the same thing happens with counterfactuals: information from interventions is not enough to distinguish between different Structural Causal Diagrams. Indeed, prediction, intervention and counterfactuals represent a <strong>natural hierarchy</strong> of <em>reasoning tasks</em>, with increasing levels of refinement and increasing demands on the knowledge required to accomplish them. Pearl calls this hierarchy the <strong>Ladder of Causation</strong>:</p>
+<p><img src="../../images/ladder.png" class="img-fluid"></p>
+<p>Whereas for prediction one only needs a joint distribution function, the analysis of intervention requires a causal structure; finally, <strong>processing counterfactuals</strong> requires information about the <strong>functional relationships</strong> that determine that determine the variables and/or the distribution of the <strong>omitted factors</strong>. We will encode all this necessary information with <strong>Structural Causal Models (SCM)</strong>.</p>
+</section>
+<section id="defining-counterfactuals" class="level2">
+<h2 class="anchored" data-anchor-id="defining-counterfactuals">Defining Counterfactuals</h2>
+<p>A Structural Causal Model is a triplet of Unobserved Exogenous Variables (<span class="math inline">\(U\)</span>) called <strong>background variables</strong>, Observed Endogenous Variables (<span class="math inline">\(V\)</span>) and Functional relationships (<span class="math inline">\(F\)</span>) that map for each <span class="math inline">\(V_i\)</span> from their respective domain <span class="math inline">\(U_i \cup Pa_i\)</span> (<span class="math inline">\(Pa_i\)</span> are the parents of <span class="math inline">\(i\)</span>) into <span class="math inline">\(V_i\)</span> thus:</p>
+<p><span class="math display">\[
+v_i = f_i(Pa_i, u_i)
+\]</span></p>
+<p>Every SCM can be associated with a causal DAG. However, the graph merely identifies the endogenous and background variables; it does not specify the functional form of <span class="math inline">\(f_i\)</span> nor the distribution of the background variables.</p>
+<p><strong>A counterfactual</strong> is defined by a submodel, <span class="math inline">\(M_x\)</span>, where the the functional relationship for <span class="math inline">\(X\)</span> is replaced to make <span class="math inline">\(X=x\)</span> hold true under any <span class="math inline">\(u\)</span>. Thus, the potential response of <span class="math inline">\(Y\)</span> to action <span class="math inline">\(do(X=x)\)</span> denoted by <span class="math inline">\(Y_x(u)\)</span> is the solution for <span class="math inline">\(Y\)</span> on the set of equations <span class="math inline">\(F_x\)</span> in <span class="math inline">\(M_x\)</span>.</p>
+<p>If we define a probability function over the background variables, <span class="math inline">\(P(u)\)</span>, we can define the probability over the endogenous variables thus:</p>
+<p><span class="math display">\[
+P(Y = y) := \sum_{u | Y(u) = y} P(u)
+\]</span></p>
+<p>Therefore, the probability of counterfactual statements is thus derived:</p>
+<p><span class="math display">\[
+P(Y_x = y) := \sum_{u | Y_x(u) = y} P(u)
+\]</span></p>
+<p>Note that we can define <span class="math inline">\(P(Y = y | do(X=x)) = P(Y_x = y)\)</span>. This solution to the SCM coincides with the truncated factorization obtained by pruning arrows from a causal DAG.</p>
+<section id="connecting-different-worlds-through-background-variables" class="level3">
+<h3 class="anchored" data-anchor-id="connecting-different-worlds-through-background-variables">Connecting different worlds through background variables</h3>
+<p>The determining feature of most counterfactuals is that we are interested in a <strong>conditional probability</strong> such that the information we are updating on is in contradiction with the counterfactual antecedent. In math terms:</p>
+<p><span class="math display">\[
+P(Y_{x'} = y' | X = x, Y = y) = \sum_u P(Y_{x'}(u) = y') P(u | x, y)
+\]</span> First, notice that we are using the information from one causal world (<span class="math inline">\(&lt;M, u&gt;\)</span>) where we observe <span class="math inline">\((X=x, Y = y)\)</span> to find out the probability of a statement <span class="math inline">\(Y_x\)</span> in a different causal world (<span class="math inline">\(&lt;M_x, u&gt;\)</span>). That is, the <em>counterfactual antecedent</em> “<strong>must be evaluated under the same background conditions</strong> as those prevailing in the observed world”.</p>
+<p>“The background variables are thus the main carriers of information from the actual world to the hypothetical world; they serve as the guardians of invariance.” To do so, we must first update our knowledge of <span class="math inline">\(P(u)\)</span> to obtain <span class="math inline">\(P(u|x, y)\)</span>. Therefore, to be able to answer counterfactual queries we must have a <strong>distribution for the background variables</strong>. Indeed, this key step is known as <strong>abduction</strong>: reasoning from evidence (<span class="math inline">\((x, y)\)</span> observed) to explanation (the background variables).</p>
+<p>This is the fundamental characteristic counterfactual statements: we need to <em>route the impact of known facts</em> through U”.</p>
+</section>
+<section id="after-abduction-comes-action-and-prediction" class="level3">
+<h3 class="anchored" data-anchor-id="after-abduction-comes-action-and-prediction">After abduction comes action and prediction</h3>
+<p>Once we have evaluated the prevailing background conditions, we use these in the sub-model <span class="math inline">\(M_{x'}\)</span>, where <span class="math inline">\(x'\)</span> is the antecedent of the counterfactual. Finally, we use the equations in this modified SCM to predict the probability of <span class="math inline">\(Y_{x'}\)</span>, the consequence of the counterfactual.</p>
+<p>Pearl has a great temporal metaphor for this whole process:</p>
+<blockquote class="blockquote">
+<p>Abduction explains the past (U) in light of the current evidence. The action bends the course of history to comply with the hypothetical condition <span class="math inline">\(X= x'\)</span>. Finally, we predict the future based on our new understanding of the past and our newly established condition, <span class="math inline">\(X=x'\)</span>.</p>
+</blockquote>
+</section>
+</section>
+<section id="probabilities-for-the-dead" class="level2">
+<h2 class="anchored" data-anchor-id="probabilities-for-the-dead">Probabilities for the dead</h2>
+<p>Let’s formulate the following example that will show why information from interventions undetermines counterfactuals and that will serve as practice in computing counterfactuals. The example is taken from the excellent paper from <a href="https://causalai.net/r60.pdf">Bareinboim (et alter) (PDF)</a>:</p>
+Let ( ^{<em>}=={U_{1}, U_{2}}, ={X, Y}, ^{</em>}, P(U), ) where [ ^{*}={
+<span class="math display">\[\begin{array}{ll}
+X &amp; \leftarrow U_{1} \\
+Y &amp; \leftarrow U_{2}
+\end{array}\]</span>
+<p>. ]</p>
+<p>and <span class="math inline">\(U_1, U_2\)</span> are binary.</p>
+<p>Notice that we expect that any intervention will lead us to conclude that the treatment <span class="math inline">\(X\)</span> is not effective: <span class="math inline">\(P(Y| do(X)) = P(Y)\)</span>. Suppose that we conclude exactly this with a RCT.</p>
+<p><strong>Is this intervention evidence</strong> enough to argue for <span class="math inline">\(\mathcal{M}^{*}\)</span>? No! Interventional information undetermines counterfactual information. Notice that other SCM, <span class="math inline">\(\mathcal{M}^{'}\)</span>, is also consistent with such causal effects and yet leads to a different counterfactual answer:</p>
+<p><span class="math display">\[
+\mathcal{F}^{\prime}=\left\{\begin{array}{ll}
+X &amp; \leftarrow U_{1} \\
+Y &amp; \leftarrow X U_{2}+(1-X)\left(1-U_{2}\right)
+\end{array}\right.
+\]</span></p>
+<p>In both <span class="math inline">\(\mathcal{M}^{'}\)</span> and <span class="math inline">\(\mathcal{M}^{*}\)</span>, we expect an intervention on <span class="math inline">\(X\)</span> to lead to no causal effect: <span class="math inline">\(P(Y| do(X)) = P(Y)\)</span>.</p>
+<p><img src="https://cdn.mathpix.com/snip/images/iQHSNdrTUmxs6kJrz577MAtWDUpuP1GqchRppNY_lXo.original.fullsize.png" class="img-fluid"></p>
+<p>However, notice that they lead to very different answers for counterfactual queries. Suppose, then, that you have a patient <span class="math inline">\(S\)</span> that took the treatment and died: what is the probability that ( S ) would have survived had they not been treated? We write this as ( P(Y_{X=0}=1 X=1, Y=0), )</p>
+<blockquote class="blockquote">
+<p>In ( ^{<em>}, ) we have ( P<sup>{</sup>{</em>}}(Y_{X=0}=1 X=1, Y=0)=0, ) whereas in ( ^{} ) we have the exact opposite pattern, ( P<sup>{</sup>{}}(Y_{X=0}=1 X=1, Y=0)=1 ). These two models thus make diametrically opposed predictions about whether ( S ) would have survived had they not taken the treatment.</p>
+</blockquote>
+<p>In other words, the best explanation for ( S ) ’s death may be completely different depending on whether the world is like ( ^{<em>} ) or ( ^{} ). In ( ^{</em>}, S ) would hav died anyway, while in ( ^{}, S ) would actually have survived, if only they had not been give the treatment.</p>
+</section>
+<section id="conclusions" class="level1">
+<h1>Conclusions</h1>
+<p>Counterfactual queries are a crucial part of our reasoning tools. Yet they pose a fundamental challenge: most of the time, the counterfactual antecedent contradicts the observed evidence. Thus, creating a clashing of worlds between the observed world and the hypothetical world that is our object of study.</p>
+<p>To reconcile these two worlds, we must posit a SCM that <strong>leverages the invariant information across causal worlds</strong>: the background variables. Once we have this information, we can answer counterfactual queries. Finally, we saw how interventional information is far from being sufficient to deliver answer to these queries.</p>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

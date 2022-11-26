@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.262">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="David Salazar">
+<meta name="dcterms.date" content="2020-05-13">
+
+<title>David Salazar - Standard Deviation and Fat Tails</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">David Salazar</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../archive.html">
+ <span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/David-Salazar"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/DavidSalazarVir"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Standard Deviation and Fat Tails</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>David Salazar </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 13, 2020</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#statistical-consequences-of-fat-tails" id="toc-statistical-consequences-of-fat-tails" class="nav-link active" data-scroll-target="#statistical-consequences-of-fat-tails">Statistical Consequences of Fat Tails</a></li>
+  <li><a href="#standard-deviation-under-fat-tails" id="toc-standard-deviation-under-fat-tails" class="nav-link" data-scroll-target="#standard-deviation-under-fat-tails">Standard deviation under Fat Tails</a>
+  <ul class="collapse">
+  <li><a href="#game-plan" id="toc-game-plan" class="nav-link" data-scroll-target="#game-plan">Game Plan</a></li>
+  <li><a href="#efficiency-in-mediocristan" id="toc-efficiency-in-mediocristan" class="nav-link" data-scroll-target="#efficiency-in-mediocristan">Efficiency in Mediocristan</a>
+  <ul class="collapse">
+  <li><a href="#efficiency-under-the-poisson" id="toc-efficiency-under-the-poisson" class="nav-link" data-scroll-target="#efficiency-under-the-poisson">Efficiency under the Poisson</a></li>
+  <li><a href="#efficiency-under-the-gaussian" id="toc-efficiency-under-the-gaussian" class="nav-link" data-scroll-target="#efficiency-under-the-gaussian">Efficiency under The Gaussian</a></li>
+  </ul></li>
+  <li><a href="#what-happens-to-sds-efficiency-as-we-fatten-the-tails" id="toc-what-happens-to-sds-efficiency-as-we-fatten-the-tails" class="nav-link" data-scroll-target="#what-happens-to-sds-efficiency-as-we-fatten-the-tails">What happens to SD’s efficiency as we fatten the tails?</a>
+  <ul class="collapse">
+  <li><a href="#why" id="toc-why" class="nav-link" data-scroll-target="#why">Why?</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="statistical-consequences-of-fat-tails" class="level1">
+<h1>Statistical Consequences of Fat Tails</h1>
+<p>In this post, I’ll continue to explore with Monte-Carlo simulations the ideas in Nassim Taleb’s latest book: <a href="https://arxiv.org/abs/2001.10488">Statistical Consequences of Fat Tails</a>. In other posts, I have look at <a href="2020-04-17-fat-vs-thin-does-lln-work.html">the persistent small sample effect that plagues the mean estimates under fat tails</a> as a consequence of the loooong pre-asymptotics of the law of large numbers. Also, how this in turn plagues other statistical techniques <a href="2020-04-27-spurious-pca-under-thick-tails.html">such as PCA</a>. This time, I’ll explore what Taleb finds out by turning his attention to the much misunderstood standard deviation.</p>
+</section>
+<section id="standard-deviation-under-fat-tails" class="level1">
+<h1>Standard deviation under Fat Tails</h1>
+<p>In Chapter 4 of his book, Taleb explores how Standard Deviation (SD) is problematic:</p>
+<ol type="1">
+<li>Widely misunderstood. People mistake Standard Deviation with Mean Absolute Deviation (MAD).</li>
+<li>That this confusion is benign under thin tailed distributions but an unforgivable mistake under fat tails.</li>
+</ol>
+<p>Let’s try to replicate the second point.</p>
+<section id="game-plan" class="level2">
+<h2 class="anchored" data-anchor-id="game-plan">Game Plan</h2>
+<p>First, I’ll begin by exploring in what sense, under a Gaussian, the Standard Deviation (SD) is more “efficient estimator” than the Mean Absolute Deviation (MAD).</p>
+<p>Secondly, in order to gauge the problems that start to arise with standard deviation (SD) as a measure of the scale of the distribution, Taleb uses the same trick as before: stochastize the volatility by switching between 2 normals with same means but different variances. The larger the difference between the variances, the fatter the tail of the resulting random variable. I tried to play with this idea in <a href="2020-05-09-what-does-it-mean-to-fatten-the-tails.html">this post</a>. Therefore, by analyzing the relationship between SD and MAD as we increase this difference, we get a type of derivative: as we increase the fat-tailedness, the difference between Standard Deviation (SD) and Mean Absolute Deviation (MAD) grows.</p>
+</section>
+<section id="efficiency-in-mediocristan" class="level2">
+<h2 class="anchored" data-anchor-id="efficiency-in-mediocristan">Efficiency in Mediocristan</h2>
+<p>When deciding between estimators, statistics textbooks end up talking about two asymptotic properties of the estimator: consistency and efficiency. Consistency concerns itself with the asymptotic accuracy of an estimator and efficiency with the asymptotic variance of the estimator. That is, consistency means that the estimator with lots of observations has a distribution tightly centered around the parameter. Whereas efficiency is something more esoteric but it means that the asymptotic variance is the lowest it can possibly be.</p>
+<section id="efficiency-under-the-poisson" class="level3">
+<h3 class="anchored" data-anchor-id="efficiency-under-the-poisson">Efficiency under the Poisson</h3>
+<p>To get some intuition around why we should care about the variance of an estimator, let’s play with <span class="math inline">\(X \sim Poisson(\lambda)\)</span>. Note that <span class="math inline">\(E(X) = Var(X) = \lambda\)</span>. We could use either the estimate for the mean or the variance to estimate <span class="math inline">\(\lambda\)</span>. Which is better?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>lambda_estimates <span class="ot">&lt;-</span> <span class="cf">function</span>(size) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  sample <span class="ot">&lt;-</span> <span class="fu">rpois</span>(size, <span class="at">lambda =</span> <span class="dv">1</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  mean_estimate <span class="ot">&lt;-</span> <span class="fu">mean</span>(sample)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  variance_estimate <span class="ot">&lt;-</span> <span class="fu">var</span>(sample)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">sample_size =</span> size, mean_estimate, variance_estimate) </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>montecarlo_lambda <span class="ot">&lt;-</span> <span class="cf">function</span>(size) {</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rerun</span>(<span class="dv">1000</span>, <span class="fu">lambda_estimates</span>(size)) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bind_rows</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="sc">-</span>sample_size, <span class="at">names_to =</span> <span class="st">"estimator"</span>, <span class="at">values_to =</span> <span class="st">"estimate"</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">100</span>, <span class="dv">500</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_df</span>(montecarlo_lambda) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sample_size =</span> glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">"sample size: {sample_size}"</span>)) <span class="ot">-&gt;</span> lambda_est </span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>lambda_est <span class="sc">%&gt;%</span> </span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> estimate, <span class="at">y =</span> sample_size)) <span class="sc">+</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density_ridges</span>(<span class="fu">aes</span>(<span class="at">fill =</span> estimator), <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  hrbrthemes<span class="sc">::</span><span class="fu">theme_ipsum_rc</span>(<span class="at">grid =</span> <span class="st">"X"</span>) <span class="sc">+</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">""</span>, </span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Estimating Poisson's lambda = 1"</span>,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Mean estimate has lower variance"</span>,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"1000 monte carlo simulations for each sample size"</span>) <span class="sc">+</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-05-13-standard-deviation-and-fat-tails_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Thus, even though both estimators put a lot of their mass close to the true value, the Mean estimate has a lower variance than the Variance estimate of <span class="math inline">\(\lambda\)</span>. And therefore is a safer bet to estimate the <span class="math inline">\(\lambda\)</span> parameter with the mean. Indeed, there’s a mathematical bound for the variance of an estimator of <span class="math inline">\(\lambda\)</span>: <span class="math inline">\(\dfrac{\lambda}{n}\)</span> which only the mean estimator satisties.</p>
+<p>This is an important results: <strong>the variance estimate is too sensitive to outliers and we should prefer a natural weighting of the observations</strong>. However, with a Poisson and its thin tails, this is no big deal.</p>
+<p>So far, we have talked about the intuition. If one wanted to compare the two estimator’s asymptotic efficiency, then one would compare the following ratio:</p>
+<p><span class="math display">\[ \dfrac{(Var(S^2)}{Var(\bar{X})} \]</span></p>
+<p>Which is the asymptotic Relative efficiency of the two estimators. That is, which of them has a lower variance as the number of available observations becomes increasingly large.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>montecarlo_lambda_efficiency <span class="ot">&lt;-</span> <span class="cf">function</span>(size) {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rerun</span>(<span class="dv">1000</span>, <span class="fu">lambda_estimates</span>(size)) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bind_rows</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="sc">-</span>sample_size, <span class="at">names_to =</span> <span class="st">"estimator"</span>, <span class="at">values_to =</span> <span class="st">"estimate"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(sample_size, estimator) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">variance_estimator =</span> <span class="fu">var</span>(estimate))</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">500</span>, <span class="dv">1000</span>, <span class="dv">5000</span>, <span class="dv">10000</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_df</span>(montecarlo_lambda_efficiency) <span class="ot">-&gt;</span> lambda_efficiency</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>lambda_efficiency <span class="sc">%&gt;%</span> </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(sample_size, <span class="at">names_from =</span> estimator, <span class="at">values_from =</span> variance_estimator) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">are =</span> variance_estimate<span class="sc">/</span>mean_estimate) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sample_size, <span class="at">y =</span> are)) <span class="sc">+</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_log10</span>() <span class="sc">+</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expand_limits</span>(<span class="at">x =</span> <span class="dv">100</span>, <span class="at">y =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  hrbrthemes<span class="sc">::</span><span class="fu">theme_ipsum_rc</span>(<span class="at">grid =</span> <span class="st">"Y"</span>) <span class="sc">+</span> </span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"sample size (log scale)"</span>,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Asymptotic Relative Efficiency"</span>,</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"ARE Mean and Variance to estimate Poisson's lambda"</span>,</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Mean estimate is ~ 3x more efficient"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-05-13-standard-deviation-and-fat-tails_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="efficiency-under-the-gaussian" class="level3">
+<h3 class="anchored" data-anchor-id="efficiency-under-the-gaussian">Efficiency under The Gaussian</h3>
+<p>Now let’s start playing with a Gaussian with known mean 0. Imagine you have to estimate the scale of the distribution, whatever that may mean. We have two candidates: the SD or the MAD. Which one should we prefer? Just as with the Poisson, let’s play with with some Monte-Carlo simulations and calculate the ARE:</p>
+<p><span class="math display">\[  \dfrac{(\dfrac{Var(SD^2)}{E(SD)^2})}{(\dfrac{Var({MAD})}{E({MAD})^2})} \]</span></p>
+<p>Note that SD and MAD are estimating different measures of the scale of the distribution Therefore, instead of comparing their variances, we compare their coefficients of variation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>gaussian_estimates <span class="ot">&lt;-</span> <span class="cf">function</span>(size) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  sample <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(size)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  standard_deviation <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(sample<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  mad <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">abs</span>(sample))<span class="sc">/</span>size </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">sample_size =</span> size, standard_deviation, mad)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>montecarlo_sigma <span class="ot">&lt;-</span> <span class="cf">function</span>(size) {</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rerun</span>(<span class="dv">1000</span>, <span class="fu">gaussian_estimates</span>(size)) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bind_rows</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="sc">-</span>sample_size, <span class="at">names_to =</span> <span class="st">"estimator"</span>, <span class="at">values_to =</span> <span class="st">"estimate"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(sample_size, estimator) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">variance_estimator =</span> <span class="fu">var</span>(estimate)<span class="sc">/</span><span class="fu">mean</span>(estimate)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">100</span>, <span class="dv">500</span>, <span class="dv">1000</span>, <span class="dv">10000</span>, <span class="dv">20000</span>, <span class="dv">50000</span> ) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_df</span>(montecarlo_sigma) <span class="ot">-&gt;</span> gaussian_est</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>gaussian_est <span class="sc">%&gt;%</span> </span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(sample_size, <span class="at">names_from =</span> estimator, <span class="at">values_from =</span> variance_estimator) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">are =</span> standard_deviation<span class="sc">/</span>mad) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(sample_size, are)) <span class="sc">+</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="fu">aes</span>(<span class="at">yintercept =</span> <span class="fl">0.875</span>), <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_log10</span>() <span class="sc">+</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expand_limits</span>(<span class="at">x =</span> <span class="dv">100</span>) <span class="sc">+</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  hrbrthemes<span class="sc">::</span><span class="fu">theme_ipsum_rc</span>(<span class="at">grid =</span> <span class="st">"Y"</span>) <span class="sc">+</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Asymptotic Relative Efficiency SD/MAD under Mediocristan"</span>,</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Variance of SD is ~ 0.875 that of MAD"</span>,</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Asymptotic Relative Efficiency"</span>,</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Sample size (log scale)"</span>,</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Red is theoretical ARE = 0.875"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-05-13-standard-deviation-and-fat-tails_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Great, as our results replicate what Taleb did with math.</p>
+<p>Thus, in a strict sense, <strong>when we are dealing with samples of Gaussian</strong>, it is more efficient to use SD than MAD. However, what happens when we slip away into fatter-tails?</p>
+</section>
+</section>
+<section id="what-happens-to-sds-efficiency-as-we-fatten-the-tails" class="level2">
+<h2 class="anchored" data-anchor-id="what-happens-to-sds-efficiency-as-we-fatten-the-tails">What happens to SD’s efficiency as we fatten the tails?</h2>
+<p>Taleb introduces an incredible heuristic ( <a href="2020-05-09-what-does-it-mean-to-fatten-the-tails.html">which I already examined in this post</a> ) that works perfectly to get the intuition of fattening a distribution. In Taleb’s words: “The equivalent of a functional derivative that provides good grasp for local sensitivities”</p>
+<p>The heuristic is a simple <strong>switching between two gaussians with different standard deviations</strong>. Thus, we stochastize the variance of the distrbution. With probability <span class="math inline">\(1-p\)</span>, we switch to a <span class="math inline">\(Normal(0, \sigma)\)</span>; with probability <span class="math inline">\(p\)</span>, we switch to <span class="math inline">\(Normal(0, \sigma \sqrt{(1+a)})\)</span>.</p>
+<p>That is, if <span class="math inline">\(p\)</span> is small, there’s a tiny probability that we switch to a gaussian with a higher standard deviation and that will likely generate outliers in comparison to the rest of the distribution. The higher <span class="math inline">\(a\)</span>, the larger the scale of the distribution. Thus, <strong>given that the tail probabilities are convex to the scale of the distribution, the higher <span class="math inline">\(a\)</span>, the more we fatten the distribution</strong>. Let’s sample from this distribution to have a quick look:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate fattened</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>fatten_simulations <span class="ot">&lt;-</span> <span class="cf">function</span>(samples, a, p, <span class="at">sigma  =</span> <span class="dv">1</span>)  {</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create vector to store sims</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  sims <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">length =</span> samples)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># sample with probability p</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  p_location <span class="ot">&lt;-</span> <span class="fu">rbernoulli</span>(samples, <span class="at">p =</span> p)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  sims[p_location] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="fu">sum</span>(p_location), <span class="at">sd =</span> sigma <span class="sc">*</span><span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">+</span>a))</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  sims[<span class="sc">!</span>p_location] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="fu">sum</span>(<span class="sc">!</span>p_location), <span class="at">sd =</span> sigma)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(sims)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>samples <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># simulated fattened</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>a_s <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="at">length.out =</span> <span class="dv">5</span>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(a_s) <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">map</span>(a_s, <span class="sc">~</span> glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">"a = {.x/5}"</span>)))</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>a_s<span class="sc">%&gt;%</span> </span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_df</span>(<span class="sc">~</span> <span class="fu">fatten_simulations</span>(samples, <span class="at">a =</span> .x, <span class="at">p =</span> <span class="fl">0.01</span>, <span class="at">sigma =</span> <span class="dv">5</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">simulation =</span> <span class="dv">1</span><span class="sc">:</span>samples) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>simulation, <span class="at">names_to =</span> <span class="st">"a_s"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">a_s =</span> <span class="fu">fct_inorder</span>(a_s)) <span class="ot">-&gt;</span> fattend_different_as</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>fattend_different_as <span class="sc">%&gt;%</span> </span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">sample =</span> value, <span class="at">color =</span> a_s)) <span class="sc">+</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq_line</span>() <span class="sc">+</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_d</span>(<span class="at">direction =</span> <span class="sc">-</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  hrbrthemes<span class="sc">::</span><span class="fu">theme_ipsum_rc</span>() <span class="sc">+</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"QQ-plot for different stochastic volatilties"</span>,</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Tail values are convex to the scale of the distribution. Higher a, larger scale"</span>,</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">""</span>,</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Theoretical distribution is the normal. parameter a as a multiple of sigma"</span>) <span class="sc">+</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-05-13-standard-deviation-and-fat-tails_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Therefore, if we calculate the ARE for different values of <span class="math inline">\(a\)</span>, we are calculating its sensibility as we move close to fatter distributions. Let’s check whether SD keeps being more efficient than MAD:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fatten_estimates <span class="ot">&lt;-</span> <span class="cf">function</span>(size, a, p, sigma) {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  sample <span class="ot">&lt;-</span> <span class="fu">fatten_simulations</span>(size, a, p, <span class="at">sigma =</span> sigma) </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  standard_deviation <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(sample<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  mad <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">abs</span>(sample)) </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">sample_size =</span> size, standard_deviation, mad)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>montecarlo_sigma_fattened <span class="ot">&lt;-</span> <span class="cf">function</span>(size, a, p, sigma) {</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rerun</span>(<span class="dv">3000</span>, <span class="fu">fatten_estimates</span>(size, a, p, sigma)) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bind_rows</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="sc">-</span>sample_size, <span class="at">names_to =</span> <span class="st">"estimator"</span>, <span class="at">values_to =</span> <span class="st">"estimate"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(estimator) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">variance_estimator =</span> <span class="fu">var</span>(estimate)<span class="sc">/</span><span class="fu">mean</span>(estimate)<span class="sc">^</span><span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">a =</span> a)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>a_s <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="at">length.out =</span> <span class="dv">40</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(a_s) <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">map</span>(a_s, <span class="sc">~</span> glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">"a = {.x}"</span>)))</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>a_s<span class="sc">%&gt;%</span> </span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_df</span>(<span class="sc">~</span><span class="fu">montecarlo_sigma_fattened</span> (<span class="at">size =</span> <span class="dv">1000</span>, <span class="at">a =</span> .x, <span class="at">p =</span> <span class="fl">0.01</span>, <span class="at">sigma =</span> <span class="dv">5</span>)) <span class="ot">-&gt;</span>fattened_are</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>fattened_are <span class="sc">%&gt;%</span> </span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(a, <span class="at">names_from =</span> estimator, <span class="at">values_from =</span> variance_estimator) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">are =</span> standard_deviation<span class="sc">/</span>mad,</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>         <span class="at">a =</span> a <span class="sc">/</span> <span class="dv">5</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(a, are)) <span class="sc">+</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expand_limits</span>(<span class="at">x =</span> <span class="dv">0</span>, <span class="at">y =</span> <span class="dv">0</span>)  <span class="sc">+</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  hrbrthemes<span class="sc">::</span><span class="fu">theme_ipsum_rc</span>() <span class="sc">+</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"parameter a as a multiple of sigma"</span>,</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Asymptotic Relative Efficiency of SD vs MAD"</span>,</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Small outliers (~ 2 SD upwards) eat away the efficiency of SD"</span>,</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Asymptotic Relative Efficiency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-05-13-standard-deviation-and-fat-tails_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Per Taleb:</p>
+<blockquote class="blockquote">
+<p>A minute presence of outliers makes MAD more “efﬁcient” than STD. Small “outliers” of 5 standard deviations cause MAD to be ﬁve times more efﬁcient.</p>
+</blockquote>
+<p>Therefore, as we move towards distribution with fatter tails, we move to a place where standard deviation is worse than useless: it is dangerous. The problem compounds as the tails are precisely convex to the scale of the distribution.</p>
+<p>Thus, to estimate the tails with SD is to play with fire: we are verly likely to make mistakes that will compound at the part of the distribution that matters the most. As Taleb says, this is also one of the misunderstandings of the Black Swan: the problem is not only that the extreme plays a large role; but also that we can very easily produce bogus estimates of the probabilities at the tail.</p>
+<section id="why" class="level3">
+<h3 class="anchored" data-anchor-id="why">Why?</h3>
+<p>The problem arises from the weighting that SD performs. The larger the observation, the even larger weight will have on the Standard Deviation. Whereas MAD uses a more natural weighting, where the weight is equal to each observation. This becomes evident if we examine the cumulative SD and cumulative MAD, where every once in a while we get an extreme value.</p>
+<p>To simulate this, let’s sample from a Cauchy distribution where there is not even a defined first moment. In sample, however, we can calculate anything:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>samples <span class="ot">&lt;-</span> <span class="fu">rcauchy</span>(<span class="dv">10000</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>cumstd <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">cumvar</span>(samples))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>cummad <span class="ot">&lt;-</span> <span class="fu">cummean</span>(<span class="fu">abs</span>(samples <span class="sc">-</span> <span class="fu">cummean</span>(samples)))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">obs =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10000</span>, cumstd, cummad) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(obs <span class="sc">&gt;</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>obs) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(obs, value)) <span class="sc">+</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">color =</span> name)) <span class="sc">+</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    hrbrthemes<span class="sc">::</span><span class="fu">theme_ipsum_rc</span>(<span class="at">grid =</span> <span class="st">"Y"</span>) <span class="sc">+</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_brewer</span>(<span class="at">palette =</span> <span class="st">"Set1"</span>) <span class="sc">+</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">""</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"The SD is way too sensible to outliers"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-05-13-standard-deviation-and-fat-tails_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>SD is only optimal in Mediocristan. When we start moving toward Extremistan, SD blows up due to being a sum of squares. Even relatively small deviations wash away the efficiency of SD over MAD. Thus, when dealing with fat-tails, SD should not be used as it can lead to very imprecise estimates of the probability at the tails. Thus, SD is not an appropriate measure of the scale of the distribution for fat tails. It is much better to use the MAD. That is, <strong>MAD is a better estimator of <span class="math inline">\(E(|X-\mu|)\)</span> than SD as an estimator of <span class="math inline">\(\sigma\)</span>.</strong></p>
+
+
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

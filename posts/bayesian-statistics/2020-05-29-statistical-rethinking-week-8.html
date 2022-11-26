@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.262">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="">
+<meta name="dcterms.date" content="2020-05-29">
+
+<title>David Salazar - Statistical Rethinking Week 8</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">David Salazar</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../archive.html">
+ <span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/David-Salazar"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/DavidSalazarVir"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Statistical Rethinking Week 8</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 29, 2020</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#statistical-rethinking-week-8" id="toc-statistical-rethinking-week-8" class="nav-link active" data-scroll-target="#statistical-rethinking-week-8">Statistical Rethinking Week 8</a></li>
+  <li><a href="#homework" id="toc-homework" class="nav-link" data-scroll-target="#homework">Homework</a></li>
+  <li><a href="#st-problem" id="toc-st-problem" class="nav-link" data-scroll-target="#st-problem">1st Problem</a>
+  <ul class="collapse">
+  <li><a href="#model-with-only-predation" id="toc-model-with-only-predation" class="nav-link" data-scroll-target="#model-with-only-predation">Model with only predation</a></li>
+  <li><a href="#model-with-only-size" id="toc-model-with-only-size" class="nav-link" data-scroll-target="#model-with-only-size">Model with only size</a></li>
+  <li><a href="#model-with-size-and-predators" id="toc-model-with-size-and-predators" class="nav-link" data-scroll-target="#model-with-size-and-predators">Model with size and predators</a></li>
+  <li><a href="#model-with-an-interaction" id="toc-model-with-an-interaction" class="nav-link" data-scroll-target="#model-with-an-interaction">Model with an interaction</a></li>
+  </ul></li>
+  <li><a href="#nd-problem" id="toc-nd-problem" class="nav-link" data-scroll-target="#nd-problem">2nd problem</a>
+  <ul class="collapse">
+  <li><a href="#traditional-fixed-effects" id="toc-traditional-fixed-effects" class="nav-link" data-scroll-target="#traditional-fixed-effects">Traditional fixed-effects</a></li>
+  </ul></li>
+  <li><a href="#rd-problem" id="toc-rd-problem" class="nav-link" data-scroll-target="#rd-problem">3rd Problem</a></li>
+  </ul>
+</nav>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="statistical-rethinking-week-8" class="level1">
+<h1>Statistical Rethinking Week 8</h1>
+<p>This week was our first introduction to Multilevel models. Models where we explicitly model a family of parameters as coming from a common distribution: with each sample, we simultaneously learn each parameter and the parameters of the common distribution. <strong>This process of sharing information is called pooling. The end result is shrinkage: each parameter gets pulled towards the estimated mean of the common distribution.</strong> I tried my best to understand this process and result by simulating in <a href="https://david-salazar.github.io/2020/05/28/simulating-into-understanding-multilevel-models/">this post</a></p>
+</section>
+<section id="homework" class="level1">
+<h1>Homework</h1>
+</section>
+<section id="st-problem" class="level1">
+<h1>1st Problem</h1>
+<p>Revisit the Reed frog survival data, data(reedfrogs), and add the predation and size treatment variables to the varying intercepts model. Consider models with either predictor alone, both predictors, as well as a model including their interaction. What do you infer about the causal influence of these predictor variables? Also focus on the inferred variation across tanks (the <span class="math inline">\(\sigma\)</span> across tanks). Explain why it changes as it does across models with different predictors included.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 48
+Columns: 5
+$ density  &lt;int&gt; 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 1…
+$ pred     &lt;fct&gt; no, no, no, no, no, no, no, no, pred, pred, pred, pred, pred,…
+$ size     &lt;fct&gt; big, big, big, big, small, small, small, small, big, big, big…
+$ surv     &lt;int&gt; 9, 10, 7, 10, 9, 9, 10, 9, 4, 9, 7, 6, 7, 5, 9, 9, 24, 23, 22…
+$ propsurv &lt;dbl&gt; 0.90, 1.00, 0.70, 1.00, 0.90, 0.90, 1.00, 0.90, 0.40, 0.90, 0…</code></pre>
+</div>
+</div>
+<section id="model-with-only-predation" class="level2">
+<h2 class="anchored" data-anchor-id="model-with-only-predation">Model with only predation</h2>
+<p>Let’s check how the predation variable is encoded:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>  pred  n
+1   no 24
+2 pred 24</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>  predation_int pred  n
+1             0   no 24
+2             1 pred 24</code></pre>
+</div>
+</div>
+<p>Now, let’s propose the model with varying intercept for tanks and taking into account whether there were predators or not.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains, with 1 thread(s) per chain...
+
+Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 1 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 1 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 1 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 2 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 2 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 2 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 2 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 2 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 3 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 3 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 3 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 3 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 3 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 3 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 4 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 4 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 4 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 4 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 4 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 4 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 1 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 1 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 1 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 1 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 1 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 1 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 2 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 2 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 2 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 3 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 3 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 3 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 4 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 4 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 4 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 1 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 1 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 2 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 2 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 2 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 3 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 3 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 3 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 4 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 4 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 4 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 1 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 1 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 2 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 2 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 2 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 3 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 3 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 4 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 4 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 4 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 1 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 1 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 2 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 2 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 2 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 3 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 3 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 3 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 4 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 4 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 4 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 3 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 1 finished in 0.8 seconds.
+Chain 2 finished in 0.7 seconds.
+Chain 3 finished in 0.8 seconds.
+Chain 4 finished in 0.7 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 0.7 seconds.
+Total execution time: 0.9 seconds.</code></pre>
+</div>
+</div>
+<p>Let’s check the posterior and the Rhat values:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>     Rhat4       
+ Min.   :0.9992  
+ 1st Qu.:0.9994  
+ Median :0.9996  
+ Mean   :0.9998  
+ 3rd Qu.:0.9998  
+ Max.   :1.0028  </code></pre>
+</div>
+</div>
+<p>The <span class="math inline">\(\hat{R}\)</span> values look good enough, all are close to 0. There appear to not be signs of transient like behavior.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>            mean        sd      5.5%     94.5%    n_eff    Rhat4
+pred  -1.8222334 0.2997461 -2.280908 -1.312238 1410.822 1.001462
+a_bar  2.1963295 0.2296880  1.814582  2.555532 1922.014 1.001507
+sigma  0.9106572 0.1645364  0.675735  1.189860 1139.664 1.002823</code></pre>
+</div>
+</div>
+<p>As expected, tanks with predators have, on average, lower log odds of probability of surviving.</p>
+</section>
+<section id="model-with-only-size" class="level2">
+<h2 class="anchored" data-anchor-id="model-with-only-size">Model with only size</h2>
+<p>Let’s prepare size to the model:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>   size  n
+1   big 24
+2 small 24</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>  size_int  size  n
+1        0   big 24
+2        1 small 24</code></pre>
+</div>
+</div>
+<p>Now, let’s add the size to our model with varying intercepts:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains, with 1 thread(s) per chain...
+
+Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 1 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 1 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 1 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 1 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 2 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 2 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 3 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 3 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 3 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 4 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 4 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 1 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 1 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 1 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 1 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 2 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 2 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 2 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 2 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 3 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 3 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 3 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 3 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 4 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 4 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 4 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 4 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 1 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 2 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 2 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 3 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 3 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 4 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 4 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 4 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 1 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 1 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 2 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 2 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 3 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 3 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 3 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 4 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 1 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 1 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 1 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 2 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 2 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 2 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 3 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 3 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 4 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 4 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 1 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 1 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 2 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 2 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 3 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 3 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 3 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 4 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 4 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 1 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 2 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 3 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 4 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 4 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 1 finished in 0.8 seconds.
+Chain 2 finished in 0.8 seconds.
+Chain 3 finished in 0.8 seconds.
+Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 finished in 0.8 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 0.8 seconds.
+Total execution time: 1.0 seconds.</code></pre>
+</div>
+</div>
+<p>Let’s check our <span class="math inline">\(\hat{R}\)</span> values:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>     Rhat4       
+ Min.   :0.9992  
+ 1st Qu.:0.9995  
+ Median :0.9999  
+ Mean   :1.0001  
+ 3rd Qu.:1.0004  
+ Max.   :1.0027  </code></pre>
+</div>
+</div>
+<p>Let’s check our precis ouptut:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>           mean        sd       5.5%     94.5%    n_eff    Rhat4
+s     0.2621837 0.3559195 -0.3168585 0.8315286 1557.368 1.002716
+a_bar 1.2242716 0.3072198  0.7418783 1.7224410 1090.394 1.000859
+sigma 1.5785150 0.1997810  1.2827567 1.9168341 1338.498 1.002117</code></pre>
+</div>
+</div>
+<p>It seems that the size is not that relevant in the log-odds scale. Its 89% PI covers zero and a prety wide interval.</p>
+</section>
+<section id="model-with-size-and-predators" class="level2">
+<h2 class="anchored" data-anchor-id="model-with-size-and-predators">Model with size and predators</h2>
+<p>Let’s include both variables:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains, with 1 thread(s) per chain...
+
+Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 1 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 2 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 3 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 3 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 4 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 4 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 1 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 1 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 1 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 1 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 2 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 2 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 2 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 2 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 3 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 3 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 3 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 4 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 4 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 1 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 1 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 2 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 2 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 3 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 3 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 3 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 4 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 4 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 4 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 1 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 1 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 3 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 4 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 4 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 1 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 2 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 2 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 3 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 3 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 3 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 4 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 4 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 4 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 1 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 1 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 1 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 2 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 2 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 2 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 3 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 3 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 4 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 4 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 1 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 1 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 2 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 2 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 2 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 3 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 3 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 3 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 4 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 4 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 4 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 3 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 1 finished in 0.9 seconds.
+Chain 2 finished in 0.9 seconds.
+Chain 3 finished in 0.9 seconds.
+Chain 4 finished in 0.8 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 0.9 seconds.
+Total execution time: 1.0 seconds.</code></pre>
+</div>
+</div>
+<p>Let’s check our <span class="math inline">\(\hat{R}\)</span> values:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>     Rhat4       
+ Min.   :0.9991  
+ 1st Qu.:0.9994  
+ Median :0.9996  
+ Mean   :0.9998  
+ 3rd Qu.:1.0000  
+ Max.   :1.0015  </code></pre>
+</div>
+</div>
+<p>The <span class="math inline">\(\hat{R}\)</span> values look OK. Let’s check the <code>precis</code> output:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>            mean        sd        5.5%      94.5%    n_eff     Rhat4
+s      0.3802925 0.2658079 -0.04409109  0.7974136 2220.168 1.0014675
+pred  -1.8502836 0.2942538 -2.29862435 -1.3587384 1648.664 1.0011477
+a_bar  2.0230849 0.2598151  1.59480645  2.4302732 2075.647 0.9995557
+sigma  0.8718928 0.1674364  0.62479505  1.1597191 1044.173 1.0009064</code></pre>
+</div>
+</div>
+<p>Predators’ effect is still large and negative on the log-odds scale. Also, size’s effect has shifted and, once we have statistically adjusted by the presence of predators, now has most of its posterior mass to the right of zero. Presumably, this arises because size and the presence of predators are related; unless we adjust by the presence of predators, the coefficient for size will pick up some of the predators’ effect.</p>
+</section>
+<section id="model-with-an-interaction" class="level2">
+<h2 class="anchored" data-anchor-id="model-with-an-interaction">Model with an interaction</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains, with 1 thread(s) per chain...
+
+Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 1 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 1 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 3 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 4 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 1 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 1 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 2 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 2 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 2 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 3 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 3 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 3 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 4 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 4 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 4 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 1 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 1 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 1 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 2 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 2 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 3 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 3 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 4 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 4 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 1 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 1 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 2 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 2 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 3 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 3 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 3 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 4 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 4 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 4 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 1 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 1 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 1 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 1 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 2 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 2 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 2 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 3 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 3 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 4 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 4 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 4 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 1 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 1 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 1 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 2 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 2 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 3 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 3 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 3 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 4 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 4 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 1 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 2 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 2 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 3 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 3 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 4 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 4 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 4 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 3 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 1 finished in 1.0 seconds.
+Chain 2 finished in 1.0 seconds.
+Chain 3 finished in 1.0 seconds.
+Chain 4 finished in 0.9 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 1.0 seconds.
+Total execution time: 1.1 seconds.</code></pre>
+</div>
+</div>
+<p>.</p>
+<p>Let’s check on the <span class="math inline">\(\hat{R}\)</span> values:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>     Rhat4       
+ Min.   :0.9991  
+ 1st Qu.:0.9995  
+ Median :0.9997  
+ Mean   :0.9999  
+ 3rd Qu.:1.0000  
+ Max.   :1.0020  </code></pre>
+</div>
+</div>
+<p>The <span class="math inline">\(\hat{R}\)</span> values look OK. Let’s check the <code>precis</code> output:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>                   mean        sd        5.5%      94.5%    n_eff     Rhat4
+s            0.39027815 0.2917359 -0.06399788  0.8527317 2805.604 0.9998481
+pred        -1.86693961 0.3037439 -2.32497935 -1.3481036 1942.572 1.0012481
+interaction -0.01565226 0.2231252 -0.37841780  0.3360543 4759.155 0.9993405
+a_bar        2.02130251 0.2554671  1.61979835  2.4199170 2432.114 1.0007998
+sigma        0.86186357 0.1669389  0.61695795  1.1412422 1423.359 1.0019521</code></pre>
+</div>
+</div>
+<p>Prediction is still large and negative on the log-odds scale. Size also does not appear to change much with the interaction. The interaction has a large standard error and most of its mass lies largely symmetric around zero.</p>
+<p>Now it’s the turn to check how the estimated variation of tanks has changed with the different models:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-05-29-statistical-rethinking-week-8_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+<p>All the models that include predators have almost identical estimates for the variation across tanks. That is, the presence of predators explain some of the variation across tanks.</p>
+<p>Finally, let’s compare the models according to information criteria:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>                         WAIC       SE     dWAIC       dSE    pWAIC    weight
+model_both           199.0788 7.927714 0.0000000        NA 19.19389 0.3594406
+model_only_predators 199.5214 8.146360 0.4425911 1.5345879 19.53953 0.2880844
+model_interaction    200.3865 7.898739 1.3076555 0.5588874 19.65161 0.1869276
+model_only_size      200.6294 7.227683 1.5505815 3.9940200 21.08975 0.1655475</code></pre>
+</div>
+</div>
+<p>According to information criteria, all of the models make essentially have the same expected predictive performance out-of-sample.</p>
+</section>
+</section>
+<section id="nd-problem" class="level1">
+<h1>2nd problem</h1>
+<ol start="2" type="1">
+<li><p>In 1980, a typical Bengali woman could have 5 or more children in her lifetime. By the year 2000, a typical Bengali woman had only 2 or 3. You’re going to look at a historical set of data, when contraception was widely available but many families chose not to use it. These data reside in data(bangladesh) and come from the 1988 Bangladesh Fertility Survey. Each row is one of 1934 women. There are six variables, but you can focus on two of them for this practice problem:</p></li>
+<li><p>district</p></li>
+<li><p>use.contraception</p></li>
+</ol>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,934
+Columns: 6
+$ woman             &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 1…
+$ district          &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+$ use.contraception &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1…
+$ living.children   &lt;int&gt; 4, 1, 3, 4, 1, 1, 4, 4, 2, 4, 1, 1, 2, 4, 4, 4, 1, 4…
+$ age.centered      &lt;dbl&gt; 18.4400, -5.5599, 1.4400, 8.4400, -13.5590, -11.5600…
+$ urban             &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…</code></pre>
+</div>
+</div>
+<p>Let’s fix the district:</p>
+<div class="cell">
+
+</div>
+<blockquote class="blockquote">
+<p>Now, focus on predicting use.contraception, clustered by district_id. Fit both (1) a traditional fixed-effects model that uses an index variable for district and (2) a multilevel model with varying intercepts for district.</p>
+</blockquote>
+<section id="traditional-fixed-effects" class="level2">
+<h2 class="anchored" data-anchor-id="traditional-fixed-effects">Traditional fixed-effects</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains, with 1 thread(s) per chain...
+
+Chain 1 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 2 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 3 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 4 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 1 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 2 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 3 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 4 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 1 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 2 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 4 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 3 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 1 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 2 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 4 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 3 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 2 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 1 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 4 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 3 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 2 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 2 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 4 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 3 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 1 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 2 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 3 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 4 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 1 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 2 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 4 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 3 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 2 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 4 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 3 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 2 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 4 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 1 finished in 4.3 seconds.
+Chain 2 finished in 4.2 seconds.
+Chain 4 finished in 4.2 seconds.
+Chain 3 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 3 finished in 4.3 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 4.2 seconds.
+Total execution time: 4.4 seconds.</code></pre>
+</div>
+</div>
+<p>Let’s check the <span class="math inline">\(\hat{R}\)</span> values:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>     Rhat4       
+ Min.   :0.9981  
+ 1st Qu.:0.9985  
+ Median :0.9986  
+ Mean   :0.9987  
+ 3rd Qu.:0.9988  
+ Max.   :1.0003  </code></pre>
+</div>
+</div>
+<p>The <span class="math inline">\(\hat{R}\)</span> values look OK. Let’s fit the multilevel model:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains, with 1 thread(s) per chain...
+
+Chain 1 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 2 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 3 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 4 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 2 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 4 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 1 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 3 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 2 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 4 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 1 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 3 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 1 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 2 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 4 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 3 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 1 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 2 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 4 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 3 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 1 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 4 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 2 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 3 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 1 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 2 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 4 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 3 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 1 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 2 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 4 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 3 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 1 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 2 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 4 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 3 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 2 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 1 finished in 5.9 seconds.
+Chain 2 finished in 5.9 seconds.
+Chain 4 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 4 finished in 5.9 seconds.
+Chain 3 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 3 finished in 6.1 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 5.9 seconds.
+Total execution time: 6.2 seconds.</code></pre>
+</div>
+</div>
+<p>Let’s check on the <span class="math inline">\(\hat{R}\)</span> values:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>     Rhat4       
+ Min.   :0.9983  
+ 1st Qu.:0.9991  
+ Median :0.9997  
+ Mean   :0.9999  
+ 3rd Qu.:1.0002  
+ Max.   :1.0049  </code></pre>
+</div>
+</div>
+<p>The <span class="math inline">\(\hat{R}\)</span> values look OK.</p>
+<p>Now let’s inspect the values for the distribution of varying intercepts for each district:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>            mean         sd       5.5%      94.5%    n_eff    Rhat4
+alpha -0.5300451 0.09031838 -0.6757211 -0.3845637 725.4713 1.002841
+sigma  0.5155339 0.08471016  0.3923543  0.6590001 802.9495 1.002967</code></pre>
+</div>
+</div>
+<p>The overall use of contraceptives seems unlikely across districts, thus the negative alpha.</p>
+<blockquote class="blockquote">
+<p>Plot the predicted proportions of women in each district using contraception, for both the fixed-effects model and the varying-effects model.</p>
+</blockquote>
+<p>Notice that each women, within a same district, has the same prediction.</p>
+<div class="cell">
+
+</div>
+<p>Let’s average over the posterior the alpha of the distribution of varying intercepts per district</p>
+<div class="cell">
+
+</div>
+<p>Let’s plot the requested graph:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-05-29-statistical-rethinking-week-8_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We are seeing the consequences of pooling information from the common distribution of districts: each district’s prediction is overall much closer to the estimated common distribution’s mean than the predictions from the fixed effects model. Therefore, each yellow point is closer to the red line than its corresponding purple point. There are a couple of districts where the difference in predictions between the two models is huge. This are the places where most outside information was used. From what we’ve known about Pooling, these must be the places that were most likely to overfit and had fewer data points. Let’s confirm this intuition:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-05-29-statistical-rethinking-week-8_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Finally, let’s compare their expected out of sample performance:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>                        WAIC       SE    dWAIC      dSE    pWAIC     weight
+model_multilevel    2515.105 24.92913 0.000000       NA 35.82908 0.98751026
+model_fixed_effects 2523.846 28.93510 8.740559 7.733149 53.90337 0.01248974</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="rd-problem" class="level1">
+<h1>3rd Problem</h1>
+<p>Return to the Trolley data, data(Trolley), from Chapter 12. Define and fit a varying intercepts model for these data. By this I mean to add an intercept parameter for the individual to the linear model. Cluster the varying intercepts on individual participants, as indicated by the unique values in the id variable. Include action, intention, and contact as before.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 9,930
+Columns: 12
+$ case      &lt;fct&gt; cfaqu, cfbur, cfrub, cibox, cibur, cispe, fkaqu, fkboa, fkbo…
+$ response  &lt;int&gt; 4, 3, 4, 3, 3, 3, 5, 4, 4, 4, 4, 4, 4, 5, 4, 4, 4, 4, 4, 3, …
+$ order     &lt;int&gt; 2, 31, 16, 32, 4, 9, 29, 12, 23, 22, 27, 19, 14, 3, 18, 15, …
+$ id        &lt;fct&gt; 96;434, 96;434, 96;434, 96;434, 96;434, 96;434, 96;434, 96;4…
+$ age       &lt;int&gt; 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, …
+$ male      &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+$ edu       &lt;fct&gt; Middle School, Middle School, Middle School, Middle School, …
+$ action    &lt;int&gt; 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, …
+$ intention &lt;int&gt; 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, …
+$ contact   &lt;int&gt; 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+$ story     &lt;fct&gt; aqu, bur, rub, box, bur, spe, aqu, boa, box, bur, car, spe, …
+$ action2   &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, …</code></pre>
+</div>
+</div>
+<p>Therefore, we will run an ordered logistic model where Action, Intention and Contact interact between each other.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains, with 1 thread(s) per chain...
+
+Chain 1 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 2 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 3 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 4 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 3 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 4 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 2 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 1 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 4 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 2 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 3 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 4 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 1 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 2 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 3 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 4 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 2 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 3 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 1 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 4 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 3 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 4 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 2 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 1 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 2 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 4 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 1 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 3 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 2 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 4 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 3 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 2 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 3 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 3 finished in 238.1 seconds.
+Chain 4 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 2 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 2 finished in 255.4 seconds.
+Chain 4 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 4 finished in 265.2 seconds.
+Chain 1 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 1 finished in 285.3 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 261.0 seconds.
+Total execution time: 285.6 seconds.</code></pre>
+</div>
+</div>
+<p>Let’s check our <span class="math inline">\(\hat{R}\)</span> values:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>     Rhat4      
+ Min.   :1.001  
+ 1st Qu.:1.001  
+ Median :1.003  
+ Mean   :1.002  
+ 3rd Qu.:1.004  
+ Max.   :1.004  </code></pre>
+</div>
+</div>
+<p>The <span class="math inline">\(\hat{R}\)</span> values look good enough.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>          mean         sd       5.5%      94.5%    n_eff    Rhat4
+bIC -1.2536887 0.09787824 -1.4078527 -1.0972498 916.6130 1.001050
+bIA -0.4588409 0.07976593 -0.5846241 -0.3308186 915.8706 1.002552
+bI  -0.2635621 0.05547950 -0.3539045 -0.1741581 851.2259 1.003748
+bC  -0.3155594 0.06895451 -0.4275243 -0.2047311 881.3079 1.000786
+bA  -0.4428254 0.05420215 -0.5289409 -0.3556129 798.8642 1.003789</code></pre>
+</div>
+</div>
+<p>Now, let’s fit the model with varying intercepts by individual:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains, with 1 thread(s) per chain...
+
+Chain 1 Iteration:    1 / 1500 [  0%]  (Warmup) 
+Chain 2 Iteration:    1 / 1500 [  0%]  (Warmup) 
+Chain 3 Iteration:    1 / 1500 [  0%]  (Warmup) 
+Chain 4 Iteration:    1 / 1500 [  0%]  (Warmup) 
+Chain 3 Iteration:  100 / 1500 [  6%]  (Warmup) 
+Chain 4 Iteration:  100 / 1500 [  6%]  (Warmup) 
+Chain 1 Iteration:  100 / 1500 [  6%]  (Warmup) 
+Chain 2 Iteration:  100 / 1500 [  6%]  (Warmup) 
+Chain 3 Iteration:  200 / 1500 [ 13%]  (Warmup) 
+Chain 1 Iteration:  200 / 1500 [ 13%]  (Warmup) 
+Chain 4 Iteration:  200 / 1500 [ 13%]  (Warmup) 
+Chain 2 Iteration:  200 / 1500 [ 13%]  (Warmup) 
+Chain 3 Iteration:  300 / 1500 [ 20%]  (Warmup) 
+Chain 1 Iteration:  300 / 1500 [ 20%]  (Warmup) 
+Chain 4 Iteration:  300 / 1500 [ 20%]  (Warmup) 
+Chain 2 Iteration:  300 / 1500 [ 20%]  (Warmup) 
+Chain 3 Iteration:  400 / 1500 [ 26%]  (Warmup) 
+Chain 1 Iteration:  400 / 1500 [ 26%]  (Warmup) 
+Chain 4 Iteration:  400 / 1500 [ 26%]  (Warmup) 
+Chain 3 Iteration:  500 / 1500 [ 33%]  (Warmup) 
+Chain 2 Iteration:  400 / 1500 [ 26%]  (Warmup) 
+Chain 1 Iteration:  500 / 1500 [ 33%]  (Warmup) 
+Chain 4 Iteration:  500 / 1500 [ 33%]  (Warmup) 
+Chain 3 Iteration:  600 / 1500 [ 40%]  (Warmup) 
+Chain 1 Iteration:  600 / 1500 [ 40%]  (Warmup) 
+Chain 2 Iteration:  500 / 1500 [ 33%]  (Warmup) 
+Chain 4 Iteration:  600 / 1500 [ 40%]  (Warmup) 
+Chain 3 Iteration:  700 / 1500 [ 46%]  (Warmup) 
+Chain 1 Iteration:  700 / 1500 [ 46%]  (Warmup) 
+Chain 3 Iteration:  751 / 1500 [ 50%]  (Sampling) 
+Chain 4 Iteration:  700 / 1500 [ 46%]  (Warmup) 
+Chain 2 Iteration:  600 / 1500 [ 40%]  (Warmup) 
+Chain 4 Iteration:  751 / 1500 [ 50%]  (Sampling) 
+Chain 1 Iteration:  751 / 1500 [ 50%]  (Sampling) 
+Chain 3 Iteration:  850 / 1500 [ 56%]  (Sampling) 
+Chain 2 Iteration:  700 / 1500 [ 46%]  (Warmup) 
+Chain 4 Iteration:  850 / 1500 [ 56%]  (Sampling) 
+Chain 1 Iteration:  850 / 1500 [ 56%]  (Sampling) 
+Chain 3 Iteration:  950 / 1500 [ 63%]  (Sampling) 
+Chain 2 Iteration:  751 / 1500 [ 50%]  (Sampling) 
+Chain 4 Iteration:  950 / 1500 [ 63%]  (Sampling) 
+Chain 1 Iteration:  950 / 1500 [ 63%]  (Sampling) 
+Chain 3 Iteration: 1050 / 1500 [ 70%]  (Sampling) 
+Chain 4 Iteration: 1050 / 1500 [ 70%]  (Sampling) 
+Chain 1 Iteration: 1050 / 1500 [ 70%]  (Sampling) 
+Chain 3 Iteration: 1150 / 1500 [ 76%]  (Sampling) 
+Chain 2 Iteration:  850 / 1500 [ 56%]  (Sampling) 
+Chain 4 Iteration: 1150 / 1500 [ 76%]  (Sampling) 
+Chain 1 Iteration: 1150 / 1500 [ 76%]  (Sampling) 
+Chain 3 Iteration: 1250 / 1500 [ 83%]  (Sampling) 
+Chain 4 Iteration: 1250 / 1500 [ 83%]  (Sampling) 
+Chain 1 Iteration: 1250 / 1500 [ 83%]  (Sampling) 
+Chain 2 Iteration:  950 / 1500 [ 63%]  (Sampling) 
+Chain 3 Iteration: 1350 / 1500 [ 90%]  (Sampling) 
+Chain 4 Iteration: 1350 / 1500 [ 90%]  (Sampling) 
+Chain 1 Iteration: 1350 / 1500 [ 90%]  (Sampling) 
+Chain 3 Iteration: 1450 / 1500 [ 96%]  (Sampling) 
+Chain 3 Iteration: 1500 / 1500 [100%]  (Sampling) 
+Chain 3 finished in 755.1 seconds.
+Chain 4 Iteration: 1450 / 1500 [ 96%]  (Sampling) 
+Chain 1 Iteration: 1450 / 1500 [ 96%]  (Sampling) 
+Chain 2 Iteration: 1050 / 1500 [ 70%]  (Sampling) 
+Chain 4 Iteration: 1500 / 1500 [100%]  (Sampling) 
+Chain 4 finished in 778.1 seconds.
+Chain 1 Iteration: 1500 / 1500 [100%]  (Sampling) 
+Chain 1 finished in 779.8 seconds.
+Chain 2 Iteration: 1150 / 1500 [ 76%]  (Sampling) 
+Chain 2 Iteration: 1250 / 1500 [ 83%]  (Sampling) 
+Chain 2 Iteration: 1350 / 1500 [ 90%]  (Sampling) 
+Chain 2 Iteration: 1450 / 1500 [ 96%]  (Sampling) 
+Chain 2 Iteration: 1500 / 1500 [100%]  (Sampling) 
+Chain 2 finished in 1003.1 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 829.0 seconds.
+Total execution time: 1003.4 seconds.</code></pre>
+</div>
+</div>
+<p>Let’s check the <span class="math inline">\(\hat{R}\)</span> values:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>     Rhat4       
+ Min.   :0.9989  
+ 1st Qu.:0.9997  
+ Median :1.0001  
+ Mean   :1.0003  
+ 3rd Qu.:1.0008  
+ Max.   :1.0056  </code></pre>
+</div>
+</div>
+<p>They look OK.</p>
+<blockquote class="blockquote">
+<p>Compare the varying intercepts model and a model that ignores individuals, using both WAIC/LOO and posterior predictions.</p>
+</blockquote>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>            mean         sd       5.5%      94.5%    n_eff    Rhat4
+bIC   -1.6683595 0.10067796 -1.8280428 -1.5044902 2041.316 1.001806
+bIA   -0.5603385 0.08092598 -0.6881210 -0.4302237 1751.210 1.000439
+bI    -0.3835373 0.05848220 -0.4764278 -0.2909250 1519.676 1.000894
+bC    -0.4521763 0.07003289 -0.5622873 -0.3377944 1938.544 1.002460
+bA    -0.6484359 0.05691941 -0.7385056 -0.5594558 1960.843 1.000483
+sigma  1.9175789 0.08277129  1.7891569  2.0527683 2816.559 1.000350</code></pre>
+</div>
+</div>
+<p>We estimate the sigma to be very large, indicating lots of variations in the responses among the individuals. Once we control for this average response per individual, we can estimate all the other parameters much more easily.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>                     WAIC        SE    dWAIC      dSE     pWAIC weight
+model_varying    31057.66 179.39096    0.000       NA 356.31980      1
+model_no_varying 36930.02  79.88204 5872.354 173.3291  10.94063      0</code></pre>
+</div>
+</div>
+<p>It seems that the expected performance out of sample, for the model with varying intercepts, is a lot better than the expected for the model with no varying intercept.</p>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

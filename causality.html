@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.262">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>David Salazar - Series:CCausal Inference</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-listing/list.min.js"></script>
+<script src="site_libs/quarto-listing/quarto-listing.js"></script>
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script>
+
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    const listingTargetEl = window.document.querySelector('#listing-listing .list');
+    if (!listingTargetEl) {
+      // No listing discovered, do not attach.
+      return; 
+    }
+
+    const options = {
+      valueNames: ['listing-date','listing-title','listing-reading-time','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      
+      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description"],
+    };
+
+    window['quarto-listings'] = window['quarto-listings'] || {};
+    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
+
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  });
+
+  window.addEventListener('hashchange',() => {
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  })
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">David Salazar</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./archive.html">
+ <span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/David-Salazar"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/DavidSalazarVir"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content column-page" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Series:CCausal Inference</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+
+
+
+
+<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
+<div class="list quarto-listing-default">
+<div class="quarto-post image-right" data-index="0" data-categories="" data-listing-date-sort="1598418000000" data-listing-file-modified-sort="1669309245058" data-listing-reading-time-sort="12.68">
+<div class="body">
+<a href="./posts/causality/2020-08-26-causality-mediation-analysis.html">
+<h3 class="no-anchor listing-title">
+Causality: Mediation Analysis
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+Kids are the prototypical question makers; they never stop asking questions. Just after you have answered a <strong>Why?</strong> question, they ask yet another <em>Why</em>? This is the problem of mediation…<em></em><strong></strong><strong></strong><strong></strong>
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./posts/causality/2020-08-26-causality-mediation-analysis.html">
+<div class="listing-date">
+Aug 26, 2020
+</div>
+<div class="listing-reading-time">
+12 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-categories="" data-listing-date-sort="1597899600000" data-listing-file-modified-sort="1669309408607" data-listing-reading-time-sort="6.405">
+<div class="body">
+<a href="./posts/causality/2020-08-20-causality-probabilities-of-causation.html">
+<h3 class="no-anchor listing-title">
+Causality: Probabilities of Causation
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+Questions of attribution are everywhere: i.e., did <span class="math inline">\(X=x\)</span> cause <span class="math inline">\(Y=y\)</span>? From…<strong></strong>
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./posts/causality/2020-08-20-causality-probabilities-of-causation.html">
+<div class="listing-date">
+Aug 20, 2020
+</div>
+<div class="listing-reading-time">
+6 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="2" data-categories="" data-listing-date-sort="1597554000000" data-listing-file-modified-sort="1669309558295" data-listing-reading-time-sort="9.51">
+<div class="body">
+<a href="./posts/causality/2020-08-16-causality-effect-of-treatment-on-the-treated.html">
+<h3 class="no-anchor listing-title">
+Causality: Regret? Look at Effect of Treatment on the Treated
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+Regret about our actions stems from a <strong>counterfactual question</strong>: <em>What if I had acted differently?</em>. Therefore, to answer such question, we need a more elaborate language than the one we…<strong></strong><em></em><strong></strong><strong></strong>
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./posts/causality/2020-08-16-causality-effect-of-treatment-on-the-treated.html">
+<div class="listing-date">
+Aug 16, 2020
+</div>
+<div class="listing-reading-time">
+9 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="3" data-categories="" data-listing-date-sort="1597035600000" data-listing-file-modified-sort="1669309577148" data-listing-reading-time-sort="7.485">
+<div class="body">
+<a href="./posts/causality/2020-08-10-causality-counterfactuals-clash-of-worlds.html">
+<h3 class="no-anchor listing-title">
+Causality: Counterfactuals - Clash of Worlds
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+We’ve seen how the language of causality require an exogenous intervention on the values of <span class="math inline">\(X\)</span>; so far…<span class="math inline"></span><strong></strong><em></em><strong></strong>
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./posts/causality/2020-08-10-causality-counterfactuals-clash-of-worlds.html">
+<div class="listing-date">
+Aug 10, 2020
+</div>
+<div class="listing-reading-time">
+7 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="4" data-categories="" data-listing-date-sort="1596171600000" data-listing-file-modified-sort="1669309634835" data-listing-reading-time-sort="13.58">
+<div class="body">
+<a href="./posts/causality/2020-07-31-causality-testing-identifiability.html">
+<h3 class="no-anchor listing-title">
+Causality: Testing Identifiability
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+We’ve defined causal effects as an interventional distribution and posit two identification strategies to estimate them: the back-door and the front-door criteria. However, we cannot always use these…<em></em>
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./posts/causality/2020-07-31-causality-testing-identifiability.html">
+<div class="listing-date">
+Jul 31, 2020
+</div>
+<div class="listing-reading-time">
+13 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="5" data-categories="" data-listing-date-sort="1596085200000" data-listing-file-modified-sort="1669309671396" data-listing-reading-time-sort="8.295">
+<div class="body">
+<a href="./posts/causality/2020-07-30-causality-the-front-door-criterion.html">
+<h3 class="no-anchor listing-title">
+Causality: The front-door criterion
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+In a past blogpost, I’ve explore the backdoor criterion: a simple <em>graphical algorithm</em>, we can define <strong>which variables we must include</strong> in our analysis in order to <strong>cancel out all the information coming from different causal relationships than the one…</strong>
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./posts/causality/2020-07-30-causality-the-front-door-criterion.html">
+<div class="listing-date">
+Jul 30, 2020
+</div>
+<div class="listing-reading-time">
+8 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="6" data-categories="" data-listing-date-sort="1595653200000" data-listing-file-modified-sort="1669309699193" data-listing-reading-time-sort="12.255">
+<div class="body">
+<a href="./posts/causality/2020-07-25-causality-to-adjust-or-not-to-adjust.html">
+<h3 class="no-anchor listing-title">
+Causality: To adjust or not to adjust
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+In this blogpost, I’ll simulate data to show how <strong>conditioning on as many variables as possible</strong> <em>is not a good idea</em>. Sometimes, conditioning can lead to de-confound an effect; other times, however, conditioning on a variable can create unnecessary…
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./posts/causality/2020-07-25-causality-to-adjust-or-not-to-adjust.html">
+<div class="listing-date">
+Jul 25, 2020
+</div>
+<div class="listing-reading-time">
+12 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="7" data-categories="" data-listing-date-sort="1595394000000" data-listing-file-modified-sort="1669309726784" data-listing-reading-time-sort="10.515">
+<div class="body">
+<a href="./posts/causality/2020-07-22-causality-invariance-under-interventions.html">
+<h3 class="no-anchor listing-title">
+Causality: Invariance under Interventions
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+In the last post we saw how two causal models can yield the same testable implications and thus cannot be distinguished from data alone. That is, we cannot gain…
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./posts/causality/2020-07-22-causality-invariance-under-interventions.html">
+<div class="listing-date">
+Jul 22, 2020
+</div>
+<div class="listing-reading-time">
+10 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="8" data-categories="" data-listing-date-sort="1595048400000" data-listing-file-modified-sort="1669309752595" data-listing-reading-time-sort="18.39">
+<div class="body">
+<a href="./posts/causality/2020-07-18-causality-bayesian-networks.html">
+<h3 class="no-anchor listing-title">
+Causality: Bayesian Networks and Probability Distributions
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+Stats people know that <strong>correlation coefficients do not imply causal effects</strong>. Yet, very often, <em>partial correlation</em> coefficients from <strong>regressions…</strong><em></em><strong></strong><em></em>
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./posts/causality/2020-07-18-causality-bayesian-networks.html">
+<div class="listing-date">
+Jul 18, 2020
+</div>
+<div class="listing-reading-time">
+18 min
+</div>
+</a>
+</div>
+</div>
+</div>
+<div class="listing-no-matching d-none">
+No matching items
+</div>
+</div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.262">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="">
+<meta name="dcterms.date" content="2020-07-30">
+
+<title>David Salazar - Causality: The front-door criterion</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">David Salazar</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../archive.html">
+ <span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/David-Salazar"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/DavidSalazarVir"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Causality: The front-door criterion</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">July 30, 2020</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#motivation" id="toc-motivation" class="nav-link active" data-scroll-target="#motivation">Motivation</a></li>
+  <li><a href="#the-limits-of-the-back-door-a-quick-example" id="toc-the-limits-of-the-back-door-a-quick-example" class="nav-link" data-scroll-target="#the-limits-of-the-back-door-a-quick-example">The limits of the back-door: a quick example</a></li>
+  <li><a href="#consecutive-applications-of-the-back-door-criterion" id="toc-consecutive-applications-of-the-back-door-criterion" class="nav-link" data-scroll-target="#consecutive-applications-of-the-back-door-criterion">Consecutive applications of the back-door criterion</a></li>
+  <li><a href="#empirical-estimation" id="toc-empirical-estimation" class="nav-link" data-scroll-target="#empirical-estimation">Empirical estimation</a></li>
+  <li><a href="#when-can-we-use-the-front-door-criterion" id="toc-when-can-we-use-the-front-door-criterion" class="nav-link" data-scroll-target="#when-can-we-use-the-front-door-criterion">When can we use the Front-Door criterion?</a></li>
+  <li><a href="#a-monte-carlo-experiment" id="toc-a-monte-carlo-experiment" class="nav-link" data-scroll-target="#a-monte-carlo-experiment">A Monte-Carlo experiment</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="motivation" class="level2">
+<h2 class="anchored" data-anchor-id="motivation">Motivation</h2>
+<p>In a <a href="https://david-salazar.github.io/2020/07/25/causality-to-adjust-or-not-to-adjust/">past blogpost</a>, I’ve explore the backdoor criterion: a simple <em>graphical algorithm</em>, we can define <strong>which variables we must include</strong> in our analysis in order to <strong>cancel out all the information coming from different causal relationships than the one we are interested</strong>. However, these variables are not always measured. What else can we do?</p>
+<p>In this blogpost, I’ll explore the front-door criterion: i) an intuitive proof of why it works; (ii) how to estimate it; (iii) what are its fundamental assumptions; finally, (iv) an experiment with monte-carlo samples. Whereas the back-door criterion blocks all the non-causal information that <span class="math inline">\(X\)</span> could possibly pick up, the <strong>front-door exploits the outgoing information from <span class="math inline">\(X\)</span></strong> to derive a causal estimator.</p>
+</section>
+<section id="the-limits-of-the-back-door-a-quick-example" class="level2">
+<h2 class="anchored" data-anchor-id="the-limits-of-the-back-door-a-quick-example">The limits of the back-door: a quick example</h2>
+<p>Let’s assume the following DAG, which is a darling of Pearl’s work. Does smoking cause cancer?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>example <span class="ot">&lt;-</span> <span class="fu">dagify</span>(x <span class="sc">~</span> u,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                  m <span class="sc">~</span> x,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                  y <span class="sc">~</span> u <span class="sc">+</span> m,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"x"</span> <span class="ot">=</span> <span class="st">"Smoking"</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"y"</span> <span class="ot">=</span> <span class="st">"Cancer"</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"m"</span> <span class="ot">=</span> <span class="st">"Tar"</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"u"</span> <span class="ot">=</span> <span class="st">"Genotype"</span>),</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">latent =</span> <span class="st">"u"</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                  <span class="at">exposure =</span> <span class="st">"x"</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                  <span class="at">outcome =</span> <span class="st">"y"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-07-30-causality-the-front-door-criterion_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Given that we cannot measure genotype, we cannot use the back-door criterion to stop <span class="math inline">\(Smoking\)</span> from picking up the causal effect of <span class="math inline">\(Genotype\)</span>. Therefore, one can not use the back-door criterion to <strong>ascertain which portion of the observed association</strong> between smoking and cancer is <em>spurious</em> (because it is attributable to their common cause, Genotype) and what portion is <em>genuinely causative</em>.</p>
+</section>
+<section id="consecutive-applications-of-the-back-door-criterion" class="level2">
+<h2 class="anchored" data-anchor-id="consecutive-applications-of-the-back-door-criterion">Consecutive applications of the back-door criterion</h2>
+<p>However, we notice that we can use the <em>back-door criterion</em> to estimate two partial effects: <span class="math inline">\(X \rightarrow M\)</span> and <span class="math inline">\(M \rightarrow Y\)</span>. <strong>By chaining</strong> these two partial effects, we can obtain <em>the overall effect</em> <span class="math inline">\(X \rightarrow Y\)</span>.</p>
+<p>The intuition for the chaining is thus: intervening on the levels of tar in the lungs lead to different probabilities of cancer: <span class="math inline">\(P(Y = y | \text{do(M = m)})\)</span>. However, the levels of tar are themselves determined by how much someone smokes: <span class="math inline">\(P(M= m| \text{do(X = x)})\)</span>. Therefore, by intervening on smoking to determine the levels of tar we can estimate the causal effect of smoking.</p>
+<p>We intervene on smoking and check the respective effect for each value of tar:</p>
+<p><span class="math display">\[
+P(Y \mid d o(X))=\sum_{M} P(Y \mid M, d o(X)) \times P(M \mid d o(X))
+\]</span></p>
+<p>Because smoking blocks all the back-door paths from tar into cancer, we can replace the conditioning expression by an intervention expression in the first term.<span class="math inline">\(P(Y \mid M, d o(X))=P(Y \mid d o(M), d o(X))\)</span>. Given that intervening on smoking, once we have intervened on tar has no effect on cancer, we can also write <span class="math inline">\(P(Y \mid M, d o(X))=P(Y \mid d o(M), d o(X))=P(Y \mid d o(M))\)</span>.</p>
+<p>Given that smoking blocks all backdoor paths into tar, we can estimate <span class="math inline">\(P(Y \mid d o(M))\)</span> using the back-door adjustment:</p>
+<p><span class="math display">\[
+P(Y \mid d o(M))=\sum_{X} P(Y \mid X, M) \times P(X)
+\]</span></p>
+<p>Therefore, we can re-write <span class="math inline">\(P(Y \mid d o(X))\)</span> thus:</p>
+<p><span class="math display">\[
+P(Y \mid d o(X)) = \sum_{M} P(M | do(X)) \sum_{X'} P(Y \mid X', M) \times P(X')
+\]</span></p>
+<p>Considering that there are no backdoor paths from smoking to tar, we can write <span class="math inline">\(P(M | do(X)) = P(M | X)\)</span>. Therefore, we can re-write our entire expression for <span class="math inline">\(P(Y \mid d o(X))\)</span> in terms of pre-intervention probabilities:</p>
+<p><span class="math display">\[
+P(Y \mid d o(X)) = \sum_{M} P(M | X) \sum_{X'} P(Y \mid X', M) \times P(X')
+\]</span></p>
+<p>This is the <strong>front-door formula</strong>.</p>
+</section>
+<section id="empirical-estimation" class="level2">
+<h2 class="anchored" data-anchor-id="empirical-estimation">Empirical estimation</h2>
+<p><a href="https://www.canr.msu.edu/afre/events/Bellemare%20and%20Bloem%20(2020).pdf">Conceptually</a>,</p>
+<blockquote class="blockquote">
+<p>the FDC [Front-door Criterion] approach works by first estimating the effect of X on M, and then estimating the effect of M on Y holding X constant. Both of these effects are unbiased because <em>nothing confounds</em> the effect of X on M and X blocks <em>the only back-door path</em> between M on Y. <strong>Multiplying these effects by one another yields the FDC estimand</strong>.</p>
+</blockquote>
+<p>Therefore, in a regression setting we can estimate the causal effect using the Average Treatment Effect (ATE) via the FDC thus. Formulate two linear regressions:</p>
+<p>[ M_{i}=+X_{i}+<em>{i} ] and [ Y</em>{i}=+M_{i}+X_{i}+v_{i} ]</p>
+<p>Our estimate of the ATE is given by:</p>
+<p><span class="math display">\[
+ATE = E[Y|do(X)] = \delta \times \gamma
+\]</span></p>
+</section>
+<section id="when-can-we-use-the-front-door-criterion" class="level2">
+<h2 class="anchored" data-anchor-id="when-can-we-use-the-front-door-criterion">When can we use the Front-Door criterion?</h2>
+<p>We’ve given an intuitive proof of the Front-door criterion and given an empirical estimation technique. But what exactly have we presupposed that allowed us to do all of this? In other words, <strong>what are the fundamental assumptions behind the criterion?</strong></p>
+<p>A set of variables ( Z ) is said to satisfy the front-door criterion relative to an ordered pair of variables ( (X, Y) ) if:</p>
+<ol type="1">
+<li><p>Z intercepts all directed paths from ( X ) to ( Y ).</p></li>
+<li><p>There is no backdoor path from ( X ) to ( Z )</p></li>
+<li><p>All backdoor paths from Z to ( Y ) are blocked by X.</p></li>
+</ol>
+<p>When these conditions are met, we can use the Front-Door criterion to estimate the causal effect of <span class="math inline">\(X\)</span>.</p>
+</section>
+<section id="a-monte-carlo-experiment" class="level2">
+<h2 class="anchored" data-anchor-id="a-monte-carlo-experiment">A Monte-Carlo experiment</h2>
+<p>Let’s work a Monte-Carlo experiment to show the power of the backdoor criterion. Consider the following DAG:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dag <span class="ot">&lt;-</span> <span class="fu">downloadGraph</span>(<span class="st">"dagitty.net/m331"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag</span>(dag) <span class="sc">+</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"We only need to measure W to estimate the effect of X on Y"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-07-30-causality-the-front-door-criterion_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Assume that only <span class="math inline">\(X, Y\)</span>, and one additional variable can be measured. Which variable would would allow the identification of the causal effect <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>? The answer is all in the front-door criterion! We only need to measure <span class="math inline">\(W\)</span> to be able to estimate the effect. Notice that:</p>
+<ol type="1">
+<li><p><span class="math inline">\(W\)</span> intercepts all the direct paths from <span class="math inline">\(X\)</span> into <span class="math inline">\(Y\)</span>.</p></li>
+<li><p>There is no backdoor path from <span class="math inline">\(X\)</span> into <span class="math inline">\(W\)</span>.</p></li>
+<li><p>All back-door paths from <span class="math inline">\(W\)</span> into <span class="math inline">\(Y\)</span> are blocked</p></li>
+</ol>
+<p>Therefore, we can use the front-door criterion.</p>
+<p>Let’s use a Monte-Carlo simulation to confirm the answer.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>c <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">2</span><span class="sc">*</span>b <span class="sc">+</span><span class="dv">2</span><span class="sc">*</span>c <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="dv">3</span><span class="sc">*</span>b <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">3</span><span class="sc">*</span>c <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">4</span><span class="sc">+</span>a <span class="sc">+</span><span class="dv">2</span><span class="sc">*</span>z <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">2</span><span class="sc">*</span>x <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> z <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>w <span class="sc">+</span> d <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(b, c, z, a, d, x, w, y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In this simulated dataset, the causal effect of unit of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> is -4. Let’s recuperate this effect by using the back-door criterion to find out for which variables we must control.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag_adjustment_set</span>(dag, <span class="at">outcome =</span> <span class="st">"Y"</span>, <span class="at">exposure =</span> <span class="st">"X"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-07-30-causality-the-front-door-criterion_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+<p>Let’s take the first adjustment set.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>model_backdoor <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(y <span class="sc">~</span> x <span class="sc">+</span> a <span class="sc">+</span> z, <span class="at">data =</span> data, <span class="at">refresh =</span> <span class="dv">0</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>model_backdoor <span class="sc">%&gt;%</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">spread_draws</span>(x) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x)) <span class="sc">+</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_halfeye</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span> </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  hrbrthemes<span class="sc">::</span><span class="fu">theme_ipsum_rc</span>(<span class="at">grid =</span> <span class="st">"y"</span>) <span class="sc">+</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> <span class="sc">-</span><span class="dv">4</span>), <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="sc">-</span><span class="fl">4.08</span>, <span class="at">y =</span> <span class="fl">0.7</span>, <span class="at">label =</span> <span class="st">"True causal effect"</span>, <span class="at">color =</span> <span class="st">"red"</span>, </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">family =</span> <span class="fu">theme_get</span>()<span class="sc">$</span>text[[<span class="st">"family"</span>]]) <span class="sc">+</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Causal inference from Model y ~ x + a + z"</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"We deconfound our estimates by conditioning on a and z"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-07-30-causality-the-front-door-criterion_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Given our DAG, a testable implication is that we must arrive at the same answer by using the front-door criterion. <strong>Remember that it is just a consecutive use of the back-door criterion that translates into two regressions</strong>. Therefore, we can use a multi-variable model thus:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>model_frontdoor <span class="ot">&lt;-</span> <span class="fu">ulam</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">alist</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(Y, W) <span class="sc">~</span> <span class="fu">multi_normal</span>(<span class="fu">c</span>(muY, muW), Rho, Sigma),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    muY <span class="ot">&lt;-</span> alphaY <span class="sc">+</span> delta<span class="sc">*</span>W,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    muW <span class="ot">&lt;-</span> alphaW <span class="sc">+</span> gamma<span class="sc">*</span>X, </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    gq<span class="sc">&gt;</span> ate <span class="ot">&lt;-</span> gamma <span class="sc">*</span> delta, <span class="co"># calculate ate directly in stan</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(alphaY, alphaW) <span class="sc">~</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.2</span>),</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(gamma, delta) <span class="sc">~</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.5</span>),</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    Rho <span class="sc">~</span> <span class="fu">lkj_corr</span>(<span class="dv">2</span>),</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    Sigma <span class="sc">~</span> <span class="fu">exponential</span>(<span class="dv">1</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">list</span>(<span class="at">Y =</span> data<span class="sc">$</span>y, <span class="at">X =</span> data<span class="sc">$</span>x, <span class="at">W =</span> data<span class="sc">$</span>w), <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">3000</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains, with 1 thread(s) per chain...
+
+Chain 1 Iteration:    1 / 3000 [  0%]  (Warmup) 
+Chain 2 Iteration:    1 / 3000 [  0%]  (Warmup) 
+Chain 3 Iteration:    1 / 3000 [  0%]  (Warmup) 
+Chain 4 Iteration:    1 / 3000 [  0%]  (Warmup) 
+Chain 3 Iteration:  100 / 3000 [  3%]  (Warmup) 
+Chain 1 Iteration:  100 / 3000 [  3%]  (Warmup) 
+Chain 4 Iteration:  100 / 3000 [  3%]  (Warmup) 
+Chain 2 Iteration:  100 / 3000 [  3%]  (Warmup) 
+Chain 3 Iteration:  200 / 3000 [  6%]  (Warmup) 
+Chain 1 Iteration:  200 / 3000 [  6%]  (Warmup) 
+Chain 4 Iteration:  200 / 3000 [  6%]  (Warmup) 
+Chain 2 Iteration:  200 / 3000 [  6%]  (Warmup) 
+Chain 3 Iteration:  300 / 3000 [ 10%]  (Warmup) 
+Chain 1 Iteration:  300 / 3000 [ 10%]  (Warmup) 
+Chain 4 Iteration:  300 / 3000 [ 10%]  (Warmup) 
+Chain 2 Iteration:  300 / 3000 [ 10%]  (Warmup) 
+Chain 3 Iteration:  400 / 3000 [ 13%]  (Warmup) 
+Chain 4 Iteration:  400 / 3000 [ 13%]  (Warmup) 
+Chain 1 Iteration:  400 / 3000 [ 13%]  (Warmup) 
+Chain 2 Iteration:  400 / 3000 [ 13%]  (Warmup) 
+Chain 1 Iteration:  500 / 3000 [ 16%]  (Warmup) 
+Chain 3 Iteration:  500 / 3000 [ 16%]  (Warmup) 
+Chain 4 Iteration:  500 / 3000 [ 16%]  (Warmup) 
+Chain 2 Iteration:  500 / 3000 [ 16%]  (Warmup) 
+Chain 3 Iteration:  600 / 3000 [ 20%]  (Warmup) 
+Chain 1 Iteration:  600 / 3000 [ 20%]  (Warmup) 
+Chain 4 Iteration:  600 / 3000 [ 20%]  (Warmup) 
+Chain 2 Iteration:  600 / 3000 [ 20%]  (Warmup) 
+Chain 1 Iteration:  700 / 3000 [ 23%]  (Warmup) 
+Chain 3 Iteration:  700 / 3000 [ 23%]  (Warmup) 
+Chain 4 Iteration:  700 / 3000 [ 23%]  (Warmup) 
+Chain 2 Iteration:  700 / 3000 [ 23%]  (Warmup) 
+Chain 1 Iteration:  800 / 3000 [ 26%]  (Warmup) 
+Chain 3 Iteration:  800 / 3000 [ 26%]  (Warmup) 
+Chain 4 Iteration:  800 / 3000 [ 26%]  (Warmup) 
+Chain 2 Iteration:  800 / 3000 [ 26%]  (Warmup) 
+Chain 1 Iteration:  900 / 3000 [ 30%]  (Warmup) 
+Chain 3 Iteration:  900 / 3000 [ 30%]  (Warmup) 
+Chain 4 Iteration:  900 / 3000 [ 30%]  (Warmup) 
+Chain 2 Iteration:  900 / 3000 [ 30%]  (Warmup) 
+Chain 1 Iteration: 1000 / 3000 [ 33%]  (Warmup) 
+Chain 3 Iteration: 1000 / 3000 [ 33%]  (Warmup) 
+Chain 4 Iteration: 1000 / 3000 [ 33%]  (Warmup) 
+Chain 2 Iteration: 1000 / 3000 [ 33%]  (Warmup) 
+Chain 1 Iteration: 1100 / 3000 [ 36%]  (Warmup) 
+Chain 3 Iteration: 1100 / 3000 [ 36%]  (Warmup) 
+Chain 4 Iteration: 1100 / 3000 [ 36%]  (Warmup) 
+Chain 2 Iteration: 1100 / 3000 [ 36%]  (Warmup) 
+Chain 1 Iteration: 1200 / 3000 [ 40%]  (Warmup) 
+Chain 4 Iteration: 1200 / 3000 [ 40%]  (Warmup) 
+Chain 3 Iteration: 1200 / 3000 [ 40%]  (Warmup) 
+Chain 2 Iteration: 1200 / 3000 [ 40%]  (Warmup) 
+Chain 1 Iteration: 1300 / 3000 [ 43%]  (Warmup) 
+Chain 4 Iteration: 1300 / 3000 [ 43%]  (Warmup) 
+Chain 3 Iteration: 1300 / 3000 [ 43%]  (Warmup) 
+Chain 2 Iteration: 1300 / 3000 [ 43%]  (Warmup) 
+Chain 1 Iteration: 1400 / 3000 [ 46%]  (Warmup) 
+Chain 3 Iteration: 1400 / 3000 [ 46%]  (Warmup) 
+Chain 4 Iteration: 1400 / 3000 [ 46%]  (Warmup) 
+Chain 2 Iteration: 1400 / 3000 [ 46%]  (Warmup) 
+Chain 1 Iteration: 1500 / 3000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1501 / 3000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 1500 / 3000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1501 / 3000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 1500 / 3000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 1501 / 3000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 1500 / 3000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1501 / 3000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 1600 / 3000 [ 53%]  (Sampling) 
+Chain 3 Iteration: 1600 / 3000 [ 53%]  (Sampling) 
+Chain 4 Iteration: 1600 / 3000 [ 53%]  (Sampling) 
+Chain 2 Iteration: 1600 / 3000 [ 53%]  (Sampling) 
+Chain 1 Iteration: 1700 / 3000 [ 56%]  (Sampling) 
+Chain 3 Iteration: 1700 / 3000 [ 56%]  (Sampling) 
+Chain 4 Iteration: 1700 / 3000 [ 56%]  (Sampling) 
+Chain 1 Iteration: 1800 / 3000 [ 60%]  (Sampling) 
+Chain 2 Iteration: 1700 / 3000 [ 56%]  (Sampling) 
+Chain 3 Iteration: 1800 / 3000 [ 60%]  (Sampling) 
+Chain 4 Iteration: 1800 / 3000 [ 60%]  (Sampling) 
+Chain 1 Iteration: 1900 / 3000 [ 63%]  (Sampling) 
+Chain 3 Iteration: 1900 / 3000 [ 63%]  (Sampling) 
+Chain 2 Iteration: 1800 / 3000 [ 60%]  (Sampling) 
+Chain 4 Iteration: 1900 / 3000 [ 63%]  (Sampling) 
+Chain 1 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
+Chain 3 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
+Chain 2 Iteration: 1900 / 3000 [ 63%]  (Sampling) 
+Chain 4 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
+Chain 1 Iteration: 2100 / 3000 [ 70%]  (Sampling) 
+Chain 3 Iteration: 2100 / 3000 [ 70%]  (Sampling) 
+Chain 2 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
+Chain 4 Iteration: 2100 / 3000 [ 70%]  (Sampling) 
+Chain 1 Iteration: 2200 / 3000 [ 73%]  (Sampling) 
+Chain 3 Iteration: 2200 / 3000 [ 73%]  (Sampling) 
+Chain 2 Iteration: 2100 / 3000 [ 70%]  (Sampling) 
+Chain 4 Iteration: 2200 / 3000 [ 73%]  (Sampling) 
+Chain 1 Iteration: 2300 / 3000 [ 76%]  (Sampling) 
+Chain 3 Iteration: 2300 / 3000 [ 76%]  (Sampling) 
+Chain 2 Iteration: 2200 / 3000 [ 73%]  (Sampling) 
+Chain 4 Iteration: 2300 / 3000 [ 76%]  (Sampling) 
+Chain 1 Iteration: 2400 / 3000 [ 80%]  (Sampling) 
+Chain 3 Iteration: 2400 / 3000 [ 80%]  (Sampling) 
+Chain 1 Iteration: 2500 / 3000 [ 83%]  (Sampling) 
+Chain 2 Iteration: 2300 / 3000 [ 76%]  (Sampling) 
+Chain 3 Iteration: 2500 / 3000 [ 83%]  (Sampling) 
+Chain 4 Iteration: 2400 / 3000 [ 80%]  (Sampling) 
+Chain 4 Iteration: 2500 / 3000 [ 83%]  (Sampling) 
+Chain 1 Iteration: 2600 / 3000 [ 86%]  (Sampling) 
+Chain 2 Iteration: 2400 / 3000 [ 80%]  (Sampling) 
+Chain 3 Iteration: 2600 / 3000 [ 86%]  (Sampling) 
+Chain 1 Iteration: 2700 / 3000 [ 90%]  (Sampling) 
+Chain 2 Iteration: 2500 / 3000 [ 83%]  (Sampling) 
+Chain 3 Iteration: 2700 / 3000 [ 90%]  (Sampling) 
+Chain 4 Iteration: 2600 / 3000 [ 86%]  (Sampling) 
+Chain 1 Iteration: 2800 / 3000 [ 93%]  (Sampling) 
+Chain 2 Iteration: 2600 / 3000 [ 86%]  (Sampling) 
+Chain 3 Iteration: 2800 / 3000 [ 93%]  (Sampling) 
+Chain 4 Iteration: 2700 / 3000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 2900 / 3000 [ 96%]  (Sampling) 
+Chain 3 Iteration: 2900 / 3000 [ 96%]  (Sampling) 
+Chain 2 Iteration: 2700 / 3000 [ 90%]  (Sampling) 
+Chain 4 Iteration: 2800 / 3000 [ 93%]  (Sampling) 
+Chain 1 Iteration: 3000 / 3000 [100%]  (Sampling) 
+Chain 1 finished in 13.5 seconds.
+Chain 3 Iteration: 3000 / 3000 [100%]  (Sampling) 
+Chain 3 finished in 13.6 seconds.
+Chain 2 Iteration: 2800 / 3000 [ 93%]  (Sampling) 
+Chain 4 Iteration: 2900 / 3000 [ 96%]  (Sampling) 
+Chain 2 Iteration: 2900 / 3000 [ 96%]  (Sampling) 
+Chain 4 Iteration: 3000 / 3000 [100%]  (Sampling) 
+Chain 4 finished in 14.2 seconds.
+Chain 2 Iteration: 3000 / 3000 [100%]  (Sampling) 
+Chain 2 finished in 14.5 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 13.9 seconds.
+Total execution time: 14.7 seconds.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">precis</span>(model_frontdoor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              mean          sd        5.5%      94.5%    n_eff     Rhat4
+alphaW  0.01317289 0.055819588 -0.07701513  0.1010920 4808.342 0.9996915
+alphaY  0.10889162 0.131415392 -0.10501164  0.3210728 4608.519 1.0008755
+delta   2.00223411 0.011824792  1.98296890  2.0211506 5199.217 1.0003623
+gamma  -1.99645002 0.008484629 -2.01018000 -1.9829200 4639.059 0.9998826
+ate    -3.99735509 0.028352648 -4.04329220 -3.9517884 5258.228 0.9998829</code></pre>
+</div>
+</div>
+<p>And indeed, we arrive at the same answer!</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-07-30-causality-the-front-door-criterion_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p>Besides Chapter 3 of Pearl’s Causality, I found this <a href="https://www.canr.msu.edu/afre/events/Bellemare%20and%20Bloem%20(2020).pdf">terrific paper (PDF)</a> by Bellemare and Bloem.</p>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.262">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="">
+<meta name="dcterms.date" content="2020-07-05">
+
+<title>David Salazar - Tail Risk of diseases in R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">David Salazar</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../archive.html">
+ <span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/David-Salazar"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/DavidSalazarVir"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Tail Risk of diseases in R</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">July 5, 2020</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-data" id="toc-the-data" class="nav-link active" data-scroll-target="#the-data">The Data</a></li>
+  <li><a href="#the-plots" id="toc-the-plots" class="nav-link" data-scroll-target="#the-plots">The plots</a>
+  <ul class="collapse">
+  <li><a href="#max-to-sum-ratio" id="toc-max-to-sum-ratio" class="nav-link" data-scroll-target="#max-to-sum-ratio">Max-to-Sum ratio</a></li>
+  <li><a href="#histogram" id="toc-histogram" class="nav-link" data-scroll-target="#histogram">Histogram</a></li>
+  <li><a href="#the-zipf-plot" id="toc-the-zipf-plot" class="nav-link" data-scroll-target="#the-zipf-plot">The Zipf plot</a></li>
+  <li><a href="#mean-excess-plot" id="toc-mean-excess-plot" class="nav-link" data-scroll-target="#mean-excess-plot">Mean Excess Plot</a></li>
+  </ul></li>
+  <li><a href="#fitting-the-tail" id="toc-fitting-the-tail" class="nav-link" data-scroll-target="#fitting-the-tail">Fitting the tail</a>
+  <ul class="collapse">
+  <li><a href="#wait-a-moment-infinite-casualties" id="toc-wait-a-moment-infinite-casualties" class="nav-link" data-scroll-target="#wait-a-moment-infinite-casualties">Wait a moment: infinite casualties?</a></li>
+  <li><a href="#extreme-value-theory-on-the-dual-observations" id="toc-extreme-value-theory-on-the-dual-observations" class="nav-link" data-scroll-target="#extreme-value-theory-on-the-dual-observations">Extreme Value theory on the dual observations</a></li>
+  <li><a href="#maximum-likelihood-estimate" id="toc-maximum-likelihood-estimate" class="nav-link" data-scroll-target="#maximum-likelihood-estimate">Maximum Likelihood estimate</a></li>
+  </ul></li>
+  <li><a href="#bayesian-model" id="toc-bayesian-model" class="nav-link" data-scroll-target="#bayesian-model">Bayesian model</a>
+  <ul class="collapse">
+  <li><a href="#simulating-fake-data" id="toc-simulating-fake-data" class="nav-link" data-scroll-target="#simulating-fake-data">Simulating fake data</a></li>
+  <li><a href="#fitting-the-model" id="toc-fitting-the-model" class="nav-link" data-scroll-target="#fitting-the-model">Fitting the model</a></li>
+  <li><a href="#posterior-predictive-checks" id="toc-posterior-predictive-checks" class="nav-link" data-scroll-target="#posterior-predictive-checks">Posterior predictive checks</a></li>
+  <li><a href="#convergence-diagnostics" id="toc-convergence-diagnostics" class="nav-link" data-scroll-target="#convergence-diagnostics">Convergence diagnostics</a></li>
+  </ul></li>
+  <li><a href="#stressing-the-data" id="toc-stressing-the-data" class="nav-link" data-scroll-target="#stressing-the-data">Stressing the data</a>
+  <ul class="collapse">
+  <li><a href="#measurement-error" id="toc-measurement-error" class="nav-link" data-scroll-target="#measurement-error">Measurement error</a></li>
+  </ul></li>
+  <li><a href="#influential-observations" id="toc-influential-observations" class="nav-link" data-scroll-target="#influential-observations">Influential observations</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>Pasquale Cirillo and Nassim Taleb published a short, interesting and important paper on the <a href="https://arxiv.org/abs/2004.08658">Tail Risk of contagious diseases</a>. In short, the distribution of fatalities is strongly fat-tailed: thus rendering any forecast, whether is pointwise or a distributional forecast, useless and dangerous. The <strong>distributional evidence is there</strong>: the lack of a characteristic scale makes our uncertainty at any point in the pandemic maximal: we can only say that it can always get worse.</p>
+<p>Read the paper! It’s short and packed of ideas. In this blogpost, I’ll reproduce the main plots, the main model that uses Extreme Value Theory to model the tail of the distribution of casualties and, finally, I will re-implement the model in a Bayesian framework using Stan.</p>
+<section id="the-data" class="level2">
+<h2 class="anchored" data-anchor-id="the-data">The Data</h2>
+<p>Taleb and Cirillo collected data for 72 events with more than 1,000 estimated victims.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">data</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">72</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 13%">
+<col style="width: 19%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">name</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">34</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">69</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 9%">
+<col style="width: 13%">
+<col style="width: 8%">
+<col style="width: 9%">
+<col style="width: 4%">
+<col style="width: 7%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">start_year</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1619.08</td>
+<td style="text-align: right;">517.26</td>
+<td style="text-align: right;">-429</td>
+<td style="text-align: right;">1595.00</td>
+<td style="text-align: right;">1813.0</td>
+<td style="text-align: right;">1916.50</td>
+<td style="text-align: right;">2019</td>
+<td style="text-align: left;">▁▁▁▁▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">end_year</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1613.35</td>
+<td style="text-align: right;">520.65</td>
+<td style="text-align: right;">-426</td>
+<td style="text-align: right;">1593.00</td>
+<td style="text-align: right;">1813.5</td>
+<td style="text-align: right;">1923.75</td>
+<td style="text-align: right;">2020</td>
+<td style="text-align: left;">▁▁▁▁▇</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">lower</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2660.74</td>
+<td style="text-align: right;">9915.03</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10.00</td>
+<td style="text-align: right;">75.5</td>
+<td style="text-align: right;">850.00</td>
+<td style="text-align: right;">75000</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">avg_est</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4877.66</td>
+<td style="text-align: right;">19132.36</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10.00</td>
+<td style="text-align: right;">82.0</td>
+<td style="text-align: right;">850.00</td>
+<td style="text-align: right;">137500</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">upper_est</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">7094.56</td>
+<td style="text-align: right;">28705.00</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10.00</td>
+<td style="text-align: right;">88.0</td>
+<td style="text-align: right;">850.00</td>
+<td style="text-align: right;">200000</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rescaled_avg_est</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">84874.62</td>
+<td style="text-align: right;">409099.85</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">41.75</td>
+<td style="text-align: right;">738.0</td>
+<td style="text-align: right;">6112.25</td>
+<td style="text-align: right;">2678283</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">population</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2037.94</td>
+<td style="text-align: right;">2434.28</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">554.00</td>
+<td style="text-align: right;">990.0</td>
+<td style="text-align: right;">1817.25</td>
+<td style="text-align: right;">7643</td>
+<td style="text-align: left;">▇▂▁▁▂</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The estimates for the number of casualties are in the thousands. The <code>avg_est</code> is the estimate for the number of casualities that we are going to be working with.</p>
+</section>
+<section id="the-plots" class="level2">
+<h2 class="anchored" data-anchor-id="the-plots">The plots</h2>
+<p>Taleb and Cirillo begin the paper with a graphical analysis of the properties of the data. In it, they show that the data present all of the traits of fat-tailed random variables. To reproduce most of the figures, I use an <a href="https://github.com/David-Salazar/ggtails/">R package</a> that I wrote: <code>ggtails</code>.</p>
+<section id="max-to-sum-ratio" class="level3">
+<h3 class="anchored" data-anchor-id="max-to-sum-ratio">Max-to-Sum ratio</h3>
+<p>Taleb and Cirillo begin by examining the <a href="https://david-salazar.github.io/2020/06/02/lln-for-higher-p-moments/">Max-to-Sum ratio plots</a>. A consequence of the Law of Large Numbers (LLN) is the following:</p>
+<p><span class="math display">\[
+E[X^p] &lt; \infty  \iff R_n^p = \dfrac{max(X_1^p, \dots, X_n^p)}{\sum_{i=1}^n X_i^p} \to 0, \ \text{as} \ n \to \infty
+\]</span> That is, the theoretical moment <span class="math inline">\(p\)</span> exists if and only if the ratio of the partial max to the partial sum converges to <span class="math inline">\(0\)</span>. Neither of the fourth moments converges for neither of the fatalities’ estimates</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">%&gt;%</span> </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">sample =</span> avg_est)) <span class="sc">+</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  ggtails<span class="sc">::</span><span class="fu">stat_max_sum_ratio_plot</span>() <span class="sc">+</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span>, <span class="fl">0.6</span>, <span class="fl">0.8</span>, <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_brewer</span>(<span class="at">palette =</span> <span class="dv">2</span>, <span class="at">type =</span> <span class="st">"qual"</span>) <span class="sc">+</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Max-to-Sum ratio plot"</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"There's no convergence. No finite moment is likely to exist"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-07-05-tail-risk-of-diseases-in-r_files/figure-html/maxtosum-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+<p>Given that none of the moments converges, it is likely that we are dealing with such a fat-tailed random variable that all of the theoretical moments are undefined. Or if the theoretical moments exist, that the Law of Large Numbers works way too slowly for us to use it. In which case any method that relies on any sample moment estimator of the empirical distribution is useless.</p>
+</section>
+<section id="histogram" class="level3">
+<h3 class="anchored" data-anchor-id="histogram">Histogram</h3>
+<p>Let’s check what exactly is the range of values that Cirillo and Taleb have collected:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">%&gt;%</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(avg_est<span class="sc">*</span><span class="dv">1000</span>)) <span class="sc">+</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">8</span><span class="sc">/</span><span class="dv">80</span>, <span class="at">fill =</span> <span class="st">"dodgerblue4"</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> <span class="cf">function</span>(x) scales<span class="sc">::</span><span class="fu">number</span>(x, <span class="at">scale =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span><span class="sc">^</span><span class="dv">8</span>)) <span class="sc">+</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">TeX</span>(<span class="st">"Casualties (x $10^8$)"</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Histogram of casualties"</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"The data encodes a huge array of variation. No characteristic scale, typical of fat-tails"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-07-05-tail-risk-of-diseases-in-r_files/figure-html/histogram-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+<p>The data contains an incredible arrange of variation. This is typical for fat-tailed random variables.</p>
+</section>
+<section id="the-zipf-plot" class="level3">
+<h3 class="anchored" data-anchor-id="the-zipf-plot">The Zipf plot</h3>
+<p>For a Pareto random variable, the slope of the log of the Survival function in log space decays linearly. With the Zipf plot, we compare the decay of the log of the empirical survival function with the linear decay that we expect with a Pareto.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">%&gt;%</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">sample =</span> <span class="fu">log10</span>(avg_est<span class="sc">*</span><span class="dv">1000</span>))) <span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  ggtails<span class="sc">::</span><span class="fu">stat_zipf</span>(<span class="at">color =</span> <span class="st">"dodgerblue4"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>)  <span class="sc">+</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>(<span class="at">label=</span>scientific_10) <span class="sc">+</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_log10</span>() <span class="sc">+</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Zipf plot of casualties"</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"There's the linear decay we expect with fat-tailed variables"</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"log(x)"</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"log(Survival)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-07-05-tail-risk-of-diseases-in-r_files/figure-html/loglogplot-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+<p>The empirical survival function indeed decays slowly: it’s almost linear. Thus, giving us a hint that we are dealing with a fat-tailed random variable.</p>
+</section>
+<section id="mean-excess-plot" class="level3">
+<h3 class="anchored" data-anchor-id="mean-excess-plot">Mean Excess Plot</h3>
+<p>For a given threshold <span class="math inline">\(v\)</span>, the Mean Excess for a random variable <span class="math inline">\(X\)</span> is:</p>
+<p><span class="math display">\[
+E[X - v | X &gt; v]
+\]</span> For a Pareto, we expect this mean excess to scale linearly with the threshold.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">%&gt;%</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">sample =</span> avg_est<span class="sc">*</span><span class="dv">1000</span>)) <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  ggtails<span class="sc">::</span><span class="fu">stat_mean_excess</span>()<span class="ot">-&gt;</span> p </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">layer_data</span>(p)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(y <span class="sc">&lt;</span> <span class="fl">3.95e07</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(x, y), <span class="at">color =</span> <span class="st">"dodgerblue4"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> <span class="cf">function</span>(x) scales<span class="sc">::</span><span class="fu">number</span>(x, <span class="at">scale =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span><span class="sc">^</span><span class="dv">6</span>)) <span class="sc">+</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> <span class="cf">function</span>(x) scales<span class="sc">::</span><span class="fu">number</span>(x, <span class="at">scale =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span><span class="sc">^</span><span class="dv">7</span>)) <span class="sc">+</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expand_limits</span>(<span class="at">y =</span> <span class="fl">5e07</span>) <span class="sc">+</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Mean Excess Plot for casualties"</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"There's the linear slope that we expect with fat-tailed variables"</span>,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"More volatile observations were excluded."</span>,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="fu">TeX</span>(<span class="st">"Threshold (x $10^6$)"</span>),</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">TeX</span>(<span class="st">" Mean Excess Funtion (x $10^7$)"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-07-05-tail-risk-of-diseases-in-r_files/figure-html/meplot-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+<p>Given that the mean excess plot increases linearly, we are even more convinced that the number of casualties is indeed fat-tailed.</p>
+</section>
+</section>
+<section id="fitting-the-tail" class="level2">
+<h2 class="anchored" data-anchor-id="fitting-the-tail">Fitting the tail</h2>
+<p>The graphical analysis tells us that we are likely dealing with a fat-tailed random variable: the survival function decays very slowly. Thus, the fat-tails make a) an extremely large array of possibilities relevant; b) thus, eliminating the possibility of a characteristic scale or “typical” catastrophe; c) and possibly making the theoretical moments undefined.</p>
+<section id="wait-a-moment-infinite-casualties" class="level3">
+<h3 class="anchored" data-anchor-id="wait-a-moment-infinite-casualties">Wait a moment: infinite casualties?</h3>
+<p>We know that the number of casualties is bounded by the total population. Thus, the variable only has the appearance of an infinite mean given its upper bound. Graphically, by ignoring the upper bound, we are positing a continuous tail thus:</p>
+<p><img src="../../images/apparenttail.PNG" class="img-fluid"></p>
+<p>The difference, thus, is only relevant in the vicinity of the upper bound <span class="math inline">\(H\)</span>. One could thus keep modeling ignoring the upper bound without too many practical consequences. Nevertheless, it would be epistemologically wrong. To solve this problem, Taleb and Cirillo introduce a log transformation that eliminates the upper bound:</p>
+<p><span class="math display">\[
+Z = \varphi(Y)=L-H \log \left(\frac{H-Y}{H-L}\right)
+\]</span></p>
+<p>Taleb and Cirillo call <span class="math inline">\(Z\)</span> the dual observations. <span class="math inline">\(Z\)</span> is the variable that we will model with Extreme Value theory.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>H <span class="ot">&lt;-</span> <span class="dv">7700000</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>data_to_model <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dual =</span> L <span class="sc">-</span>  H<span class="sc">*</span> <span class="fu">log</span>( (H<span class="sc">-</span>avg_est) <span class="sc">/</span> (H<span class="sc">-</span>L) ) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="extreme-value-theory-on-the-dual-observations" class="level3">
+<h3 class="anchored" data-anchor-id="extreme-value-theory-on-the-dual-observations">Extreme Value theory on the dual observations</h3>
+<p>A logical question, then, is how fat-tailed is exactly the tail of casualties from contagious diseases? Extreme Value Theory offers an answer. Indeed, the Pickands–Balkema–de Haan theorem states that tail events (events larger than a large threshold) have as a limiting distribution a Generalized Pareto Distribution (GPD). In math, for large u, the conditional excess function is thus defined and approximated by a GPD:</p>
+<p><span class="math display">\[
+G_{u}(z)=P(Z \leq z \mid Z&gt;u)=\frac{G(z)-G(u)}{1-G(u)} \approx GPD(z; \xi, \beta, u)
+\]</span> Where <span class="math inline">\(\xi\)</span> is the crucial shape parameter that determines how slowly the tail decays. The larger <span class="math inline">\(\xi\)</span>, the more slowly it decays. For example, the variance is only defined for <span class="math inline">\(\xi &lt; 0.5\)</span>. For <span class="math inline">\(\xi &gt; 1\)</span>, the theoretical mean is not defined.</p>
+<p>Crucially, we can approximate the tail of the original distribution <span class="math inline">\(G(z)\)</span> with <em>a <span class="math inline">\(GPD\)</span> with the same shape parameter</em> <span class="math inline">\(\xi\)</span>. Finally, Taleb and Cirillo use <span class="math inline">\(200,000\)</span> as a threshold <span class="math inline">\(u\)</span>. We can check both in the Mean Excess Plot and the Zipf plot that around this value we observe a power-law like behavior.</p>
+</section>
+<section id="maximum-likelihood-estimate" class="level3">
+<h3 class="anchored" data-anchor-id="maximum-likelihood-estimate">Maximum Likelihood estimate</h3>
+<p>We can fit the GPD via maximum likelihood.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> evir<span class="sc">::</span><span class="fu">gpd</span>(data_to_model<span class="sc">$</span>dual, <span class="at">threshold =</span> <span class="dv">200</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(fit<span class="sc">$</span>par.ests, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     xi    beta 
+   1.62 1174.74 </code></pre>
+</div>
+</div>
+<p>Which are the same estimates as Taleb and Cirillo. The standard errors are thus:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(fit<span class="sc">$</span>par.ses, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    xi   beta 
+  0.52 534.44 </code></pre>
+</div>
+</div>
+<p>Just as we saw with our graphical analysis, the variable is definitely fat-tailed: <span class="math inline">\(\xi &gt; 0\)</span>, which thanks to the relationship of the the Pickands–Balkema–de Haan with the Fisher-Tippet theorem, tells us that the Maximum Domain of Attraction is thus a Fréchet. From Taleb and Cirillo’s paper:</p>
+<blockquote class="blockquote">
+<p>As expected <span class="math inline">\(\xi\)</span> &gt; 1 once again supporting the idea of an infinite first moment… Looking at the standard error of <span class="math inline">\(\xi\)</span>, one could also argue that, with more data from the upper tail, the first moment could possibly become finite. Yet there is no doubt about the non-existence of the second moment, and thus about the unreliability of the sample mean, which remains too volatile to be safely used.</p>
+</blockquote>
+<p>Let’s see if we can reproduce this conclusions in a bayesian framework.</p>
+</section>
+</section>
+<section id="bayesian-model" class="level2">
+<h2 class="anchored" data-anchor-id="bayesian-model">Bayesian model</h2>
+<p>I’ll sample from the posterior using <a href="https://mc-stan.org/users/interfaces/rstan">Stan’s</a> incredible implementation of Hamiltonian Monte Carlo. Most of the heavy lifting in Stan has already been done by Aki Vehtari in a <a href="https://mc-stan.org/users/documentation/case-studies/gpareto_functions.html">case study</a> using the GPD.</p>
+<p>Our bayesian model will be thus defined:</p>
+<p><span class="math display">\[
+y \sim GPD(\xi, \beta, u = 200) \\
+\xi \sim Normal(1, 1) \\
+\beta \sim Normal(1000, 300)
+\]</span> The prior for <span class="math inline">\(\xi\)</span> is weakly informative and yet still opens the opportunity for the data to move our posterior towards a finite mean and finite variance.</p>
+<section id="simulating-fake-data" class="level3">
+<h3 class="anchored" data-anchor-id="simulating-fake-data">Simulating fake data</h3>
+<p>To verify that our code is correctly working, we’ll simulate data and assess parameter recovery.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">expose_stan_functions</span>(<span class="st">"gpd.stan"</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>fake_data <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="fl">1e3</span>, <span class="fu">gpareto_rng</span>(<span class="at">ymin =</span> <span class="dv">200</span>, <span class="fl">0.8</span>, <span class="dv">1000</span>))</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>ds<span class="ot">&lt;-</span><span class="fu">list</span>(<span class="at">ymin=</span><span class="dv">200</span>, <span class="at">N=</span><span class="fl">1e3</span>, <span class="at">y=</span>fake_data)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>fit_gpd <span class="ot">&lt;-</span> <span class="fu">stan</span>(<span class="at">file=</span><span class="st">'gpd.stan'</span>, <span class="at">data=</span>ds, <span class="at">refresh=</span><span class="dv">0</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">chains=</span><span class="dv">4</span>, <span class="at">seed=</span><span class="dv">100</span>, <span class="at">cores =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains...
+
+Chain 1 finished in 1.3 seconds.
+Chain 2 finished in 1.3 seconds.
+Chain 3 finished in 1.3 seconds.
+Chain 4 finished in 1.3 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 1.3 seconds.
+Total execution time: 1.8 seconds.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fit_gpd, <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"xi"</span>, <span class="st">"beta"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Inference for Stan model: gpd-202211241219-1-288048.
+4 chains, each with iter=1000; warmup=500; thin=1; 
+post-warmup draws per chain=500, total post-warmup draws=2000.
+
+        mean se_mean    sd   2.5%     25%     50%     75%   97.5% n_eff Rhat
+xi      0.78    0.00  0.06   0.67    0.74    0.78    0.82    0.90   942    1
+beta 1111.34    2.24 65.43 983.84 1068.06 1112.49 1153.74 1241.58   856    1
+
+Samples were drawn using NUTS(diag_e) at Thu Nov 24 12:19:38 2022.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at 
+convergence, Rhat=1).</code></pre>
+</div>
+</div>
+<p>The credible intervals are in line with the true parameters. Graphically:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>posterior <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(fit_gpd, <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"xi"</span>, <span class="st">"beta"</span>))</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>true <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="dv">1000</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mcmc_recover_hist</span>(posterior, true) <span class="sc">+</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Parameter recovery"</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"We successfully recover the parameters"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-07-05-tail-risk-of-diseases-in-r_files/figure-html/par-recover-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+<p>We can thus reasonably recover our parameter of interest <span class="math inline">\(\xi\)</span> with our current model. Therefore, we can follow along and fit our model to the real data.</p>
+</section>
+<section id="fitting-the-model" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-the-model">Fitting the model</h3>
+<p>Using the dual observations, we end up with <span class="math inline">\(25/72\)</span> observations, around <span class="math inline">\(34.7\)</span>% of the total number of observations</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>data_to_model <span class="sc">%&gt;%</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(dual <span class="sc">&gt;</span> <span class="dv">200</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(dual) <span class="ot">-&gt;</span> dual_observations</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(dual_observations)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    200     800    1500   14040    7504  138742 </code></pre>
+</div>
+</div>
+<p>Fitting the model is just as simple as fitting it to fake data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>ds<span class="ot">&lt;-</span><span class="fu">list</span>(<span class="at">ymin=</span><span class="dv">200</span>, <span class="at">N=</span><span class="dv">25</span>, <span class="at">y=</span>dual_observations)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>fit_gpd <span class="ot">&lt;-</span> <span class="fu">stan</span>(<span class="at">file=</span><span class="st">'gpd.stan'</span>, <span class="at">data=</span>ds,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">chains=</span><span class="dv">4</span>, <span class="at">seed=</span><span class="dv">100</span>, <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">5000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains...
+
+Chain 1 Iteration:    1 / 5000 [  0%]  (Warmup) 
+Chain 1 Iteration:  100 / 5000 [  2%]  (Warmup) 
+Chain 1 Iteration:  200 / 5000 [  4%]  (Warmup) 
+Chain 1 Iteration:  300 / 5000 [  6%]  (Warmup) 
+Chain 1 Iteration:  400 / 5000 [  8%]  (Warmup) 
+Chain 1 Iteration:  500 / 5000 [ 10%]  (Warmup) 
+Chain 1 Iteration:  600 / 5000 [ 12%]  (Warmup) 
+Chain 1 Iteration:  700 / 5000 [ 14%]  (Warmup) 
+Chain 1 Iteration:  800 / 5000 [ 16%]  (Warmup) 
+Chain 1 Iteration:  900 / 5000 [ 18%]  (Warmup) 
+Chain 1 Iteration: 1000 / 5000 [ 20%]  (Warmup) 
+Chain 1 Iteration: 1100 / 5000 [ 22%]  (Warmup) 
+Chain 1 Iteration: 1200 / 5000 [ 24%]  (Warmup) 
+Chain 1 Iteration: 1300 / 5000 [ 26%]  (Warmup) 
+Chain 1 Iteration: 1400 / 5000 [ 28%]  (Warmup) 
+Chain 1 Iteration: 1500 / 5000 [ 30%]  (Warmup) 
+Chain 1 Iteration: 1600 / 5000 [ 32%]  (Warmup) 
+Chain 1 Iteration: 1700 / 5000 [ 34%]  (Warmup) 
+Chain 1 Iteration: 1800 / 5000 [ 36%]  (Warmup) 
+Chain 1 Iteration: 1900 / 5000 [ 38%]  (Warmup) 
+Chain 1 Iteration: 2000 / 5000 [ 40%]  (Warmup) 
+Chain 1 Iteration: 2100 / 5000 [ 42%]  (Warmup) 
+Chain 1 Iteration: 2200 / 5000 [ 44%]  (Warmup) 
+Chain 1 Iteration: 2300 / 5000 [ 46%]  (Warmup) 
+Chain 1 Iteration: 2400 / 5000 [ 48%]  (Warmup) 
+Chain 1 Iteration: 2500 / 5000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 2501 / 5000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 2600 / 5000 [ 52%]  (Sampling) 
+Chain 1 Iteration: 2700 / 5000 [ 54%]  (Sampling) 
+Chain 1 Iteration: 2800 / 5000 [ 56%]  (Sampling) 
+Chain 1 Iteration: 2900 / 5000 [ 58%]  (Sampling) 
+Chain 1 Iteration: 3000 / 5000 [ 60%]  (Sampling) 
+Chain 1 Iteration: 3100 / 5000 [ 62%]  (Sampling) 
+Chain 1 Iteration: 3200 / 5000 [ 64%]  (Sampling) 
+Chain 1 Iteration: 3300 / 5000 [ 66%]  (Sampling) 
+Chain 1 Iteration: 3400 / 5000 [ 68%]  (Sampling) 
+Chain 1 Iteration: 3500 / 5000 [ 70%]  (Sampling) 
+Chain 2 Iteration:    1 / 5000 [  0%]  (Warmup) 
+Chain 2 Iteration:  100 / 5000 [  2%]  (Warmup) 
+Chain 2 Iteration:  200 / 5000 [  4%]  (Warmup) 
+Chain 2 Iteration:  300 / 5000 [  6%]  (Warmup) 
+Chain 2 Iteration:  400 / 5000 [  8%]  (Warmup) 
+Chain 2 Iteration:  500 / 5000 [ 10%]  (Warmup) 
+Chain 2 Iteration:  600 / 5000 [ 12%]  (Warmup) 
+Chain 2 Iteration:  700 / 5000 [ 14%]  (Warmup) 
+Chain 2 Iteration:  800 / 5000 [ 16%]  (Warmup) 
+Chain 2 Iteration:  900 / 5000 [ 18%]  (Warmup) 
+Chain 2 Iteration: 1000 / 5000 [ 20%]  (Warmup) 
+Chain 2 Iteration: 1100 / 5000 [ 22%]  (Warmup) 
+Chain 2 Iteration: 1200 / 5000 [ 24%]  (Warmup) 
+Chain 2 Iteration: 1300 / 5000 [ 26%]  (Warmup) 
+Chain 2 Iteration: 1400 / 5000 [ 28%]  (Warmup) 
+Chain 2 Iteration: 1500 / 5000 [ 30%]  (Warmup) 
+Chain 2 Iteration: 1600 / 5000 [ 32%]  (Warmup) 
+Chain 2 Iteration: 1700 / 5000 [ 34%]  (Warmup) 
+Chain 2 Iteration: 1800 / 5000 [ 36%]  (Warmup) 
+Chain 2 Iteration: 1900 / 5000 [ 38%]  (Warmup) 
+Chain 2 Iteration: 2000 / 5000 [ 40%]  (Warmup) 
+Chain 2 Iteration: 2100 / 5000 [ 42%]  (Warmup) 
+Chain 2 Iteration: 2200 / 5000 [ 44%]  (Warmup) 
+Chain 2 Iteration: 2300 / 5000 [ 46%]  (Warmup) 
+Chain 2 Iteration: 2400 / 5000 [ 48%]  (Warmup) 
+Chain 2 Iteration: 2500 / 5000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 2501 / 5000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 2600 / 5000 [ 52%]  (Sampling) 
+Chain 2 Iteration: 2700 / 5000 [ 54%]  (Sampling) 
+Chain 2 Iteration: 2800 / 5000 [ 56%]  (Sampling) 
+Chain 2 Iteration: 2900 / 5000 [ 58%]  (Sampling) 
+Chain 2 Iteration: 3000 / 5000 [ 60%]  (Sampling) 
+Chain 2 Iteration: 3100 / 5000 [ 62%]  (Sampling) 
+Chain 2 Iteration: 3200 / 5000 [ 64%]  (Sampling) 
+Chain 3 Iteration:    1 / 5000 [  0%]  (Warmup) 
+Chain 3 Iteration:  100 / 5000 [  2%]  (Warmup) 
+Chain 3 Iteration:  200 / 5000 [  4%]  (Warmup) 
+Chain 3 Iteration:  300 / 5000 [  6%]  (Warmup) 
+Chain 3 Iteration:  400 / 5000 [  8%]  (Warmup) 
+Chain 3 Iteration:  500 / 5000 [ 10%]  (Warmup) 
+Chain 3 Iteration:  600 / 5000 [ 12%]  (Warmup) 
+Chain 3 Iteration:  700 / 5000 [ 14%]  (Warmup) 
+Chain 3 Iteration:  800 / 5000 [ 16%]  (Warmup) 
+Chain 3 Iteration:  900 / 5000 [ 18%]  (Warmup) 
+Chain 3 Iteration: 1000 / 5000 [ 20%]  (Warmup) 
+Chain 3 Iteration: 1100 / 5000 [ 22%]  (Warmup) 
+Chain 3 Iteration: 1200 / 5000 [ 24%]  (Warmup) 
+Chain 3 Iteration: 1300 / 5000 [ 26%]  (Warmup) 
+Chain 3 Iteration: 1400 / 5000 [ 28%]  (Warmup) 
+Chain 3 Iteration: 1500 / 5000 [ 30%]  (Warmup) 
+Chain 3 Iteration: 1600 / 5000 [ 32%]  (Warmup) 
+Chain 3 Iteration: 1700 / 5000 [ 34%]  (Warmup) 
+Chain 3 Iteration: 1800 / 5000 [ 36%]  (Warmup) 
+Chain 3 Iteration: 1900 / 5000 [ 38%]  (Warmup) 
+Chain 3 Iteration: 2000 / 5000 [ 40%]  (Warmup) 
+Chain 3 Iteration: 2100 / 5000 [ 42%]  (Warmup) 
+Chain 3 Iteration: 2200 / 5000 [ 44%]  (Warmup) 
+Chain 3 Iteration: 2300 / 5000 [ 46%]  (Warmup) 
+Chain 3 Iteration: 2400 / 5000 [ 48%]  (Warmup) 
+Chain 3 Iteration: 2500 / 5000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 2501 / 5000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 2600 / 5000 [ 52%]  (Sampling) 
+Chain 3 Iteration: 2700 / 5000 [ 54%]  (Sampling) 
+Chain 4 Iteration:    1 / 5000 [  0%]  (Warmup) 
+Chain 4 Iteration:  100 / 5000 [  2%]  (Warmup) 
+Chain 4 Iteration:  200 / 5000 [  4%]  (Warmup) 
+Chain 4 Iteration:  300 / 5000 [  6%]  (Warmup) 
+Chain 4 Iteration:  400 / 5000 [  8%]  (Warmup) 
+Chain 4 Iteration:  500 / 5000 [ 10%]  (Warmup) 
+Chain 4 Iteration:  600 / 5000 [ 12%]  (Warmup) 
+Chain 4 Iteration:  700 / 5000 [ 14%]  (Warmup) 
+Chain 4 Iteration:  800 / 5000 [ 16%]  (Warmup) 
+Chain 4 Iteration:  900 / 5000 [ 18%]  (Warmup) 
+Chain 4 Iteration: 1000 / 5000 [ 20%]  (Warmup) 
+Chain 4 Iteration: 1100 / 5000 [ 22%]  (Warmup) 
+Chain 4 Iteration: 1200 / 5000 [ 24%]  (Warmup) 
+Chain 4 Iteration: 1300 / 5000 [ 26%]  (Warmup) 
+Chain 4 Iteration: 1400 / 5000 [ 28%]  (Warmup) 
+Chain 4 Iteration: 1500 / 5000 [ 30%]  (Warmup) 
+Chain 4 Iteration: 1600 / 5000 [ 32%]  (Warmup) 
+Chain 4 Iteration: 1700 / 5000 [ 34%]  (Warmup) 
+Chain 4 Iteration: 1800 / 5000 [ 36%]  (Warmup) 
+Chain 4 Iteration: 1900 / 5000 [ 38%]  (Warmup) 
+Chain 4 Iteration: 2000 / 5000 [ 40%]  (Warmup) 
+Chain 4 Iteration: 2100 / 5000 [ 42%]  (Warmup) 
+Chain 4 Iteration: 2200 / 5000 [ 44%]  (Warmup) 
+Chain 4 Iteration: 2300 / 5000 [ 46%]  (Warmup) 
+Chain 4 Iteration: 2400 / 5000 [ 48%]  (Warmup) 
+Chain 4 Iteration: 2500 / 5000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 2501 / 5000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 2600 / 5000 [ 52%]  (Sampling) 
+Chain 1 Iteration: 3600 / 5000 [ 72%]  (Sampling) 
+Chain 1 Iteration: 3700 / 5000 [ 74%]  (Sampling) 
+Chain 1 Iteration: 3800 / 5000 [ 76%]  (Sampling) 
+Chain 1 Iteration: 3900 / 5000 [ 78%]  (Sampling) 
+Chain 1 Iteration: 4000 / 5000 [ 80%]  (Sampling) 
+Chain 1 Iteration: 4100 / 5000 [ 82%]  (Sampling) 
+Chain 1 Iteration: 4200 / 5000 [ 84%]  (Sampling) 
+Chain 1 Iteration: 4300 / 5000 [ 86%]  (Sampling) 
+Chain 1 Iteration: 4400 / 5000 [ 88%]  (Sampling) 
+Chain 1 Iteration: 4500 / 5000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 4600 / 5000 [ 92%]  (Sampling) 
+Chain 1 Iteration: 4700 / 5000 [ 94%]  (Sampling) 
+Chain 1 Iteration: 4800 / 5000 [ 96%]  (Sampling) 
+Chain 1 Iteration: 4900 / 5000 [ 98%]  (Sampling) 
+Chain 1 Iteration: 5000 / 5000 [100%]  (Sampling) 
+Chain 2 Iteration: 3300 / 5000 [ 66%]  (Sampling) 
+Chain 2 Iteration: 3400 / 5000 [ 68%]  (Sampling) 
+Chain 2 Iteration: 3500 / 5000 [ 70%]  (Sampling) 
+Chain 2 Iteration: 3600 / 5000 [ 72%]  (Sampling) 
+Chain 2 Iteration: 3700 / 5000 [ 74%]  (Sampling) 
+Chain 2 Iteration: 3800 / 5000 [ 76%]  (Sampling) 
+Chain 2 Iteration: 3900 / 5000 [ 78%]  (Sampling) 
+Chain 2 Iteration: 4000 / 5000 [ 80%]  (Sampling) 
+Chain 2 Iteration: 4100 / 5000 [ 82%]  (Sampling) 
+Chain 2 Iteration: 4200 / 5000 [ 84%]  (Sampling) 
+Chain 2 Iteration: 4300 / 5000 [ 86%]  (Sampling) 
+Chain 2 Iteration: 4400 / 5000 [ 88%]  (Sampling) 
+Chain 2 Iteration: 4500 / 5000 [ 90%]  (Sampling) 
+Chain 2 Iteration: 4600 / 5000 [ 92%]  (Sampling) 
+Chain 2 Iteration: 4700 / 5000 [ 94%]  (Sampling) 
+Chain 2 Iteration: 4800 / 5000 [ 96%]  (Sampling) 
+Chain 2 Iteration: 4900 / 5000 [ 98%]  (Sampling) 
+Chain 2 Iteration: 5000 / 5000 [100%]  (Sampling) 
+Chain 3 Iteration: 2800 / 5000 [ 56%]  (Sampling) 
+Chain 3 Iteration: 2900 / 5000 [ 58%]  (Sampling) 
+Chain 3 Iteration: 3000 / 5000 [ 60%]  (Sampling) 
+Chain 3 Iteration: 3100 / 5000 [ 62%]  (Sampling) 
+Chain 3 Iteration: 3200 / 5000 [ 64%]  (Sampling) 
+Chain 3 Iteration: 3300 / 5000 [ 66%]  (Sampling) 
+Chain 3 Iteration: 3400 / 5000 [ 68%]  (Sampling) 
+Chain 3 Iteration: 3500 / 5000 [ 70%]  (Sampling) 
+Chain 3 Iteration: 3600 / 5000 [ 72%]  (Sampling) 
+Chain 3 Iteration: 3700 / 5000 [ 74%]  (Sampling) 
+Chain 3 Iteration: 3800 / 5000 [ 76%]  (Sampling) 
+Chain 3 Iteration: 3900 / 5000 [ 78%]  (Sampling) 
+Chain 3 Iteration: 4000 / 5000 [ 80%]  (Sampling) 
+Chain 3 Iteration: 4100 / 5000 [ 82%]  (Sampling) 
+Chain 3 Iteration: 4200 / 5000 [ 84%]  (Sampling) 
+Chain 3 Iteration: 4300 / 5000 [ 86%]  (Sampling) 
+Chain 3 Iteration: 4400 / 5000 [ 88%]  (Sampling) 
+Chain 3 Iteration: 4500 / 5000 [ 90%]  (Sampling) 
+Chain 3 Iteration: 4600 / 5000 [ 92%]  (Sampling) 
+Chain 3 Iteration: 4700 / 5000 [ 94%]  (Sampling) 
+Chain 3 Iteration: 4800 / 5000 [ 96%]  (Sampling) 
+Chain 3 Iteration: 4900 / 5000 [ 98%]  (Sampling) 
+Chain 3 Iteration: 5000 / 5000 [100%]  (Sampling) 
+Chain 4 Iteration: 2700 / 5000 [ 54%]  (Sampling) 
+Chain 4 Iteration: 2800 / 5000 [ 56%]  (Sampling) 
+Chain 4 Iteration: 2900 / 5000 [ 58%]  (Sampling) 
+Chain 4 Iteration: 3000 / 5000 [ 60%]  (Sampling) 
+Chain 4 Iteration: 3100 / 5000 [ 62%]  (Sampling) 
+Chain 4 Iteration: 3200 / 5000 [ 64%]  (Sampling) 
+Chain 4 Iteration: 3300 / 5000 [ 66%]  (Sampling) 
+Chain 4 Iteration: 3400 / 5000 [ 68%]  (Sampling) 
+Chain 4 Iteration: 3500 / 5000 [ 70%]  (Sampling) 
+Chain 4 Iteration: 3600 / 5000 [ 72%]  (Sampling) 
+Chain 4 Iteration: 3700 / 5000 [ 74%]  (Sampling) 
+Chain 4 Iteration: 3800 / 5000 [ 76%]  (Sampling) 
+Chain 4 Iteration: 3900 / 5000 [ 78%]  (Sampling) 
+Chain 4 Iteration: 4000 / 5000 [ 80%]  (Sampling) 
+Chain 4 Iteration: 4100 / 5000 [ 82%]  (Sampling) 
+Chain 4 Iteration: 4200 / 5000 [ 84%]  (Sampling) 
+Chain 4 Iteration: 4300 / 5000 [ 86%]  (Sampling) 
+Chain 4 Iteration: 4400 / 5000 [ 88%]  (Sampling) 
+Chain 4 Iteration: 4500 / 5000 [ 90%]  (Sampling) 
+Chain 4 Iteration: 4600 / 5000 [ 92%]  (Sampling) 
+Chain 4 Iteration: 4700 / 5000 [ 94%]  (Sampling) 
+Chain 4 Iteration: 4800 / 5000 [ 96%]  (Sampling) 
+Chain 4 Iteration: 4900 / 5000 [ 98%]  (Sampling) 
+Chain 4 Iteration: 5000 / 5000 [100%]  (Sampling) 
+Chain 1 finished in 0.3 seconds.
+Chain 2 finished in 0.3 seconds.
+Chain 3 finished in 0.3 seconds.
+Chain 4 finished in 0.3 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 0.3 seconds.
+Total execution time: 0.4 seconds.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fit_gpd, <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"xi"</span>, <span class="st">"beta"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Inference for Stan model: gpd-202211241219-1-6efc8a.
+4 chains, each with iter=5000; warmup=2500; thin=1; 
+post-warmup draws per chain=2500, total post-warmup draws=10000.
+
+        mean se_mean     sd   2.5%    25%     50%     75%   97.5% n_eff Rhat
+xi      1.69    0.01   0.43   0.99   1.39    1.65    1.95    2.66  5847    1
+beta 1077.46    3.32 246.93 624.37 902.09 1069.18 1240.92 1579.44  5519    1
+
+Samples were drawn using NUTS(diag_e) at Thu Nov 24 12:19:51 2022.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at 
+convergence, Rhat=1).</code></pre>
+</div>
+</div>
+<p>For know, the <span class="math inline">\(\widehat R\)</span> values look OK, which indicates that there’s no much disagreement between the Markov Chains. The credible intervals rule out the possibility that <span class="math inline">\(\xi &lt; 0\)</span>.</p>
+<p>We can intuitively interrogate the posterior for more precise questions in a Bayesian settings. For example, what is the probability that the theoretical mean is undefined, i.e., that <span class="math inline">\(\xi &gt; 1\)</span>:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-07-05-tail-risk-of-diseases-in-r_files/figure-html/theoretical_mean-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+<p>Therefore, we conclude that it is very likely that <strong>the theoretical mean is undefined and we rule out definitely the possibility of a finite second moment</strong>. Thus, we reproduce the paper’s conclusions.</p>
+<p>Given the fat-tailedness of the data and the resulting lack of characteristic scale from the huge array of variability that it’s possible, there’s no <em>possibility</em> of forecasting what we may face with either a pointwise prediction or a distributional forecast.</p>
+</section>
+<section id="posterior-predictive-checks" class="level3">
+<h3 class="anchored" data-anchor-id="posterior-predictive-checks">Posterior predictive checks</h3>
+<p>If the model fits well to the data, the replicated data under the model should look similar to the observed data. We can easily generate data from our model because our model is generative: we draw simulated values from the posterior predictive distribution of replicated data.</p>
+<p>However, with <em>fat-tailed</em> data: what exactly does it mean for our replicated data to track our observed data. For example, what about the <strong>replicated maxima</strong>? These definitely should include the observed maxima: <strong>but also much larger values. That is the whole point of being in the MDA of a Fréchet.</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>yrep <span class="ot">&lt;-</span> <span class="fu">extract</span>(fit_gpd)<span class="sc">$</span>yrep </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ppc_stat</span>(<span class="fu">log</span>(dual_observations), <span class="fu">log</span>(yrep), <span class="at">stat =</span> <span class="st">"max"</span>) <span class="sc">+</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Posterior predictive check (log scale)"</span>,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Maxima across replicated datasets track observed maximum and beyond, just like it should"</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"log(maxima)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-07-05-tail-risk-of-diseases-in-r_files/figure-html/ppc-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+<p>And this is exactly what our model does: a difference of 30 in a log-scale is huge. We can just as well expect maxima as large as observed, and even much larger.</p>
+</section>
+<section id="convergence-diagnostics" class="level3">
+<h3 class="anchored" data-anchor-id="convergence-diagnostics">Convergence diagnostics</h3>
+<p>One of the main benefits of Stan’s implementation of HMC is that it yells at you when things have gone wrong. We can thus check a variety of diagnostics to check for convergence. Above, we examined that the <span class="math inline">\(\widehat R\)</span> values look OK. We can also check trace plots:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>posterior <span class="ot">&lt;-</span> <span class="fu">as.array</span>(fit_gpd)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">color_scheme_set</span>(<span class="st">"viridis"</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mcmc_trace</span>(posterior, <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"xi"</span>, <span class="st">"beta"</span>)) <span class="sc">+</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Traceplots"</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Traceplots are stationary, well mixed and the chains converge"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-07-05-tail-risk-of-diseases-in-r_files/figure-html/traceplot-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+<p>We can check HMC specific diagnostics:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_divergences</span>(fit_gpd)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">check_treedepth</span>(fit_gpd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="stressing-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="stressing-the-data">Stressing the data</h2>
+<p>Taleb and Cirillo are well aware that they are not working with the more precise of data. Thus, they ‘stress’ the data and check whether the results still hold. Given that we are working with fat-tailed data, the tail wags the dog: data problems can only modify the results if they are in the tail.</p>
+<section id="measurement-error" class="level3">
+<h3 class="anchored" data-anchor-id="measurement-error">Measurement error</h3>
+<p>To account for measurement error, Taleb and Cirillo recreate 10,000 of their datasets, but this time where each observation is allowed to vary between 80% and 120% of its recorded values. They find that their results are robust to this modification.</p>
+<p>In a bayesian setting, we can very easily extend our model to account for uncertainty around the true data. Indeed, in a bayesian model there’s no fundamental difference between a <em>parameter and an observation</em>: one is observed and the other is not. Thus, we formulate the true casualties being measured as <a href="https://mc-stan.org/docs/2_18/stan-users-guide/bayesian-measurement-error-model.html">missing data</a>.</p>
+<p>Therefore, we specify that the measurement comes a normal with unknown mean, the true number of casualties, and that their standard deviation is 20% of the observed value.</p>
+<p><span class="math display">\[
+y \sim Normal(y_{true}, y*0.2)
+\]</span> We fit the model and let Bayes do the rest:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ds<span class="ot">&lt;-</span><span class="fu">list</span>(<span class="at">ymin=</span><span class="dv">200</span>, <span class="at">N=</span><span class="dv">25</span>, <span class="at">y=</span>dual_observations, <span class="at">noise =</span> <span class="fl">0.2</span><span class="sc">*</span>dual_observations)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>fit_gpd_m <span class="ot">&lt;-</span> <span class="fu">stan</span>(<span class="at">file=</span><span class="st">'gpd_measurementerror.stan'</span>, <span class="at">data=</span>ds,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">chains=</span><span class="dv">4</span>, <span class="at">seed=</span><span class="dv">100</span>, <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">5000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains...
+
+Chain 1 Iteration:    1 / 5000 [  0%]  (Warmup) 
+Chain 1 Iteration:  100 / 5000 [  2%]  (Warmup) 
+Chain 1 Iteration:  200 / 5000 [  4%]  (Warmup) 
+Chain 1 Iteration:  300 / 5000 [  6%]  (Warmup) 
+Chain 1 Iteration:  400 / 5000 [  8%]  (Warmup) 
+Chain 1 Iteration:  500 / 5000 [ 10%]  (Warmup) 
+Chain 1 Iteration:  600 / 5000 [ 12%]  (Warmup) 
+Chain 1 Iteration:  700 / 5000 [ 14%]  (Warmup) 
+Chain 1 Iteration:  800 / 5000 [ 16%]  (Warmup) 
+Chain 1 Iteration:  900 / 5000 [ 18%]  (Warmup) 
+Chain 1 Iteration: 1000 / 5000 [ 20%]  (Warmup) 
+Chain 1 Iteration: 1100 / 5000 [ 22%]  (Warmup) 
+Chain 1 Iteration: 1200 / 5000 [ 24%]  (Warmup) 
+Chain 1 Iteration: 1300 / 5000 [ 26%]  (Warmup) 
+Chain 2 Iteration:    1 / 5000 [  0%]  (Warmup) 
+Chain 2 Iteration:  100 / 5000 [  2%]  (Warmup) 
+Chain 2 Iteration:  200 / 5000 [  4%]  (Warmup) 
+Chain 2 Iteration:  300 / 5000 [  6%]  (Warmup) 
+Chain 2 Iteration:  400 / 5000 [  8%]  (Warmup) 
+Chain 2 Iteration:  500 / 5000 [ 10%]  (Warmup) 
+Chain 2 Iteration:  600 / 5000 [ 12%]  (Warmup) 
+Chain 2 Iteration:  700 / 5000 [ 14%]  (Warmup) 
+Chain 2 Iteration:  800 / 5000 [ 16%]  (Warmup) 
+Chain 2 Iteration:  900 / 5000 [ 18%]  (Warmup) 
+Chain 2 Iteration: 1000 / 5000 [ 20%]  (Warmup) 
+Chain 2 Iteration: 1100 / 5000 [ 22%]  (Warmup) 
+Chain 2 Iteration: 1200 / 5000 [ 24%]  (Warmup) 
+Chain 2 Iteration: 1300 / 5000 [ 26%]  (Warmup) 
+Chain 3 Iteration:    1 / 5000 [  0%]  (Warmup) 
+Chain 3 Iteration:  100 / 5000 [  2%]  (Warmup) 
+Chain 3 Iteration:  200 / 5000 [  4%]  (Warmup) 
+Chain 3 Iteration:  300 / 5000 [  6%]  (Warmup) 
+Chain 3 Iteration:  400 / 5000 [  8%]  (Warmup) 
+Chain 3 Iteration:  500 / 5000 [ 10%]  (Warmup) 
+Chain 3 Iteration:  600 / 5000 [ 12%]  (Warmup) 
+Chain 3 Iteration:  700 / 5000 [ 14%]  (Warmup) 
+Chain 3 Iteration:  800 / 5000 [ 16%]  (Warmup) 
+Chain 3 Iteration:  900 / 5000 [ 18%]  (Warmup) 
+Chain 3 Iteration: 1000 / 5000 [ 20%]  (Warmup) 
+Chain 3 Iteration: 1100 / 5000 [ 22%]  (Warmup) 
+Chain 4 Iteration:    1 / 5000 [  0%]  (Warmup) 
+Chain 4 Iteration:  100 / 5000 [  2%]  (Warmup) 
+Chain 4 Iteration:  200 / 5000 [  4%]  (Warmup) 
+Chain 4 Iteration:  300 / 5000 [  6%]  (Warmup) 
+Chain 4 Iteration:  400 / 5000 [  8%]  (Warmup) 
+Chain 4 Iteration:  500 / 5000 [ 10%]  (Warmup) 
+Chain 4 Iteration:  600 / 5000 [ 12%]  (Warmup) 
+Chain 4 Iteration:  700 / 5000 [ 14%]  (Warmup) 
+Chain 4 Iteration:  800 / 5000 [ 16%]  (Warmup) 
+Chain 4 Iteration:  900 / 5000 [ 18%]  (Warmup) 
+Chain 4 Iteration: 1000 / 5000 [ 20%]  (Warmup) 
+Chain 1 Iteration: 1400 / 5000 [ 28%]  (Warmup) 
+Chain 1 Iteration: 1500 / 5000 [ 30%]  (Warmup) 
+Chain 1 Iteration: 1600 / 5000 [ 32%]  (Warmup) 
+Chain 1 Iteration: 1700 / 5000 [ 34%]  (Warmup) 
+Chain 1 Iteration: 1800 / 5000 [ 36%]  (Warmup) 
+Chain 1 Iteration: 1900 / 5000 [ 38%]  (Warmup) 
+Chain 1 Iteration: 2000 / 5000 [ 40%]  (Warmup) 
+Chain 1 Iteration: 2100 / 5000 [ 42%]  (Warmup) 
+Chain 1 Iteration: 2200 / 5000 [ 44%]  (Warmup) 
+Chain 1 Iteration: 2300 / 5000 [ 46%]  (Warmup) 
+Chain 1 Iteration: 2400 / 5000 [ 48%]  (Warmup) 
+Chain 1 Iteration: 2500 / 5000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 2501 / 5000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 2600 / 5000 [ 52%]  (Sampling) 
+Chain 2 Iteration: 1400 / 5000 [ 28%]  (Warmup) 
+Chain 2 Iteration: 1500 / 5000 [ 30%]  (Warmup) 
+Chain 2 Iteration: 1600 / 5000 [ 32%]  (Warmup) 
+Chain 2 Iteration: 1700 / 5000 [ 34%]  (Warmup) 
+Chain 2 Iteration: 1800 / 5000 [ 36%]  (Warmup) 
+Chain 2 Iteration: 1900 / 5000 [ 38%]  (Warmup) 
+Chain 2 Iteration: 2000 / 5000 [ 40%]  (Warmup) 
+Chain 2 Iteration: 2100 / 5000 [ 42%]  (Warmup) 
+Chain 2 Iteration: 2200 / 5000 [ 44%]  (Warmup) 
+Chain 2 Iteration: 2300 / 5000 [ 46%]  (Warmup) 
+Chain 2 Iteration: 2400 / 5000 [ 48%]  (Warmup) 
+Chain 3 Iteration: 1200 / 5000 [ 24%]  (Warmup) 
+Chain 3 Iteration: 1300 / 5000 [ 26%]  (Warmup) 
+Chain 3 Iteration: 1400 / 5000 [ 28%]  (Warmup) 
+Chain 3 Iteration: 1500 / 5000 [ 30%]  (Warmup) 
+Chain 3 Iteration: 1600 / 5000 [ 32%]  (Warmup) 
+Chain 3 Iteration: 1700 / 5000 [ 34%]  (Warmup) 
+Chain 3 Iteration: 1800 / 5000 [ 36%]  (Warmup) 
+Chain 3 Iteration: 1900 / 5000 [ 38%]  (Warmup) 
+Chain 3 Iteration: 2000 / 5000 [ 40%]  (Warmup) 
+Chain 3 Iteration: 2100 / 5000 [ 42%]  (Warmup) 
+Chain 3 Iteration: 2200 / 5000 [ 44%]  (Warmup) 
+Chain 4 Iteration: 1100 / 5000 [ 22%]  (Warmup) 
+Chain 4 Iteration: 1200 / 5000 [ 24%]  (Warmup) 
+Chain 4 Iteration: 1300 / 5000 [ 26%]  (Warmup) 
+Chain 4 Iteration: 1400 / 5000 [ 28%]  (Warmup) 
+Chain 4 Iteration: 1500 / 5000 [ 30%]  (Warmup) 
+Chain 4 Iteration: 1600 / 5000 [ 32%]  (Warmup) 
+Chain 4 Iteration: 1700 / 5000 [ 34%]  (Warmup) 
+Chain 4 Iteration: 1800 / 5000 [ 36%]  (Warmup) 
+Chain 4 Iteration: 1900 / 5000 [ 38%]  (Warmup) 
+Chain 4 Iteration: 2000 / 5000 [ 40%]  (Warmup) 
+Chain 1 Iteration: 2700 / 5000 [ 54%]  (Sampling) 
+Chain 1 Iteration: 2800 / 5000 [ 56%]  (Sampling) 
+Chain 1 Iteration: 2900 / 5000 [ 58%]  (Sampling) 
+Chain 1 Iteration: 3000 / 5000 [ 60%]  (Sampling) 
+Chain 1 Iteration: 3100 / 5000 [ 62%]  (Sampling) 
+Chain 1 Iteration: 3200 / 5000 [ 64%]  (Sampling) 
+Chain 1 Iteration: 3300 / 5000 [ 66%]  (Sampling) 
+Chain 1 Iteration: 3400 / 5000 [ 68%]  (Sampling) 
+Chain 1 Iteration: 3500 / 5000 [ 70%]  (Sampling) 
+Chain 1 Iteration: 3600 / 5000 [ 72%]  (Sampling) 
+Chain 2 Iteration: 2500 / 5000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 2501 / 5000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 2600 / 5000 [ 52%]  (Sampling) 
+Chain 2 Iteration: 2700 / 5000 [ 54%]  (Sampling) 
+Chain 2 Iteration: 2800 / 5000 [ 56%]  (Sampling) 
+Chain 2 Iteration: 2900 / 5000 [ 58%]  (Sampling) 
+Chain 2 Iteration: 3000 / 5000 [ 60%]  (Sampling) 
+Chain 2 Iteration: 3100 / 5000 [ 62%]  (Sampling) 
+Chain 2 Iteration: 3200 / 5000 [ 64%]  (Sampling) 
+Chain 2 Iteration: 3300 / 5000 [ 66%]  (Sampling) 
+Chain 2 Iteration: 3400 / 5000 [ 68%]  (Sampling) 
+Chain 3 Iteration: 2300 / 5000 [ 46%]  (Warmup) 
+Chain 3 Iteration: 2400 / 5000 [ 48%]  (Warmup) 
+Chain 3 Iteration: 2500 / 5000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 2501 / 5000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 2600 / 5000 [ 52%]  (Sampling) 
+Chain 3 Iteration: 2700 / 5000 [ 54%]  (Sampling) 
+Chain 3 Iteration: 2800 / 5000 [ 56%]  (Sampling) 
+Chain 3 Iteration: 2900 / 5000 [ 58%]  (Sampling) 
+Chain 3 Iteration: 3000 / 5000 [ 60%]  (Sampling) 
+Chain 3 Iteration: 3100 / 5000 [ 62%]  (Sampling) 
+Chain 4 Iteration: 2100 / 5000 [ 42%]  (Warmup) 
+Chain 4 Iteration: 2200 / 5000 [ 44%]  (Warmup) 
+Chain 4 Iteration: 2300 / 5000 [ 46%]  (Warmup) 
+Chain 4 Iteration: 2400 / 5000 [ 48%]  (Warmup) 
+Chain 4 Iteration: 2500 / 5000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 2501 / 5000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 2600 / 5000 [ 52%]  (Sampling) 
+Chain 4 Iteration: 2700 / 5000 [ 54%]  (Sampling) 
+Chain 4 Iteration: 2800 / 5000 [ 56%]  (Sampling) 
+Chain 4 Iteration: 2900 / 5000 [ 58%]  (Sampling) 
+Chain 4 Iteration: 3000 / 5000 [ 60%]  (Sampling) 
+Chain 4 Iteration: 3100 / 5000 [ 62%]  (Sampling) 
+Chain 1 Iteration: 3700 / 5000 [ 74%]  (Sampling) 
+Chain 1 Iteration: 3800 / 5000 [ 76%]  (Sampling) 
+Chain 1 Iteration: 3900 / 5000 [ 78%]  (Sampling) 
+Chain 1 Iteration: 4000 / 5000 [ 80%]  (Sampling) 
+Chain 1 Iteration: 4100 / 5000 [ 82%]  (Sampling) 
+Chain 1 Iteration: 4200 / 5000 [ 84%]  (Sampling) 
+Chain 1 Iteration: 4300 / 5000 [ 86%]  (Sampling) 
+Chain 1 Iteration: 4400 / 5000 [ 88%]  (Sampling) 
+Chain 2 Iteration: 3500 / 5000 [ 70%]  (Sampling) 
+Chain 2 Iteration: 3600 / 5000 [ 72%]  (Sampling) 
+Chain 2 Iteration: 3700 / 5000 [ 74%]  (Sampling) 
+Chain 2 Iteration: 3800 / 5000 [ 76%]  (Sampling) 
+Chain 2 Iteration: 3900 / 5000 [ 78%]  (Sampling) 
+Chain 2 Iteration: 4000 / 5000 [ 80%]  (Sampling) 
+Chain 2 Iteration: 4100 / 5000 [ 82%]  (Sampling) 
+Chain 2 Iteration: 4200 / 5000 [ 84%]  (Sampling) 
+Chain 3 Iteration: 3200 / 5000 [ 64%]  (Sampling) 
+Chain 3 Iteration: 3300 / 5000 [ 66%]  (Sampling) 
+Chain 3 Iteration: 3400 / 5000 [ 68%]  (Sampling) 
+Chain 3 Iteration: 3500 / 5000 [ 70%]  (Sampling) 
+Chain 3 Iteration: 3600 / 5000 [ 72%]  (Sampling) 
+Chain 3 Iteration: 3700 / 5000 [ 74%]  (Sampling) 
+Chain 3 Iteration: 3800 / 5000 [ 76%]  (Sampling) 
+Chain 3 Iteration: 3900 / 5000 [ 78%]  (Sampling) 
+Chain 3 Iteration: 4000 / 5000 [ 80%]  (Sampling) 
+Chain 4 Iteration: 3200 / 5000 [ 64%]  (Sampling) 
+Chain 4 Iteration: 3300 / 5000 [ 66%]  (Sampling) 
+Chain 4 Iteration: 3400 / 5000 [ 68%]  (Sampling) 
+Chain 4 Iteration: 3500 / 5000 [ 70%]  (Sampling) 
+Chain 4 Iteration: 3600 / 5000 [ 72%]  (Sampling) 
+Chain 4 Iteration: 3700 / 5000 [ 74%]  (Sampling) 
+Chain 4 Iteration: 3800 / 5000 [ 76%]  (Sampling) 
+Chain 4 Iteration: 3900 / 5000 [ 78%]  (Sampling) 
+Chain 1 Iteration: 4500 / 5000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 4600 / 5000 [ 92%]  (Sampling) 
+Chain 1 Iteration: 4700 / 5000 [ 94%]  (Sampling) 
+Chain 1 Iteration: 4800 / 5000 [ 96%]  (Sampling) 
+Chain 1 Iteration: 4900 / 5000 [ 98%]  (Sampling) 
+Chain 1 Iteration: 5000 / 5000 [100%]  (Sampling) 
+Chain 2 Iteration: 4300 / 5000 [ 86%]  (Sampling) 
+Chain 2 Iteration: 4400 / 5000 [ 88%]  (Sampling) 
+Chain 2 Iteration: 4500 / 5000 [ 90%]  (Sampling) 
+Chain 2 Iteration: 4600 / 5000 [ 92%]  (Sampling) 
+Chain 2 Iteration: 4700 / 5000 [ 94%]  (Sampling) 
+Chain 2 Iteration: 4800 / 5000 [ 96%]  (Sampling) 
+Chain 2 Iteration: 4900 / 5000 [ 98%]  (Sampling) 
+Chain 2 Iteration: 5000 / 5000 [100%]  (Sampling) 
+Chain 3 Iteration: 4100 / 5000 [ 82%]  (Sampling) 
+Chain 3 Iteration: 4200 / 5000 [ 84%]  (Sampling) 
+Chain 3 Iteration: 4300 / 5000 [ 86%]  (Sampling) 
+Chain 3 Iteration: 4400 / 5000 [ 88%]  (Sampling) 
+Chain 3 Iteration: 4500 / 5000 [ 90%]  (Sampling) 
+Chain 3 Iteration: 4600 / 5000 [ 92%]  (Sampling) 
+Chain 3 Iteration: 4700 / 5000 [ 94%]  (Sampling) 
+Chain 3 Iteration: 4800 / 5000 [ 96%]  (Sampling) 
+Chain 3 Iteration: 4900 / 5000 [ 98%]  (Sampling) 
+Chain 4 Iteration: 4000 / 5000 [ 80%]  (Sampling) 
+Chain 4 Iteration: 4100 / 5000 [ 82%]  (Sampling) 
+Chain 4 Iteration: 4200 / 5000 [ 84%]  (Sampling) 
+Chain 4 Iteration: 4300 / 5000 [ 86%]  (Sampling) 
+Chain 4 Iteration: 4400 / 5000 [ 88%]  (Sampling) 
+Chain 4 Iteration: 4500 / 5000 [ 90%]  (Sampling) 
+Chain 4 Iteration: 4600 / 5000 [ 92%]  (Sampling) 
+Chain 4 Iteration: 4700 / 5000 [ 94%]  (Sampling) 
+Chain 4 Iteration: 4800 / 5000 [ 96%]  (Sampling) 
+Chain 1 finished in 0.6 seconds.
+Chain 2 finished in 0.6 seconds.
+Chain 3 Iteration: 5000 / 5000 [100%]  (Sampling) 
+Chain 4 Iteration: 4900 / 5000 [ 98%]  (Sampling) 
+Chain 4 Iteration: 5000 / 5000 [100%]  (Sampling) 
+Chain 3 finished in 0.6 seconds.
+Chain 4 finished in 0.6 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 0.6 seconds.
+Total execution time: 0.8 seconds.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fit_gpd_m, <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"xi"</span>, <span class="st">"beta"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Inference for Stan model: gpd_measurementerror-202211241219-1-98c1f4.
+4 chains, each with iter=5000; warmup=2500; thin=1; 
+post-warmup draws per chain=2500, total post-warmup draws=10000.
+
+        mean se_mean     sd   2.5%    25%     50%     75%   97.5% n_eff Rhat
+xi      1.66    0.00   0.43   0.95   1.35    1.62    1.92    2.61 13151    1
+beta 1056.99    1.99 248.82 583.47 887.32 1049.45 1219.83 1562.54 15706    1
+
+Samples were drawn using NUTS(diag_e) at Thu Nov 24 12:19:57 2022.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at 
+convergence, Rhat=1).</code></pre>
+</div>
+</div>
+<p>The model sampled remarkably well. We can thus check whether our inferences still hold:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-07-05-tail-risk-of-diseases-in-r_files/figure-html/infer-measurement-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="influential-observations" class="level2">
+<h2 class="anchored" data-anchor-id="influential-observations">Influential observations</h2>
+<p>Taleb and Cirillo also stress their data by recreating the dataset 10,000 times and then eliminating from 1 to 7 of the observations with a jacknife resampling procedure. Thus, they confirm that no single observation is driving the inference.</p>
+<p>In a bayesian setting, we can check for influential observations by <em>comparing</em> the <strong>full-data predictive posterior distribution to the Leave-one-out predictive posterior for each left out point</strong>. That is: we compare <span class="math inline">\(p(y_i | y)\)</span> with <span class="math inline">\(p(y_i, | y_{-i})\)</span>.</p>
+<p>We can quickly estimate <span class="math inline">\(p(\theta_i, | y_{-i})\)</span> for each <span class="math inline">\(i\)</span> by just sampling from <span class="math inline">\(p(\theta | y)\)</span> using <a href="https://mc-stan.org/loo/reference/psis.html">Pareto Smoothed Importance Sampling LOO</a>. By examining the distribution of the importance weights, we can compare how different the two distributions are. If the weights are too fat-tailed, and the variance is infinite for the <span class="math inline">\(j\)</span>th observation, then the <span class="math inline">\(j\)</span>th observation is highly <a href="https://arxiv.org/pdf/1709.01449.pdf">influential observation determining our posterior distribution</a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>loglik <span class="ot">&lt;-</span> <span class="fu">extract</span>(fit_gpd)<span class="sc">$</span>log_lixi</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>loopsis <span class="ot">&lt;-</span> loo<span class="sc">::</span><span class="fu">loo</span>(loglik, loo<span class="sc">::</span><span class="fu">relative_eff</span>(<span class="fu">exp</span>(loglik)))</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(loopsis)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-07-05-tail-risk-of-diseases-in-r_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Indeed, no single observation is driving our inference.</p>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>Taleb and Cirillo show that the number of casualties are patently fat-tailed. Thus, there’s no typical catastrophe nor characteristic scale: a huge array of possibilities are likely and relevant for any analysis. Thus, there’s no <em>possibility</em> of forecasting what we may face with either a pointwise prediction or a distributional forecast.</p>
+<p>Indeed, we cannot even use our sample mean to do anything useful. Given the asymmetric risks involved and the huge uncertainty, the whole of Taleb’s work is very clear: we must kill the pandemic in the egg.</p>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

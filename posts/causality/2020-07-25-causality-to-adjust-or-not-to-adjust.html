@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.262">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="">
+<meta name="dcterms.date" content="2020-07-25">
+
+<title>David Salazar - Causality: To adjust or not to adjust</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">David Salazar</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../archive.html">
+ <span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/David-Salazar"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/DavidSalazarVir"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Causality: To adjust or not to adjust</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">July 25, 2020</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#what-is-this-blogpost-about" id="toc-what-is-this-blogpost-about" class="nav-link active" data-scroll-target="#what-is-this-blogpost-about">What is this blogpost about?</a></li>
+  <li><a href="#motivation" id="toc-motivation" class="nav-link" data-scroll-target="#motivation">Motivation</a></li>
+  <li><a href="#of-confounding" id="toc-of-confounding" class="nav-link" data-scroll-target="#of-confounding">Of confounding</a>
+  <ul class="collapse">
+  <li><a href="#blocking-non-causal-paths" id="toc-blocking-non-causal-paths" class="nav-link" data-scroll-target="#blocking-non-causal-paths">Blocking non-causal paths</a></li>
+  </ul></li>
+  <li><a href="#the-backdoor-criterion" id="toc-the-backdoor-criterion" class="nav-link" data-scroll-target="#the-backdoor-criterion">The Backdoor Criterion</a></li>
+  <li><a href="#correclty-adjusting" id="toc-correclty-adjusting" class="nav-link" data-scroll-target="#correclty-adjusting">Correclty adjusting</a></li>
+  <li><a href="#incorreclty-adjusting" id="toc-incorreclty-adjusting" class="nav-link" data-scroll-target="#incorreclty-adjusting">Incorreclty adjusting</a></li>
+  <li><a href="#conclusions" id="toc-conclusions" class="nav-link" data-scroll-target="#conclusions">Conclusions</a></li>
+  </ul>
+</nav>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="what-is-this-blogpost-about" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-this-blogpost-about">What is this blogpost about?</h2>
+<p>In this blogpost, I’ll simulate data to show how <strong>conditioning on as many variables as possible</strong> <em>is not a good idea</em>. Sometimes, conditioning can lead to de-confound an effect; other times, however, conditioning on a variable can create unnecessary confounding and bias the effect that we are trying to understand.</p>
+<p><strong>It all depends on our causal story</strong>: by applying the backdoor-criterion to our Causal Graph, we can derive an unambiguous answer to decide which variables should we use as controls in our statistical analysis.</p>
+</section>
+<section id="motivation" class="level2">
+<h2 class="anchored" data-anchor-id="motivation">Motivation</h2>
+<p>In the last <a href="https://david-salazar.github.io/2020/07/22/causality-invariance-under-interventions/">couple of posts</a>, we’ve seen how to define causal effects in terms of interventions and how to represent these <em>interventions</em> in terms of <em>graph surgeries</em>. We’ve also seen that <strong>observational data undetermines interventional data</strong>. Therefore, we cannot gain causal understanding unless we accompany our data-analysis with a causal story.</p>
+<p>In particular, we’ve seen that by leveraging the invariant qualities under intervention, we are able to estimate causal effects with the adjustment formula by conditioning on the parents of the exposure <span class="math inline">\(X\)</span>:</p>
+<p><span class="math display">\[
+P(Y=y|\text{do}(X=x)) = \sum_{z} P(Y=y | X=x, pa=z) P(pa=z)
+\]</span> However, what happens when we do not measure the parents of <span class="math inline">\(X\)</span> and thus cannot adjust for them? <strong>Can we adjust for some other observed variable(s)</strong>?</p>
+</section>
+<section id="of-confounding" class="level2">
+<h2 class="anchored" data-anchor-id="of-confounding">Of confounding</h2>
+<p>Let’s say that we are interested in estimating the causal effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> and we assume the following Causal Graph:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>example <span class="ot">&lt;-</span> <span class="fu">dagify</span>(z <span class="sc">~</span> b <span class="sc">+</span> c,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                  a <span class="sc">~</span> b,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                  d <span class="sc">~</span> c,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                  x <span class="sc">~</span> a <span class="sc">+</span> z,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                  w <span class="sc">~</span> x,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>                  y <span class="sc">~</span> w <span class="sc">+</span> z <span class="sc">+</span> d)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag</span>(example) <span class="sc">+</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"We want to estimate x -&gt; y"</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="fu">TeX</span>(<span class="st">"But we don't observe $A$ and thus we cannot use the adjustment formula"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>The adjustment formula above states that we should adjust for the parents of <span class="math inline">\(x\)</span>. However, assume that we <strong>cannot measure</strong> <span class="math inline">\(a\)</span>. Can we still estimate the causal effect?</p>
+<p>To answer this question we must understand why is that it’s useful to adjust for the parents. First, remember that in a Causal Graph, <strong>the statistical information flows freely</strong> in the Graph, <em>regardless</em> of the direction of the arrows. Therefore, in the above graph, the causal information from <span class="math inline">\(c\)</span> to <span class="math inline">\(y\)</span> may end up getting picked up by <span class="math inline">\(x\)</span> or vice versa.</p>
+<p><strong>We condition on the parents of <span class="math inline">\(x\)</span> such that we block all the information coming from other causal relationships</strong>. Thus, we don’t end up adding up the causal effect of some other variable in the process. However, if we cannot control by its parents, it’s possible that some of this causal effect coming from other variables will be picked up by <span class="math inline">\(X\)</span> through the arrows that go into it. Therefore, we will have <strong>confounding bias</strong>. Which we defined thus:</p>
+<p><span class="math display">\[
+P(Y | \text{do(X = x)}) \neq P(Y| X=x)
+\]</span></p>
+<section id="blocking-non-causal-paths" class="level3">
+<h3 class="anchored" data-anchor-id="blocking-non-causal-paths">Blocking non-causal paths</h3>
+<p>For example, in the above graph there are the following 4 paths from <span class="math inline">\(X\)</span> into <span class="math inline">\(Y\)</span>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag_paths</span>(example, <span class="at">from =</span> <span class="st">'x'</span>, <span class="at">to =</span> <span class="st">'y'</span>, <span class="at">shadow =</span> T) <span class="sc">+</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Paths from x into y"</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Of 4 possible paths, only one of them is a causal path"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/all-paths-1.png" class="img-fluid" width="960"></p>
+</div>
+</div>
+<p>We have 4 paths but <em>only</em> 1 of them is causal: only one is a direct descendant of <span class="math inline">\(X\)</span>. Therefore, if we want to estimate the causal effect, we must make sure that <strong>all the other non-causal paths (the backdoor paths that have arrows into X) are blocked</strong>. Luckily, we already defined a graphical algorithm to find out which variables we must adjust for in order to block some path: the <strong>d-separation criterion</strong>.</p>
+<p>Therefore, we arrive at the following four possible adjustment sets that guarantee that all non-causal paths will be blocked. By conditioning on them, we will correctly estimate the causal effect:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag_adjustment_set</span>(example, <span class="at">exposure =</span> <span class="st">'x'</span>, <span class="at">outcome =</span> <span class="st">'y'</span>, <span class="at">shadow =</span> T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/adjustment-paths-1.png" class="img-fluid" width="1152"></p>
+</div>
+</div>
+<p>Let’s see why each of the four available adjustment set works:</p>
+<ol type="1">
+<li><p>By conditioning on <span class="math inline">\(z\)</span>, we open a collider between <span class="math inline">\(b\)</span> and <span class="math inline">\(c\)</span>. However, the causal effect of <span class="math inline">\(c\)</span> on <span class="math inline">\(y\)</span> does not get picked up by <span class="math inline">\(x\)</span> because we are blocking the path by conditioning on <span class="math inline">\(a\)</span>.</p></li>
+<li><p>By conditioning on <span class="math inline">\(z\)</span>, we open a collider between <span class="math inline">\(b\)</span> and <span class="math inline">\(c\)</span>. However, given that we adjust for <span class="math inline">\(b\)</span>, the effect of <span class="math inline">\(c\)</span> on <span class="math inline">\(y\)</span> won’t be picked up by <span class="math inline">\(x\)</span>.</p></li>
+<li><p>By conditioning on <span class="math inline">\(z\)</span>, we open a collider between <span class="math inline">\(b\)</span> and <span class="math inline">\(c\)</span>. However, given that we adjust for <span class="math inline">\(c\)</span>, the effect of <span class="math inline">\(c\)</span> on <span class="math inline">\(y\)</span> won’t be picked up by <span class="math inline">\(x\)</span>.</p></li>
+<li><p>By conditioning on <span class="math inline">\(z\)</span>, we open a collider between <span class="math inline">\(b\)</span> and <span class="math inline">\(c\)</span>. However, by adjusting for <span class="math inline">\(d\)</span>, we block the effect of <span class="math inline">\(c\)</span> on <span class="math inline">\(y\)</span> and thus this effect won’t get picked up by <span class="math inline">\(x\)</span>.</p></li>
+</ol>
+</section>
+</section>
+<section id="the-backdoor-criterion" class="level2">
+<h2 class="anchored" data-anchor-id="the-backdoor-criterion">The Backdoor Criterion</h2>
+<p>Given that we cannot directly adjust by the parents of <span class="math inline">\(x\)</span>, <strong>what variables should we condition on to obtain the correct effect?</strong> The question boils down to <strong>finding a set of variables that satisfy the backdoor criterion</strong>:</p>
+<p>Given an ordered pair of variables ( (X, Y) ) in a directed acyclic graph ( G, ) a set of variables ( Z ) satisfies the backdoor criterion relative to ( (X, Y) ) if no node in ( ) is a descendant of ( X, ) and ( ) blocks every path between ( X ) and ( Y ) that contains an arrow into X. If a set of variables ( Z ) satisfies the backdoor criterion for ( X ) and ( Y, ) then the causal effect of ( X ) on ( Y ) is given by the formula [ P(Y=y d o(X=x))=_{z} P(Y=y X=x, Z=z) P(Z=z) ]</p>
+<p>Note that the parents of <span class="math inline">\(X\)</span> always satisfy the backdoor criterion. Notice also, quite importantly, that the criterion simultaneously says <strong>which variables we should use as control variables and which ones we shouldn’t</strong>. Indeed, by adjusting for the wrong variable we may end up opening a non-causal path into <span class="math inline">\(x\)</span> and thus introducing confounding bias into our estimates.</p>
+</section>
+<section id="correclty-adjusting" class="level2">
+<h2 class="anchored" data-anchor-id="correclty-adjusting">Correclty adjusting</h2>
+<p>Let’s keep working with our current Graphical Model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag_exogenous</span>(example)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We can simulate data coming from such a model thus :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>c <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>b <span class="sc">-</span> <span class="dv">3</span><span class="sc">*</span>c <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="sc">-</span>b <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>a <span class="sc">-</span><span class="dv">2</span><span class="sc">*</span>z <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fl">1.5</span><span class="sc">*</span>c <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>w <span class="ot">&lt;-</span> x<span class="sc">*</span><span class="dv">2</span> <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="dv">5</span><span class="sc">*</span>w <span class="sc">-</span><span class="dv">2</span><span class="sc">*</span>d<span class="sc">-</span> <span class="dv">5</span><span class="sc">*</span>z <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Thus, the causal effect of one unit of <span class="math inline">\(x\)</span> on <span class="math inline">\(y\)</span> is always <span class="math inline">\(10 = 5 \times 2\)</span>. Notice that we have four possible adjustment sets to estimate these causal query and all of these possibilities should yield the same answer. Therefore, <strong>this constraint becomes yet another testable implication of our model.</strong></p>
+<p>Let’s fit a Gaussian Linear regression with each of the possible adjustment sets and compare the results. But first let’s fit a naive model with no adjustment whatsoever.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(b, c, z, a, x, d, w, y)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>model_one <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> data, <span class="at">refresh =</span> <span class="dv">0</span>) </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>model_one <span class="sc">%&gt;%</span> </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">spread_draws</span>(x) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x)) <span class="sc">+</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_halfeye</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span> </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">10.2</span>, <span class="at">y =</span> <span class="fl">0.7</span>, <span class="at">label =</span> <span class="st">"True causal effect"</span>, <span class="at">color =</span> <span class="st">"red"</span>, </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">family =</span> <span class="fu">theme_get</span>()<span class="sc">$</span>text[[<span class="st">"family"</span>]]) <span class="sc">+</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  hrbrthemes<span class="sc">::</span><span class="fu">theme_ipsum_rc</span>(<span class="at">grid =</span> <span class="st">"y"</span>)  <span class="sc">+</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> <span class="dv">10</span>), <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Causal Inference from Model y ~ x"</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"This estimation overestimates the causal effect due to confounding bias"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>As expected, our estimations are off. Following the backdoor criterion, the following estimations should be unbiased:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>model_two <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(y <span class="sc">~</span> x <span class="sc">+</span> a <span class="sc">+</span>z, <span class="at">data =</span> data, <span class="at">refresh =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Much better! Let’s check the other models:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>model_three <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(y <span class="sc">~</span> x <span class="sc">+</span> b <span class="sc">+</span>z, <span class="at">data =</span> data, <span class="at">refresh =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Also a correct estimation! Let’s fit the model where we adjust by <span class="math inline">\(c\)</span>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>model_four <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(y <span class="sc">~</span> x <span class="sc">+</span> c <span class="sc">+</span>z, <span class="at">data =</span> data, <span class="at">refresh =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Finally, the model where we condition on <span class="math inline">\(z, d\)</span>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>model_five <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(y <span class="sc">~</span> x <span class="sc">+</span> d <span class="sc">+</span>z, <span class="at">data =</span> data, <span class="at">refresh =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="incorreclty-adjusting" class="level2">
+<h2 class="anchored" data-anchor-id="incorreclty-adjusting">Incorreclty adjusting</h2>
+<p>Adjusting on a variable can sometimes open backdoor paths that would had otherwise remained closed. Take the following example:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>hurting <span class="ot">&lt;-</span> <span class="fu">dagify</span>(Y <span class="sc">~</span> X <span class="sc">+</span> u1,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                  X <span class="sc">~</span> u2,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                  L <span class="sc">~</span> u1 <span class="sc">+</span> u2)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag</span>(hurting) <span class="sc">+</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"If we don't condition on L, the only backdoor path between X and Y is closed"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Notice that there is only one backdoor path for <span class="math inline">\(X\)</span>. However, it contains a collider: <span class="math inline">\(L\)</span>. Therefore, unless we condition on <span class="math inline">\(L\)</span>, the backdoor path will remain closed. In this case, we must not adjust for any of the variables, as there is no confounding bias: <span class="math inline">\(P(Y | do (X = x)) = P(Y| X = x)\)</span>.</p>
+<p>If we are naive, and we consider that controlling for observables is always a step in the right direction toward causal inference, we will end up with the wrong inference. By condition on <span class="math inline">\(L\)</span>, we open up a collider that will create a relationship between <span class="math inline">\(u_1\)</span> and <span class="math inline">\(u_2\)</span>; therefore, <span class="math inline">\(X\)</span> will pick up the causal effect of <span class="math inline">\(u_1\)</span> on <span class="math inline">\(y\)</span>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag_adjust</span>(hurting, <span class="at">var =</span> <span class="st">"L"</span>) <span class="sc">+</span>  </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_brewer</span>(<span class="at">type =</span> <span class="st">"qual"</span>, <span class="at">palette =</span> <span class="st">"Set2"</span>)  <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Conditioning on a collider opens a backdoor path between X and Y"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We can easily confirm this insight by simulating some data and fitting models.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>u1 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>u2 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>u2 <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>x <span class="sc">-</span><span class="dv">5</span><span class="sc">*</span>u1 <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>l <span class="ot">&lt;-</span> u1 <span class="sc">+</span> u2 <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(u1, u2, x, y, l)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Thus, the correct causal effect of one unit of <span class="math inline">\(x\)</span> on <span class="math inline">\(y\)</span> is always 2.</p>
+<p>First, let’s fit the correct model where we don’t condition on any of the other variables:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>model_correct <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> data, <span class="at">refresh =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>However, if we adjust for <span class="math inline">\(L\)</span>, our estimations will be biased:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>model_incorrect <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(y <span class="sc">~</span> x <span class="sc">+</span> l, <span class="at">data =</span> data, <span class="at">refresh =</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-07-25-causality-to-adjust-or-not-to-adjust_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="conclusions" class="level1">
+<h1>Conclusions</h1>
+<p>Stats people know that <strong>correlation coefficients do not imply causal effects</strong>. Yet, very often, <em>partial correlation</em> coefficients from <strong>regressions with an ever growing set of ‘control variables’</strong> are unequivocally interpreted as a step in the <em>right direction</em> toward estimating a <strong>causal effect</strong>. This mistaken intuition was aptly named by Richard McElreath, in his fantastic <a href="https://xcelab.net/rm/statistical-rethinking/">Stats course</a>, as <em>Causal Salad</em>: people toss a bunch of control variables and hope to get a casual effect out of it.</p>
+<p>With the introduction of Causal Graphs, we gain a invaluable tool with the <strong>backdoor criterion</strong>. With a simple <em>graphical algorithm</em>, we can define <strong>which variables we must include</strong> in our analysis in order to <strong>cancel out all the information coming from different causal relationships than the one we are interested</strong>.</p>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

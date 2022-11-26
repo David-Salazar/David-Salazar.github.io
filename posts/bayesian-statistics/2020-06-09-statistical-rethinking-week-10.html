@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.262">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="">
+<meta name="dcterms.date" content="2020-06-09">
+
+<title>David Salazar - Statistical Rethinking Week 10</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">David Salazar</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../archive.html">
+ <span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/David-Salazar"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/DavidSalazarVir"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Statistical Rethinking Week 10</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 9, 2020</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#st-problem" id="toc-st-problem" class="nav-link active" data-scroll-target="#st-problem">1st problem</a>
+  <ul class="collapse">
+  <li><a href="#solution" id="toc-solution" class="nav-link" data-scroll-target="#solution">Solution</a></li>
+  </ul></li>
+  <li><a href="#second-problem" id="toc-second-problem" class="nav-link" data-scroll-target="#second-problem">Second problem</a></li>
+  </ul>
+</nav>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>This is the final week of the best Statistics course out there. It showed the benefits of being ruthless with conditional probabilities: replace everything you don’t know with a distribution conditioned on what you do know. Bayes will do the rest. This holds for both measurement error and missing data.</p>
+<section id="st-problem" class="level1">
+<h1>1st problem</h1>
+<p>Consider the relationship between brain volume (brain) and body mass (body) in the data(Primates301). These values are presented as single values for each species. However, there is always a range of sizes in a species, and some of these measurements are taken from very small samples. So these values are measured with some unknown error.</p>
+<p>Let’s begin by copying Richard’s code to simulate a measurement error:</p>
+<div class="cell">
+
+</div>
+<p>Ignoring measurement error, the model is thus:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 1 chain, with 1 thread(s) per chain...
+
+Chain 1 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 1 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 1 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 1 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 1 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 1 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 1 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 1 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 1 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 1 finished in 0.4 seconds.</code></pre>
+</div>
+</div>
+<p>With the posterior:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>           mean         sd      5.5%     94.5%    n_eff    Rhat4
+a     0.4228299 0.05204509 0.3382111 0.5015443 231.8753 1.008351
+b     0.7818323 0.01259683 0.7613619 0.8010810 215.4058 1.009768
+sigma 0.2933987 0.01599348 0.2698708 0.3216627 202.4175 1.008526</code></pre>
+</div>
+</div>
+<p>Your job is to add the measurement errors to this model. Use the divorce/marriage example in the chapter as a guide.</p>
+<section id="solution" class="level2">
+<h2 class="anchored" data-anchor-id="solution">Solution</h2>
+<p>To handle measurement error we will state that the observed values for both M and B come from a distribution centered around true unknown values but with known measurement error (the one that Richard just simulated).</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains...
+
+Chain 1 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 2 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 3 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 4 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 2 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 1 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 3 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 4 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 1 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 2 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 3 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 4 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 1 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 2 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 3 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 4 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 1 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 2 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 3 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 4 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 1 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 2 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 3 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 4 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 1 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 2 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 3 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 4 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 1 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 2 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 3 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 4 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 1 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 2 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 4 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 2 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 3 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 1 finished in 2.0 seconds.
+Chain 2 finished in 1.9 seconds.
+Chain 3 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 4 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 3 finished in 1.9 seconds.
+Chain 4 finished in 1.9 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 1.9 seconds.
+Total execution time: 2.2 seconds.</code></pre>
+</div>
+</div>
+<p>Let’s check our posterior:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>           mean         sd      5.5%     94.5%    n_eff     Rhat4
+a     0.4191687 0.05866025 0.3280848 0.5165294 1898.249 0.9985912
+b     0.7905614 0.01447971 0.7676140 0.8135265 1925.384 0.9988059
+sigma 0.2638313 0.01772510 0.2367339 0.2921449 2423.656 0.9993535</code></pre>
+</div>
+</div>
+<p>Our inferences have hardly changed now that we have taken into account the measurement error.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>                                WAIC           SE        dWAIC          dSE
+model_no_measurement   -8.694090e+02 3.775739e+01 0.000000e+00           NA
+model_with_measurement  1.751128e+13 8.911135e+12 1.751128e+13 8.935717e+12
+                              pWAIC weight
+model_no_measurement   2.620076e+00      1
+model_with_measurement 8.755447e+12      0</code></pre>
+</div>
+</div>
+<p>Let’s plot the predicted relationship:</p>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-06-09-statistical-rethinking-week-10_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>The regression line is mainly informed by the small animals because they are more numerous and have smaller measurement errors (by assumption). Therefore, the terrible fit for the largest animals in the sample: there’s few of them and they have the largest measurement error.</p>
+</section>
+</section>
+<section id="second-problem" class="level1">
+<h1>Second problem</h1>
+<p>Now consider missing values—this data set is lousy with them. You can ignore measurement error in this problem. Let’s get a quick idea of the missing values by counting them in each variable:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>               name               genus             species          subspecies 
+                  0                   0                   0                 267 
+             spp_id            genus_id     social_learning     research_effort 
+                  0                   0                  98                 115 
+              brain                body          group_size           gestation 
+                117                  63                 114                 161 
+            weaning           longevity        sex_maturity maternal_investment 
+                185                 181                 194                 197 </code></pre>
+</div>
+</div>
+<div class="cell">
+
+</div>
+<p>You should end up with 238 species and 56 missing brain values among them. First, consider whether there is a pattern to the missing values. Does it look like missing values are associated with particular values of body mass?</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-06-09-statistical-rethinking-week-10_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>Draw a DAG that represents how missingness works in this case. Which type (MCAR, MAR, MNAR) is this?</p>
+</blockquote>
+<p>Therefore, this is indicative that observations for Brain Size are, in the taxonomy of Don Rubin’s missingess, “Missing at random”. That is, their <em>missingness</em> is related to one of the predictor variables: M.</p>
+<p>In DAG form, we say that the missing values arise thus:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-06-09-statistical-rethinking-week-10_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>Second, impute missing values for brain size.</p>
+</blockquote>
+<p>As always, be ruthless with conditioning. Replace the values that we don’t know with their own distribution conditional on what we do know. In this case, our likelihood, the lognormal, will serve simultaneously as the prior for the missing observations.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains...
+
+Chain 1 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 2 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 3 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 4 Iteration:   1 / 1000 [  0%]  (Warmup) 
+Chain 4 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 2 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 1 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 4 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 3 Iteration: 100 / 1000 [ 10%]  (Warmup) 
+Chain 2 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 4 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 1 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 2 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 4 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 2 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 1 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 3 Iteration: 200 / 1000 [ 20%]  (Warmup) 
+Chain 4 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 3 Iteration: 300 / 1000 [ 30%]  (Warmup) 
+Chain 4 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 1 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 4 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 2 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 1 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 4 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 1 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 2 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 3 Iteration: 400 / 1000 [ 40%]  (Warmup) 
+Chain 1 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 2 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 3 Iteration: 500 / 1000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 501 / 1000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 2 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 3 Iteration: 600 / 1000 [ 60%]  (Sampling) 
+Chain 4 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 2 finished in 3.5 seconds.
+Chain 4 finished in 3.4 seconds.
+Chain 1 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 3 Iteration: 700 / 1000 [ 70%]  (Sampling) 
+Chain 1 finished in 3.6 seconds.
+Chain 3 Iteration: 800 / 1000 [ 80%]  (Sampling) 
+Chain 3 Iteration: 900 / 1000 [ 90%]  (Sampling) 
+Chain 3 Iteration: 1000 / 1000 [100%]  (Sampling) 
+Chain 3 finished in 3.9 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 3.6 seconds.
+Total execution time: 4.0 seconds.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>           mean         sd      5.5%     94.5%     n_eff     Rhat4
+a     0.4310395 0.06224369 0.3331714 0.5322887  919.8862 1.0068288
+b     0.7840811 0.01498565 0.7602004 0.8090201  883.9844 1.0067723
+sigma 0.2927228 0.01570305 0.2686231 0.3194407 1478.0566 0.9986309</code></pre>
+</div>
+</div>
+<p>There’s really no difference in our inferences compared to what the inferences that we made when we dropped all the missing values. The answer is simple: most of the imputted variables correspond to animals with small body sizes and therefore were imputted with small brain sizes. Before, our model was already dominated by this type of animals. Now that we have imputed them, it only reinforces this dominance over the regression line. That is, the missing info, once it is accounted for, is redundant: it adds no new information to our model.</p>
+<p>Indeed, let’s compare the observed observations to the imputed observations:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-06-09-statistical-rethinking-week-10_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.262">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="">
+<meta name="dcterms.date" content="2020-06-11">
+
+<title>David Salazar - How to not get fooled by the “Empirical Distribution”</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">David Salazar</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../archive.html">
+ <span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/David-Salazar"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/DavidSalazarVir"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">How to not get fooled by the “Empirical Distribution”</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 11, 2020</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#why-does-the-empirical-distribution-fool-us" id="toc-why-does-the-empirical-distribution-fool-us" class="nav-link active" data-scroll-target="#why-does-the-empirical-distribution-fool-us">Why does the empirical distribution fool us?</a></li>
+  <li><a href="#visualizing-the-invisible-tail" id="toc-visualizing-the-invisible-tail" class="nav-link" data-scroll-target="#visualizing-the-invisible-tail">Visualizing the invisible tail</a></li>
+  <li><a href="#estimating-the-tail-first-then-the-mean" id="toc-estimating-the-tail-first-then-the-mean" class="nav-link" data-scroll-target="#estimating-the-tail-first-then-the-mean">Estimating the tail first, then the mean</a></li>
+  <li><a href="#maximum-likelihood" id="toc-maximum-likelihood" class="nav-link" data-scroll-target="#maximum-likelihood">Maximum Likelihood</a>
+  <ul class="collapse">
+  <li><a href="#maximum-likelihood-in-practice" id="toc-maximum-likelihood-in-practice" class="nav-link" data-scroll-target="#maximum-likelihood-in-practice">Maximum likelihood in practice</a></li>
+  </ul></li>
+  <li><a href="#maximum-likelihoods-alpha-distribution" id="toc-maximum-likelihoods-alpha-distribution" class="nav-link" data-scroll-target="#maximum-likelihoods-alpha-distribution">Maximum likelihood’s alpha distribution</a></li>
+  <li><a href="#from-ml-estimator-for-alpha-to-plug-in-mean" id="toc-from-ml-estimator-for-alpha-to-plug-in-mean" class="nav-link" data-scroll-target="#from-ml-estimator-for-alpha-to-plug-in-mean">From ML estimator for alpha to plug-in mean</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>With fat-tailed random variables, as Nassim Taleb says, <a href="https://twitter.com/nntaleb/status/1245399854710509574/photo/1">the tail wags the dogs</a>. That is, “the tails (the rare events) play a disproportionately large role in determining the properties”. Following the presentation given by Taleb in his latest <a href="https://www.researchers.one/media/documents/260-m-Technical%20Incerto%20Vol%201.pdf">technical book: Statistical Consequences of Fat Tails</a>, I’ll show:</p>
+<ul>
+<li>Why using the empirical distribution for estimating the moments of a fat-tailed random variable is a terrible idea.</li>
+<li>A less “unreliable” alternative to estimating the moments.</li>
+</ul>
+<section id="why-does-the-empirical-distribution-fool-us" class="level2">
+<h2 class="anchored" data-anchor-id="why-does-the-empirical-distribution-fool-us">Why does the empirical distribution fool us?</h2>
+<p>The tails play a disproportionate role in defining the theoretical moments for fat-tailed distributions. However, if we are working with the non-parametric <em>“empirical distribution”</em>, we are effectively <strong>cutting the tail at our sample maximum</strong>. The rest of the tail, the possible values larger than our sample maximum, <strong>are taken out of the equation when estimating any moment through the “empirical” distribution</strong>. This <em>hidden contribution</em> to the theoretical mean that does not appear in the sample, however, is <strong>precisely</strong> the most important to define the theoretical moment that we are trying to estimate. Thus, our estimates with the “empirical” distribution will be terrible.</p>
+<p>Instead of using the “empirical distribution”, what one should attempt is an <em>intelligent</em> extrapolation to take into consideration <a href="2020-06-10-fisher-tippet-th-a-clt-for-the-sample-maxima.html">future maxima</a> and their influence in our estimate. This can be done, in the case of a Pareto distribution, by estimating the <a href="2020-05-19-understanding-the-tail-exponent.html">tail exponent <span class="math inline">\(\alpha\)</span></a> and then <strong>plug-in</strong> our estimated alpha to estimate the mean.</p>
+</section>
+<section id="visualizing-the-invisible-tail" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-the-invisible-tail">Visualizing the invisible tail</h2>
+<p>The tails contribute the most for any theoretical moment of any fat-tailed variable. However, when we work with the “empirical” distribution, we are ignoring the contribution of the tail beyond our sample maximum. Graphically, Taleb shows it thus:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../images/hiddentail.PNG" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Hidden contribution to the p-moment</figcaption><p></p>
+</figure>
+</div>
+<p>Taleb also shows how this ignorance of the tail is most worrisome the fatter the distribution:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../images/worrysomethefatter.PNG" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">The fatter, the worse is the mistake of the empirical</figcaption><p></p>
+</figure>
+</div>
+</section>
+<section id="estimating-the-tail-first-then-the-mean" class="level2">
+<h2 class="anchored" data-anchor-id="estimating-the-tail-first-then-the-mean">Estimating the tail first, then the mean</h2>
+<p><a href="2020-05-19-understanding-the-tail-exponent.html">By definition</a> the tail exponent tells us information about the tail. Specifically, about the survival’s function rate of decay. Therefore:</p>
+<blockquote class="blockquote">
+<p>The tail exponent <span class="math inline">\(\alpha\)</span> captures, by extrapolation, the low probability deviation not seen in the data, but that plays a disproportionately large share in determining the mean.</p>
+</blockquote>
+<p>Thus, once one has taken into account the hidden tail’s influence with the estimated <span class="math inline">\(\widehat \alpha\)</span>, we can produce a less unreliable estimate of the mean (or other higher moments). However, care must be taken: <strong>with a Pareto, the mean is hardly what matters</strong>. What is really important here is the <strong>idea of first figuring out the properties of the fat-tailed distribution</strong> and <em>then</em> trying to estimate things.</p>
+</section>
+<section id="maximum-likelihood" class="level2">
+<h2 class="anchored" data-anchor-id="maximum-likelihood">Maximum Likelihood</h2>
+<p>For a Pareto with known minimum observation 1, things are pretty straightforward. As it is often the case in statistics, the answer is maximum likelihood. Just posit a likelihood for your data, take the log, differentiate w.r.t <span class="math inline">\(\alpha\)</span> and you have your estimate:</p>
+<p><span class="math display">\[ L(\alpha) = \prod_{i=1}^n \alpha \frac {1} {x_i^{\alpha+1}} = \alpha^n \prod_{i=1}^n \frac {1}{x_i^{\alpha+1}}. \]</span></p>
+<p><span class="math display">\[ \ell(\alpha) = n \ln \alpha  - (\alpha + 1) \sum_{i=1} ^n \ln x_i. \]</span> <span class="math display">\[ \widehat \alpha = \frac{n}{\sum _i  \ln (x_i) }\]</span> Luckily, this maximum likelihood estimate for <span class="math inline">\(\alpha\)</span> works reasonably well with relatively small amounts of data. Why? Because <span class="math inline">\(\widehat \alpha\)</span> follows an Inverse gamma distribution with shape parameter equal to <span class="math inline">\(n\)</span> and scale parameter equal to <span class="math inline">\(\alpha n\)</span>. Although biased, the distribution of the estimator rapidly converges to a normal distribution tightly <em>around</em> the true <span class="math inline">\(\alpha\)</span>. Therefore, one can reliably estimate the tail exponent of the Pareto and thus understand the properties of the distribution with relatively few data.</p>
+<p>Once we have an estimate for <span class="math inline">\(\widehat \alpha\)</span>, our estimate for the mean will be <span class="math inline">\(\dfrac{\widehat \alpha}{ \widehat \alpha - 1 }\)</span>. This is the <strong>plug-in</strong> estimator for the mean.</p>
+<section id="maximum-likelihood-in-practice" class="level3">
+<h3 class="anchored" data-anchor-id="maximum-likelihood-in-practice">Maximum likelihood in practice</h3>
+<p>To demonstrate the <em>superiority</em> of the <strong>maximum likelihood and plug in estimator</strong> approach to the sample mean of an empirical distribution, I’ll simulate 10^5 Monte-Carlo experiments. For each experiment, I’ll sample <span class="math inline">\(n\)</span> observations from a Pareto with <span class="math inline">\(\alpha = 1.2\)</span> and theoretical mean <span class="math inline">\(\dfrac{1.2}{1.2 - 1} = 6\)</span>. Then, I’ll produce the <strong>maximum likelihood estimate for the tail exponent</strong> and an estimate of the mean using our <strong>plug-in</strong> estimator. At the same time, I’ll produce the regular sample mean for each experiment considering the <em>“empirical distribution”</em>. Finally, I’ll compare the resulting distribution of both the sample mean and the mean from the plug-in estimator.</p>
+<p>I’ll repeat this for both <span class="math inline">\(n = 100, 1000\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="fl">1.2</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>rpareto <span class="ot">&lt;-</span> <span class="cf">function</span>(n) {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>   (<span class="dv">1</span><span class="sc">/</span><span class="fu">runif</span>(n)<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span>alpha)) <span class="co"># inverse transform sampling</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>estimate_alpha_ml <span class="ot">&lt;-</span> <span class="cf">function</span>(observations) {</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> <span class="fu">length</span>(observations)<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">log</span>(observations))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (alpha <span class="sc">&lt;</span> <span class="dv">1</span>) {</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    alpha <span class="ot">&lt;-</span> <span class="fl">1.0005</span> </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  alpha</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">crossing</span>(<span class="at">experiment =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span><span class="sc">^</span><span class="dv">5</span>, <span class="at">sample_size =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">1000</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">data =</span> <span class="fu">map</span>(sample_size, <span class="sc">~</span> <span class="fu">rpareto</span>(.)),</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>         <span class="at">mean_sample =</span> <span class="fu">map_dbl</span>(data, <span class="sc">~</span> <span class="fu">mean</span>(.)),</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>         <span class="at">alpha_ml =</span> <span class="fu">map_dbl</span>(data, <span class="sc">~</span> <span class="fu">estimate_alpha_ml</span>(.)),</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>         <span class="at">mean_ml =</span> alpha_ml <span class="sc">/</span> (alpha_ml <span class="sc">-</span> <span class="dv">1</span>) ) <span class="ot">-&gt;</span> simulations_result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="maximum-likelihoods-alpha-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="maximum-likelihoods-alpha-distribution">Maximum likelihood’s alpha distribution</h2>
+<p>From relatively few observations, we can reliably estimate the tail exponent of the distribution.</p>
+<p>This goes against the usual comment that with fat-tailed variables we <em>need more</em> and more observations; <strong>the information about the properties of the distribution</strong> is already there with <em>some</em> data. Let’s check our Monte-Carlo distribution for our maximum likelihood alpha estimates for both values of <span class="math inline">\(n = 100\)</span> and <span class="math inline">\(n= 1000\)</span></p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-06-11-how-to-not-get-fooled-by-the-empirical-distribution_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="960"></p>
+</div>
+</div>
+</section>
+<section id="from-ml-estimator-for-alpha-to-plug-in-mean" class="level2">
+<h2 class="anchored" data-anchor-id="from-ml-estimator-for-alpha-to-plug-in-mean">From ML estimator for alpha to plug-in mean</h2>
+<p>Once we have convinced ourselves that we can <strong>reliably estimate <span class="math inline">\(\alpha\)</span></strong>, we can then use this alpha estimate to <em>estimate</em> the <strong>mean of the distribution</strong>. However, one must be cautious. To prepare the reader, there are going to be <em>crazy</em> large observations that will confuse both methods at some Monte-Carlo experiments: this is just the nature of fat-tails and the precise reason why forecasting <strong>just a single variable is so dangerous</strong>. Therefore, the mean, or <em>any other</em> single estimate, <strong>cannot possibly prepare us</strong> for the enormous variation that a fat-tailed variable encodes. Thus, these problems haunt even our Maximum Likelihood estimator for the mean; <em>just less</em> than they haunt our estimate for the mean when we use the “empirical distribution”.</p>
+<p>These problems show themselves in the form of a large mean for the distribution of the estimates according to each method. Alongside these means, the median and other percentiles of the distributions for both type of estimation methods and both <span class="math inline">\(n\)</span>’s appear in the table below:</p>
+<div class="cell">
+<div class="cell-output-display">
+
+<div id="cipbnscuuz" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+:where(#cipbnscuuz) .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+:where(#cipbnscuuz) .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+:where(#cipbnscuuz) .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+:where(#cipbnscuuz) .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+:where(#cipbnscuuz) .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+:where(#cipbnscuuz) .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+:where(#cipbnscuuz) .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+:where(#cipbnscuuz) .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+:where(#cipbnscuuz) .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+:where(#cipbnscuuz) .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+:where(#cipbnscuuz) .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+:where(#cipbnscuuz) .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+:where(#cipbnscuuz) .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+:where(#cipbnscuuz) .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+:where(#cipbnscuuz) .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+:where(#cipbnscuuz) .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+:where(#cipbnscuuz) .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+:where(#cipbnscuuz) .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+:where(#cipbnscuuz) .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+:where(#cipbnscuuz) .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+:where(#cipbnscuuz) .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+:where(#cipbnscuuz) .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+:where(#cipbnscuuz) .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+:where(#cipbnscuuz) .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+:where(#cipbnscuuz) .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+:where(#cipbnscuuz) .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+:where(#cipbnscuuz) .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+:where(#cipbnscuuz) .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+:where(#cipbnscuuz) .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+:where(#cipbnscuuz) .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+:where(#cipbnscuuz) .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+:where(#cipbnscuuz) .gt_left {
+  text-align: left;
+}
+
+:where(#cipbnscuuz) .gt_center {
+  text-align: center;
+}
+
+:where(#cipbnscuuz) .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+:where(#cipbnscuuz) .gt_font_normal {
+  font-weight: normal;
+}
+
+:where(#cipbnscuuz) .gt_font_bold {
+  font-weight: bold;
+}
+
+:where(#cipbnscuuz) .gt_font_italic {
+  font-style: italic;
+}
+
+:where(#cipbnscuuz) .gt_super {
+  font-size: 65%;
+}
+
+:where(#cipbnscuuz) .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 75%;
+  vertical-align: 0.4em;
+}
+
+:where(#cipbnscuuz) .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+:where(#cipbnscuuz) .gt_indent_1 {
+  text-indent: 5px;
+}
+
+:where(#cipbnscuuz) .gt_indent_2 {
+  text-indent: 10px;
+}
+
+:where(#cipbnscuuz) .gt_indent_3 {
+  text-indent: 15px;
+}
+
+:where(#cipbnscuuz) .gt_indent_4 {
+  text-indent: 20px;
+}
+
+:where(#cipbnscuuz) .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col">method</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">n</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">mean</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">percentile_25</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">median</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">percentile_75</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">maximum_value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">Empirical Distribution</td>
+<td class="gt_row gt_right">100</td>
+<td class="gt_row gt_right">5.74</td>
+<td class="gt_row gt_right">3.34</td>
+<td class="gt_row gt_right">3.99</td>
+<td class="gt_row gt_right">5.12</td>
+<td class="gt_row gt_right">21,870.11</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #F7EFB2;">Maximum Likelihood</td>
+<td class="gt_row gt_right" style="background-color: #F7EFB2;">100</td>
+<td class="gt_row gt_right" style="background-color: #F7EFB2;">67.14</td>
+<td class="gt_row gt_right" style="background-color: #F7EFB2;">4.47</td>
+<td class="gt_row gt_right" style="background-color: #F7EFB2;">5.93</td>
+<td class="gt_row gt_right" style="background-color: #F7EFB2;">8.95</td>
+<td class="gt_row gt_right" style="background-color: #F7EFB2;">29,762.42</td></tr>
+    <tr><td class="gt_row gt_left">Empirical Distribution</td>
+<td class="gt_row gt_right">1000</td>
+<td class="gt_row gt_right">7.66</td>
+<td class="gt_row gt_right">4.16</td>
+<td class="gt_row gt_right">4.64</td>
+<td class="gt_row gt_right">5.42</td>
+<td class="gt_row gt_right">189,816.61</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #F7EFB2;">Maximum Likelihood</td>
+<td class="gt_row gt_right" style="background-color: #F7EFB2;">1000</td>
+<td class="gt_row gt_right" style="background-color: #F7EFB2;">6.16</td>
+<td class="gt_row gt_right" style="background-color: #F7EFB2;">5.42</td>
+<td class="gt_row gt_right" style="background-color: #F7EFB2;">6.00</td>
+<td class="gt_row gt_right" style="background-color: #F7EFB2;">6.71</td>
+<td class="gt_row gt_right" style="background-color: #F7EFB2;">47.60</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+</div>
+<p>For what it’s worth, the medians of the maximum likelihood method’s distributions demonstrate its superiority versus using the mean of the empirical distribution. Once we zoom in on the majority of the sample, the histogram also shows the superiority of the maximum likelihood over the empirical distribution way of estimating the mean using the sample mean:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-06-11-how-to-not-get-fooled-by-the-empirical-distribution_files/figure-html/comparison_dist-1.png" class="img-fluid" width="960"></p>
+</div>
+</div>
+<p>Just remember, superiority over the “empirical distribution” is not that big of a compliment.</p>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>The “empirical distribution” is a patently bad approach for fat-tailed distributions. It cuts the tail at the sample maxima. Thus, a portion of the tail is hidden and ignored in our mean estimation. A better approach is to take advantage of what one can possibly know from the data: the tail properties. For a Pareto, we can estimate its <span class="math inline">\(\alpha\)</span> and then exploit the knowledge we gain about the tail to estimate the mean. This latter approach is less “unreliable”:</p>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

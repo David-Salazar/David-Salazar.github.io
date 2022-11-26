@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.262">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="David Salazar">
+<meta name="dcterms.date" content="2020-05-11">
+
+<title>David Salazar - Statistical Rethinking: Week 4</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">David Salazar</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../archive.html">
+ <span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/David-Salazar"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/DavidSalazarVir"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Statistical Rethinking: Week 4</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>David Salazar </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 11, 2020</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#statistical-rethinking-week-4" id="toc-statistical-rethinking-week-4" class="nav-link active" data-scroll-target="#statistical-rethinking-week-4">Statistical Rethinking: Week 4</a>
+  <ul class="collapse">
+  <li><a href="#homework" id="toc-homework" class="nav-link" data-scroll-target="#homework">Homework</a>
+  <ul class="collapse">
+  <li><a href="#consider-3-fictional-polynesian-islands" id="toc-consider-3-fictional-polynesian-islands" class="nav-link" data-scroll-target="#consider-3-fictional-polynesian-islands">Consider 3 fictional Polynesian Islands…</a></li>
+  </ul></li>
+  <li><a href="#recall-the-marriage" id="toc-recall-the-marriage" class="nav-link" data-scroll-target="#recall-the-marriage">Recall the marriage…</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="statistical-rethinking-week-4" class="level1">
+<h1>Statistical Rethinking: Week 4</h1>
+<p>This week was a marathon of content. Richard introduced beautifully the trade-off between overfitting and underfitting and prescribed two complimentary methods to help us navigate this trade-off:</p>
+<ol type="1">
+<li>Regularizing priors</li>
+<li>Information criteria and Cross-Validation estimates of the risk of overfitting.</li>
+</ol>
+<p>Regularizing priors reduces the risk of overfitting of any model by introducing skepticisim into the priors. Whereas information criteria and Cross-Validation help us to estimate whether we have overfitted or not.</p>
+<section id="homework" class="level2">
+<h2 class="anchored" data-anchor-id="homework">Homework</h2>
+<section id="consider-3-fictional-polynesian-islands" class="level3">
+<h3 class="anchored" data-anchor-id="consider-3-fictional-polynesian-islands">Consider 3 fictional Polynesian Islands…</h3>
+<div class="cell">
+
+</div>
+<blockquote class="blockquote">
+<p>First, compute the entropy of each island’s bird distribution:</p>
+</blockquote>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-05-11-statistical-rethinking-week-4_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Island 1, having an uniform probability of each bird, encodes the highest amount of uncertainity of all the three islands. Both island 2 and 3, having 0.8 and 0.7, respectively, in only one type of bird, enconde much lower levels of uncertainty in their distributions.</p>
+<blockquote class="blockquote">
+<p>Second, use each island’s bird distribution to predict the other two.</p>
+</blockquote>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-05-11-statistical-rethinking-week-4_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Two facts arise:</p>
+<ol type="1">
+<li><p>Predicting “Island 1” is relatively easy. It already encodes so much uncertainty that the extra uncertainty induced by using any other distribution is relatively low. Nevertheless, it is better to use “Island 3”, which encodes the highest uncertainty.</p></li>
+<li><p>To predict either “Island 2” or “Island 3”, it is markedly better to use the distribution with the highest entropy: “Island 1”. It encodes so much uncertainty in itself, that, when we see the true distribution, it is hardly surprised: it expects almost anything.</p></li>
+</ol>
+</section>
+</section>
+<section id="recall-the-marriage" class="level2">
+<h2 class="anchored" data-anchor-id="recall-the-marriage">Recall the marriage…</h2>
+<blockquote class="blockquote">
+<p>Recall the marriage age, and happiness collider bias example from Chapter 6. Run models m6.9 and m6.10 again. Compare these two models using WAIC (or LOO, they will produce identical results). Which model is expected to make better predictions? Which model provides the correct causal inference about the influence of age on happiness? Can you explain why the answers to these two questions disagree?</p>
+</blockquote>
+<p>Let’s load the data:</p>
+<div class="cell">
+
+</div>
+<p>Before fitting the model, let’s remember our assumed DAG.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-05-11-statistical-rethinking-week-4_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Thus, Age and Happiness are independent. However, if we condition on Marriage, we open a collider which will make our statistical model to identify and information flow between age and happiness.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>          WAIC       SE    dWAIC      dSE    pWAIC     weight
+m6.9  2713.797 37.55914   0.0000       NA 3.647937 1.0000e+00
+m6.10 3102.072 27.75233 388.2746 35.46971 2.423316 4.8667e-85</code></pre>
+</div>
+</div>
+<p>Considering our DAG, the model that correctly identifies the causal relationship between happiness and age is m6.10. Whereas m6.9 opens a collider and thus its coefficient estimates are confounded.</p>
+<p>Nevertheless, by examing the difference in WAIC (the smaller the better), we estimate that the model that will predict happiness better out of sample is m6.9: the confounded model. This only highlights the difference between the different goals of prediction and causal inference. Why? Because the information that flows once we open the collider, although causally incorrectly attributed to age, is valuable information that can be used to predict happiness.</p>
+<blockquote class="blockquote">
+<p>Reconsider the urban fox analysis from last week’s homework. Use WAIC or LOO based model comparison on five different models, each using weight as the outcome, and containing these sets of predictor variables:</p>
+</blockquote>
+<ol type="1">
+<li>avgfood + groupsize + area</li>
+<li>avgfood + groupsize</li>
+<li>groupsize + area</li>
+<li>avgfood</li>
+<li>area</li>
+</ol>
+<p>Let’s draw the data and remember our DAG:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="2020-05-11-statistical-rethinking-week-4_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<ol type="1">
+<li>avgfood + groupsize + area</li>
+</ol>
+<p>Given our DAG, using area and avgfood simultaneously blocks the pipe that goes from area to weight. However, it correctly estimates the effect of groupsize on weight.</p>
+<div class="cell">
+
+</div>
+<ol start="2" type="1">
+<li>avgfood + groupsize</li>
+</ol>
+<p>Given this model, we will estimate the effect of groupsize on weight correctly.</p>
+<div class="cell">
+
+</div>
+<ol start="3" type="1">
+<li>groupsize + area</li>
+</ol>
+<p>Given our DAG, controlling by groupsize and including avgfood should be equivalent as including avgfood.</p>
+<div class="cell">
+
+</div>
+<ol start="4" type="1">
+<li>avgfood</li>
+</ol>
+<p>Given our DAG, this model estimates correctly the total effect of avgfood on weight.</p>
+<div class="cell">
+
+</div>
+<ol start="5" type="1">
+<li>area</li>
+</ol>
+<div class="cell">
+
+</div>
+<p>This model correctly estimates the total effect of area on weight.</p>
+<p>Now, it’s time to compare the out-of-sample prediction accuracy of the different models:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>            WAIC       SE    dWAIC      dSE    pWAIC      weight
+model_1 322.8945 16.27362  0.00000       NA 4.655545 0.457482115
+model_2 323.8989 16.08777  1.00444 3.570389 3.730356 0.276861647
+model_3 324.0148 15.85169  1.12030 2.962192 3.790548 0.261278688
+model_4 333.4444 13.78855 10.54991 7.181399 2.426279 0.002341478
+model_5 333.7239 13.79447 10.82943 7.230715 2.650636 0.002036072</code></pre>
+</div>
+</div>
+<p>Given our DAG, if we include groupsize, the information flowing from either area or avgfood should be the same in the 3 models. Thus, it makes sense that we get equivalent predictions with either way.</p>
+<p>Finally, given that the total effect of avgfood and area are the same, the information flows from either of those in the models 4 and 5 should also be the same. Thus, we get equivalent predictions for both models.</p>
+
+
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

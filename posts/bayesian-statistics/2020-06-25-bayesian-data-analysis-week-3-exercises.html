@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.262">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="">
+<meta name="dcterms.date" content="2020-06-25">
+
+<title>David Salazar - Bayesian Data Analysis: Week 3-&gt; Exercises</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">David Salazar</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../archive.html">
+ <span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/David-Salazar"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/DavidSalazarVir"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Bayesian Data Analysis: Week 3-&gt; Exercises</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 25, 2020</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#exercise-2" id="toc-exercise-2" class="nav-link active" data-scroll-target="#exercise-2">Exercise 2</a>
+  <ul class="collapse">
+  <li><a href="#solution" id="toc-solution" class="nav-link" data-scroll-target="#solution">Solution</a></li>
+  <li><a href="#post-debate" id="toc-post-debate" class="nav-link" data-scroll-target="#post-debate">Post-Debate</a></li>
+  <li><a href="#a-shift-toward-bush" id="toc-a-shift-toward-bush" class="nav-link" data-scroll-target="#a-shift-toward-bush">A shift toward Bush?</a></li>
+  </ul></li>
+  <li><a href="#exercise-3" id="toc-exercise-3" class="nav-link" data-scroll-target="#exercise-3">Exercise 3</a></li>
+  <li><a href="#solution-1" id="toc-solution-1" class="nav-link" data-scroll-target="#solution-1">Solution</a>
+  <ul class="collapse">
+  <li><a href="#control-group" id="toc-control-group" class="nav-link" data-scroll-target="#control-group">Control group</a></li>
+  <li><a href="#treatment-group" id="toc-treatment-group" class="nav-link" data-scroll-target="#treatment-group">Treatment Group</a></li>
+  <li><a href="#posterior-difference-between-mu_c-and-mu_t" id="toc-posterior-difference-between-mu_c-and-mu_t" class="nav-link" data-scroll-target="#posterior-difference-between-mu_c-and-mu_t">Posterior difference between mu_c and mu_t</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>Bayesian Data Analysis (Gelman, Vehtari et. alter) is equals part a great introduction and THE reference for advanced Bayesian Statistics. Luckily, it’s <a href="http://www.stat.columbia.edu/~gelman/book/">freely available online</a>. To make things even better for the online learner, Aki Vehtari (one of the authors) has a set of online lectures and homeworks that go through the basics of Bayesian Data Analysis.</p>
+<p>In this blogpost, I’ll go over a couple of the selected exercises for week 3: exercise number 2 and exercise number 3.</p>
+<section id="exercise-2" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-2">Exercise 2</h2>
+<p>Comparison of two multinomial observations: on September ( 25,1988, ) the evening of a presidential campaign debate, ABC News conducted a survey of registered voters in the United States; 639 persons were polled before the debate, and 639 different persons were polled after. Assume the surveys are independent simple random samples from the population of registered voters. Model the data with two different multinomial distributions. For ( t=1,2, ) let ( _{t} ) be the proportion of voters who preferred Bush, out of those who had a preference for either Bush or Dukakis at the time of survey ( t . ) <strong>Plot a histogram of the posterior density for ( <em>{2}-</em>{1} . ) What is the posterior probability that there was a shift toward Bush?</strong></p>
+<p>The results of the surveys are thus:</p>
+<p><span class="math display">\[
+\begin{array}{c|ccc|c}
+\text { Survey } &amp; \text { Bush } &amp; \text { Dukakis } &amp; \text { No opinion/other } &amp; \text { Total } \\
+\hline \text { pre-debate } &amp; 294 &amp; 307 &amp; 38 &amp; 639 \\
+\text { post-debate } &amp; 288 &amp; 332 &amp; 19 &amp; 639
+\end{array}
+\]</span></p>
+<section id="solution" class="level3">
+<h3 class="anchored" data-anchor-id="solution">Solution</h3>
+<p>Therefore, for the pre-debate we posit a multinomial model. A multinomial model is nothing more than the extension of the binomial model to more than 2 categories. Here we have 3: Bush, Dukakis and other. For both models, <strong>we assume that the 639 observations are independent and exchangeable</strong>. The likelihood for each survey is thus:</p>
+<p><span class="math display">\[
+p(y \mid \theta) \propto \prod_{j=1}^{k} \theta_{j}^{y_{j}}
+\]</span></p>
+<p>Where <span class="math inline">\(\theta_j\)</span> is the probability of choosing the <span class="math inline">\(j\)</span> option. The conjugate prior for the distribution is a multivariate generalization of the beta distribution known as Dirichlet:</p>
+<p><span class="math display">\[
+p(\theta \mid \beta) \propto \prod_{j=1}^{k} \theta_{j}^{\beta_{j}-1}
+\]</span></p>
+<p>If we set all <span class="math inline">\(\beta_j = 1\)</span>, we get an uniform distribution on the possible distributions for the <span class="math inline">\(\theta\)</span>’s. That is, <strong>just as the beta distribution, the Dirichlet distribution is a distribution of distributions.</strong></p>
+<p>The resulting posterior distribution for the <span class="math inline">\(\theta_j\)</span>’s is a Dirichlet with parameters <span class="math inline">\(\beta_j + y_j\)</span>. The question, then, is how to go from the <span class="math inline">\(\theta_j\)</span>, the proportion that favors the option <span class="math inline">\(j\)</span>, to the requested <span class="math inline">\(\alpha_t\)</span>:</p>
+<blockquote class="blockquote">
+<p>Proportion of voters who preferred Bush, out of those who had a preference for either Bush or Dukakis at the time of survey t.</p>
+</blockquote>
+<p>Note that given the inherent restriction on the Dirichlet, we can rewrite the distribution of the <span class="math inline">\(\theta_j\)</span>’s as <span class="math inline">\((\theta_1, \theta_2, 1 - \theta_1 - \theta_2)\)</span>. We can then perform a change of variables: <span class="math inline">\((\alpha, \gamma) = (\dfrac{\theta_1}{\theta_1 + \theta_2}, \theta_1 + \theta_2)\)</span>. Which it can be shown that <span class="math inline">\(\alpha\)</span> is then distributed thus:</p>
+<p><span class="math display">\[
+\alpha | y \sim Beta(y_1 + \beta_1, y_2 + \beta_2)
+\]</span> ### Pre-Debate</p>
+<p>Therefore, setting an uniform prior (<span class="math inline">\(\beta_j = 1 \ \forall j\)</span>) on the possible distribution of the <span class="math inline">\(\theta_j\)</span>’s, the posterior distribution is:</p>
+<p><span class="math display">\[
+(\theta_{bush}, \theta_{dukakis}, \theta_{neither}) | y \sim Dirichlet(295, 308, 39)
+\]</span> Which then amounts that the proportion that favor Bush, out of those who had a preference for either Bush or Dukakis in the pre-debate, that is, <span class="math inline">\(\alpha_1\)</span> is thus:</p>
+<p><span class="math display">\[
+\alpha_1 | y \sim Beta(295, 308)
+\]</span> Which we can visualize thus:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>alpha1 <span class="ot">=</span> <span class="fu">rbeta</span>(<span class="dv">10000</span>, <span class="dv">295</span>, <span class="dv">308</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(alpha1) <span class="ot">-&gt;</span> simulations_alpha1</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>simulations_alpha1 <span class="sc">%&gt;%</span> </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(alpha1)) <span class="sc">+</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fl">0.01</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"dodgerblue4"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> <span class="fl">0.5</span>), <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">TeX</span>(<span class="st">"Posterior distribution for $</span><span class="sc">\\</span><span class="st">alpha_1$"</span>),</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">" Proportion of voters who preferred Bush, out of those who had a preference </span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="st">       for either Bush or Dukakis at pre-debate"</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="fu">TeX</span>(<span class="st">"$</span><span class="sc">\\</span><span class="st">alpha_1$"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-06-25-bayesian-data-analysis-week-3-exercises_files/figure-html/alpha1-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+<p>That is, our posterior distribution points that at the pre-debate, there was already a majority of people (among the already decided) who favored Dukakis. Indeed:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>predebate <span class="ot">&lt;-</span> <span class="fu">pbeta</span>(<span class="fl">0.5</span>, <span class="dv">295</span>, <span class="dv">308</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">"There's a {round(predebate, 2)*100}% posterior probability that among decided voters Dukakis had a majority in</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="st">           the pre-debate."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>There's a 70% posterior probability that among decided voters Dukakis had a majority in
+the pre-debate.</code></pre>
+</div>
+</div>
+</section>
+<section id="post-debate" class="level3">
+<h3 class="anchored" data-anchor-id="post-debate">Post-Debate</h3>
+<p>Therefore, setting an uniform prior (<span class="math inline">\(\beta_j = 1 \ \forall j\)</span>) on the possible distribution of the <span class="math inline">\(\theta_j\)</span>’s, the posterior distribution is:</p>
+<p><span class="math display">\[
+(\theta_{bush}, \theta_{dukakis}, \theta_{neither}) | y \sim Dirichlet(289, 333, 39)
+\]</span> Which then amounts that the proportion that favor Bush, out of those who had a preference for either Bush or Dukakis in the post-debate, that is, <span class="math inline">\(\alpha_2\)</span> is thus:</p>
+<p><span class="math display">\[
+\alpha_1 | y \sim Beta(289, 333)
+\]</span></p>
+<p>Which we can visualize thus:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>alpha2 <span class="ot">=</span> <span class="fu">rbeta</span>(<span class="dv">10000</span>, <span class="dv">289</span>, <span class="dv">333</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(alpha2) <span class="ot">-&gt;</span> simulations_alpha2</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>simulations_alpha2 <span class="sc">%&gt;%</span> </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(alpha2)) <span class="sc">+</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fl">0.01</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"dodgerblue4"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> <span class="fl">0.5</span>), <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">TeX</span>(<span class="st">"Posterior distribution for $</span><span class="sc">\\</span><span class="st">alpha_2$"</span>),</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">" Proportion of voters who preferred Bush, out of those who had a preference </span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="st">       for either Bush or Dukakis at post-debate"</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="fu">TeX</span>(<span class="st">"$</span><span class="sc">\\</span><span class="st">alpha_2$"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-06-25-bayesian-data-analysis-week-3-exercises_files/figure-html/alpha2-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+<p>After the debate, Dukakis won an even larger majority among the decided voters:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>postdebeate <span class="ot">&lt;-</span> <span class="fu">pbeta</span>(<span class="fl">0.5</span>, <span class="dv">289</span>, <span class="dv">333</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">"There's a {round(postdebeate, 2)*100}% posterior probability that among decided voters Dukakis had a majority in</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="st">           the pre-debate."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>There's a 96% posterior probability that among decided voters Dukakis had a majority in
+the pre-debate.</code></pre>
+</div>
+</div>
+</section>
+<section id="a-shift-toward-bush" class="level3">
+<h3 class="anchored" data-anchor-id="a-shift-toward-bush">A shift toward Bush?</h3>
+<p>We have the posterior probability for both <span class="math inline">\(\alpha_1\)</span> and <span class="math inline">\(\alpha_2\)</span>. Sampling form these posteriors, we can then arrive at a posterior distribution for <span class="math inline">\(\alpha_2 - \alpha_1\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>difference <span class="ot">&lt;-</span> alpha2 <span class="sc">-</span> alpha1</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(difference) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(difference)) <span class="sc">+</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> <span class="dv">0</span>), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fl">0.01</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"dodgerblue4"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>)  <span class="sc">+</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">TeX</span>(<span class="st">"Posterior distribution for $</span><span class="sc">\\</span><span class="st">alpha_2 - </span><span class="sc">\\</span><span class="st">alpha_1$"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-06-25-bayesian-data-analysis-week-3-exercises_files/figure-html/difference-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+<p>The posterior probability that there was a shift toward Bush is the probability that <span class="math inline">\(\alpha_2 - \alpha_1 &gt; 0\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>shift <span class="ot">&lt;-</span> <span class="fu">sum</span>(difference <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">/</span> <span class="fu">length</span>(difference)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">"The posterior probability that there was a shift toward Bush is thus {round(shift, 2)*100}%"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The posterior probability that there was a shift toward Bush is thus 19%</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="exercise-3" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-3">Exercise 3</h2>
+<p>Estimation from two independent experiments: an experiment was performed on the effects of magnetic fields on the flow of calcium out of chicken brains. Two groups of chickens were involved: a control group of 32 chickens and an exposed group of 36 chickens. One measurement was taken on each chicken, and the purpose of the experiment was to measure the average flow ( <em>{c} ) in untreated (control) chickens and the average flow ( </em>{t} ) in treated chickens. The 32 measurements on the control group had a sample mean of 1.013 and a sample standard deviation of ( 0.24 . ) The 36 measurements on the treatment group had a sample mean of 1.173 and a sample standard deviation of 0.20</p>
+<ol type="a">
+<li><p>Assuming the control measurements were taken at random from a normal distribution with mean ( <em>{c} ) and variance ( </em>{c}^{2}, ) what is the posterior distribution of ( <em>{c} ? ) Similarly, use the treatment group measurements to determine the marginal posterior distribution of ( </em>{t} . ) Assume a uniform prior distribution on ( (<em>{c}, </em>{t}, <em>{c}, </em>{t}) )</p></li>
+<li><p>What is the posterior distribution for the difference, ( <em>{t}-</em>{c} ? ) To get this, you may sample from the independent ( t ) distributions you obtained in part(a) above. Plot a histogram of your samples and give an approximate ( 95 % ) posterior interval for ( <em>{t}-</em>{c} )</p></li>
+</ol>
+</section>
+<section id="solution-1" class="level2">
+<h2 class="anchored" data-anchor-id="solution-1">Solution</h2>
+<p>Let’s posit two normal probability models for both the control measurements and the treatment measurements, assuming exchangeability among these two groups.</p>
+<section id="control-group" class="level3">
+<h3 class="anchored" data-anchor-id="control-group">Control group</h3>
+<p>Therefore:</p>
+<p><span class="math display">\[
+y_c | \mu, \sigma^2 \sim N(\mu_c, \sigma_c^2) \\
+p(\mu_c, \sigma_c | y) \propto p (y | \mu_c, \sigma_c) p(\mu_c, \sigma_c)
+\]</span> If we posit an uniform prior on <span class="math inline">\((\mu_c, log \sigma_c)\)</span></p>
+<p><span class="math display">\[
+p(\mu_c, \sigma_c^2) \propto (\sigma_c^2)^{-1}
+\]</span></p>
+<p>Then, the marginal posterior distribution for <span class="math inline">\(\mu_c\)</span> is a t-distribution:</p>
+<p><span class="math display">\[
+\dfrac{\mu_c  - \bar y_c}{s_c/\sqrt{n_c}} | y \sim t_{n_c-1}
+\]</span></p>
+<p>For the control group, we have <span class="math inline">\(n_c = 32\)</span>, <span class="math inline">\(\bar y_c = 1.013\)</span> and <span class="math inline">\(s_c = 0.24\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mu_c <span class="ot">&lt;-</span> <span class="fu">rtnew</span>(<span class="dv">10000</span>, <span class="at">df =</span> <span class="dv">31</span>, <span class="at">mean =</span> <span class="fl">1.013</span>, <span class="at">scale =</span> <span class="fl">0.24</span><span class="sc">/</span><span class="fu">sqrt</span>(<span class="dv">32</span>) )</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">mu_control =</span> mu_c) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(mu_control)) <span class="sc">+</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fl">0.01</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"dodgerblue4"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">TeX</span>(<span class="st">"Posterior distribution for $</span><span class="sc">\\</span><span class="st">mu_c$"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-06-25-bayesian-data-analysis-week-3-exercises_files/figure-html/muc-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+</section>
+<section id="treatment-group" class="level3">
+<h3 class="anchored" data-anchor-id="treatment-group">Treatment Group</h3>
+<p>The same likelihood and prior are valid for the treatment measurements. Therefore, the marginal posterior for <span class="math inline">\(\mu_t\)</span>:</p>
+<p><span class="math display">\[
+\dfrac{\mu_t  - \bar y_t}{s_t/\sqrt{n_t}} | y \sim t_{n_t-1}
+\]</span></p>
+<p>For the treatment group, we have <span class="math inline">\(n_t = 36\)</span>, <span class="math inline">\(\mu_t = 1.173\)</span>, <span class="math inline">\(s_t = 0.2\)</span>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>mu_t <span class="ot">&lt;-</span> <span class="fu">rtnew</span>(<span class="dv">10000</span>, <span class="at">df =</span> <span class="dv">35</span>, <span class="at">mean =</span> <span class="fl">1.173</span>, <span class="at">scale =</span> <span class="fl">0.2</span><span class="sc">/</span><span class="fu">sqrt</span>(<span class="dv">36</span>) )</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">mu_treatment =</span> mu_t) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(mu_treatment)) <span class="sc">+</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fl">0.01</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"dodgerblue4"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">TeX</span>(<span class="st">"Posterior distribution for $</span><span class="sc">\\</span><span class="st">mu_t$"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-06-25-bayesian-data-analysis-week-3-exercises_files/figure-html/mut-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+</section>
+<section id="posterior-difference-between-mu_c-and-mu_t" class="level3">
+<h3 class="anchored" data-anchor-id="posterior-difference-between-mu_c-and-mu_t">Posterior difference between mu_c and mu_t</h3>
+<p>To get the posterior distribution of the difference, we compare the samples from the marginal posterior of <span class="math inline">\(\mu_c, \mu_t\)</span>. Therefore, the 95% posterior credibility interval on the different is thus</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>different_mu <span class="ot">&lt;-</span> mu_t <span class="sc">-</span> mu_c</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>interval <span class="ot">&lt;-</span> rethinking<span class="sc">::</span><span class="fu">PI</span>(different_mu, <span class="at">prob =</span> <span class="fl">0.95</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>lower <span class="ot">&lt;-</span> interval[[<span class="dv">1</span>]]</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>upper <span class="ot">&lt;-</span> interval[[<span class="dv">2</span>]]</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">"The 95% posterior credibility interval for the difference is {round(lower, 2)}, {round(upper, 2)}"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The 95% posterior credibility interval for the difference is 0.05, 0.27</code></pre>
+</div>
+</div>
+<p>And the full posterior of the difference is thus:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(different_mu) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(different_mu)) <span class="sc">+</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fl">0.01</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"dodgerblue4"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">TeX</span>(<span class="st">"Posterior distribution for $</span><span class="sc">\\</span><span class="st">mu_t - </span><span class="sc">\\</span><span class="st">mu_c$"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2020-06-25-bayesian-data-analysis-week-3-exercises_files/figure-html/differentmu-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+
+
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
