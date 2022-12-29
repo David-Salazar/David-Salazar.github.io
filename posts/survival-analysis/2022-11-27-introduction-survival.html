@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.262">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="David Salazar">
+
+<title>David Salazar - Introduction to Survival Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">David Salazar</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../archive.html">
+ <span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/David-Salazar"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/DavidSalazarVir"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Introduction to Survival Analysis</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>David Salazar </p>
+            </div>
+    </div>
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#time-matters" id="toc-time-matters" class="nav-link active" data-scroll-target="#time-matters">Time matters</a></li>
+  <li><a href="#undefined-state-censoring" id="toc-undefined-state-censoring" class="nav-link" data-scroll-target="#undefined-state-censoring">Undefined state: Censoring</a></li>
+  <li><a href="#cox-proportional-hazard-and-survival-math" id="toc-cox-proportional-hazard-and-survival-math" class="nav-link" data-scroll-target="#cox-proportional-hazard-and-survival-math">Cox Proportional Hazard and Survival Math</a>
+  <ul class="collapse">
+  <li><a href="#survival-math" id="toc-survival-math" class="nav-link" data-scroll-target="#survival-math">Survival math</a></li>
+  <li><a href="#the-cox-proportional-hazards-model" id="toc-the-cox-proportional-hazards-model" class="nav-link" data-scroll-target="#the-cox-proportional-hazards-model">The Cox Proportional Hazards Model</a>
+  <ul class="collapse">
+  <li><a href="#why-the-proportional-in-the-name-constant-hazard-ratios" id="toc-why-the-proportional-in-the-name-constant-hazard-ratios" class="nav-link" data-scroll-target="#why-the-proportional-in-the-name-constant-hazard-ratios">Why the Proportional in the name? Constant hazard Ratios</a></li>
+  </ul></li>
+  <li><a href="#constructing-the-likelihood" id="toc-constructing-the-likelihood" class="nav-link" data-scroll-target="#constructing-the-likelihood">Constructing the Likelihood</a>
+  <ul class="collapse">
+  <li><a href="#coxs-partial-profile-likelihood" id="toc-coxs-partial-profile-likelihood" class="nav-link" data-scroll-target="#coxs-partial-profile-likelihood">Cox’s Partial (Profile) Likelihood</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#fitting-the-model-on-simulated-data" id="toc-fitting-the-model-on-simulated-data" class="nav-link" data-scroll-target="#fitting-the-model-on-simulated-data">Fitting the model on simulated data</a>
+  <ul class="collapse">
+  <li><a href="#kaplan-meier-estimator" id="toc-kaplan-meier-estimator" class="nav-link" data-scroll-target="#kaplan-meier-estimator">Kaplan Meier Estimator</a></li>
+  <li><a href="#cox-proportional-hazard-model" id="toc-cox-proportional-hazard-model" class="nav-link" data-scroll-target="#cox-proportional-hazard-model">Cox Proportional Hazard model</a>
+  <ul class="collapse">
+  <li><a href="#fitting-the-model" id="toc-fitting-the-model" class="nav-link" data-scroll-target="#fitting-the-model">Fitting the model</a></li>
+  <li><a href="#interpreting-the-results" id="toc-interpreting-the-results" class="nav-link" data-scroll-target="#interpreting-the-results">Interpreting the Results</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Bibliography</a></li>
+  </ul>
+</nav>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>Survival Analysis is fun, but not often taught in statistics courses. It’s just like regular statistics but with a few twists.</p>
+<blockquote class="blockquote">
+<p>Survival Analysis is a branch of statistics that is used to study <strong>the time to an event of interest</strong>, such as death, disease, or failure. It is different from regular event models because it focuses on the time to the event and takes into account the fact that not all events may be observed. This is called <strong>censoring</strong>, and it is an important concept in Survival Analysis because it can affect the estimates of the time to the event.</p>
+</blockquote>
+<p>One of the most common Survival models is the Cox Proportional Hazard model, which allows for the analysis of censored data and the estimation of the time to the event. In this blog post, <strong>we will go over the basic construction of the Cox model and how it deals with censoring and time. We will also provide an example to illustrate the concepts and show how the model can be applied in practice.</strong></p>
+<section id="time-matters" class="level1">
+<h1>Time matters</h1>
+<p>Imagine you are trying to predict which are the customers most likely to churn in the next few months. Data Science practitioners will often end up doing some like this:</p>
+<blockquote class="blockquote">
+<p>Use past customer data and create a binary target 0/1 for churn. Then, train a binary classification algorithm to predict risk churn from whatever independent features you have at your disposal. Your end result would be scalar risk predictions for each of your current customers.</p>
+</blockquote>
+<p>How did we <strong>deal with time</strong> in the example above? Well, we just swept time under the rug: our target does not differentiate between someone who had been a regular customer for 2 years and someone who had only been a regular customer for 3 months; they are just a 0 in your target. The same happens for churned customers: churned in 6 months or in 6 days, they are just a 1 in your target.</p>
+<p>In both cases, whether they churned or not, you threw away time and its relationship to your target: maybe someone has very high risk of churning in the first few months but then it plateaus, or someone has a constant medium risk of churn; nevertheless, your scalar prediction won’t have this kind of information and thus won’t be able to deal with these types of customers differently.</p>
+<p><strong>Survival Analysis</strong> aims to solve this problem: it’s useful when you care to predict <strong>if and when</strong> an event will happen. By predicting the time to the event, we can expand our risk predictions across time and act accordingly!</p>
+</section>
+<section id="undefined-state-censoring" class="level1">
+<h1>Undefined state: Censoring</h1>
+<p>Let’s continue with our Churn example. At the moment of creating the training dataset, we will have individuals who have not churned, but maybe that’s just an artifact of when we are observing them; maybe, they will churn tomorrow and the model would have incorrectly assumed that they are exemplary of customers who don’t churn.</p>
+<p>To deal with these undefined states, Survival models have the concept of <strong>censored observations: observations for which we haven’t observed their end state yet.</strong> They should contribute to our model, just not as much as observations who have an end state defined. The clearest example is death: survival models are routinely used in medicine to predict time to death: if the patient has not died, it’s just a matter of time until they do (At the end, that’s the end for all phenomena: death, right?)</p>
+<blockquote class="blockquote">
+<p>This undefined state called Censoring is what renders traditional statistical methods inappropriate: they are not like other observations, and they warrant a different treatment in our statistical machinery. Survival Models are exactly this type of models.</p>
+</blockquote>
+</section>
+<section id="cox-proportional-hazard-and-survival-math" class="level1">
+<h1>Cox Proportional Hazard and Survival Math</h1>
+<p>Let’s put what we just said to good use. We have records of events, but we want to differentiate the events depending on how long it took them to happen and we want to differentiate between censored and uncensored events.</p>
+<p>Before we introduce the Cox Proportional Hazards model, let’s introduce some useful math notation.</p>
+<section id="survival-math" class="level2">
+<h2 class="anchored" data-anchor-id="survival-math">Survival math</h2>
+<p>We are interested in the probability that event will happen as a function of time. There are three equivalent mathematical representations to model this time-to-event modeling:</p>
+<ul>
+<li><p>The <strong>Survival Function</strong>: <em>the probability that an event of interest will not occur up to a given time</em>. Mathematically, we can define it thus: <span class="math inline">\(S(t) = 1 - F(t)\)</span>, where <span class="math inline">\(F(t)\)</span> is the lifetime distribution function for the time to the event of interest, and <span class="math inline">\(f(t)\)</span> being the <strong>event density</strong>. Thus, we can expand both mathematical representations thus <span class="math inline">\(S(t) = \Pr(T &gt; t) = \int_t^{\infty} f(u)\,du = 1-F(t)\)</span> and <span class="math inline">\(s(t) = S'(t) = \frac{d}{dt} S(t) = \frac{d}{dt} \int_t^{\infty} f(u)\,du = \frac{d}{dt} [1-F(t)] = -f(t)\)</span>.</p></li>
+<li><p>The <strong>Hazard Rate</strong>: the instantaneous probability of an event of interest occurring at a given time, given that the event has not occurred up to that time. Mathematically: <span class="math inline">\(\lambda (t) = \lim_{dt \rightarrow 0} \frac{\Pr(t \leq T &lt; t+dt)}{dt\cdot S(t)} = \frac{f(t)}{S(t)} = - \frac{S'(t)}{S(t)}\)</span></p></li>
+<li><p>The <strong>Cumulative Hazard Rate</strong>: <span class="math inline">\(\Lambda(t) = \int_0^{t} \lambda(u)\,du = -\log S(t)\)</span></p></li>
+</ul>
+<p>Sometimes, a given representation will be more useful than others. Crucially, they are all related thus:</p>
+<p><span class="math display">\[
+S(t) = \exp [ -\Lambda(t) ] = \frac{f(t)}{\lambda(t)} = 1-F(t), \quad t &gt; 0
+\]</span> We see that with survival math, unlike regular binary classification algorithms, <strong>time to event</strong> is a first class citizen. Let’s see a particular instance of such model: the Cox Proportional Hazards model.</p>
+</section>
+<section id="the-cox-proportional-hazards-model" class="level2">
+<h2 class="anchored" data-anchor-id="the-cox-proportional-hazards-model">The Cox Proportional Hazards Model</h2>
+<p>Now that we’ve gotten some notation out of the way, let’s lay out the intuition and the math for the Cox Proportional Hazards Model.</p>
+<p>To start with, we will model the hazard rate directly <strong>by separating the functional form into two parts</strong>: <em>a baseline rate function that will vary exclusively with time</em> <span class="math inline">\(h_0(t)\)</span>, and a <em>risk function that will NOT vary with time but with whatever predictor variables we have</em> <span class="math inline">\(r(X; \beta)\)</span>:</p>
+<p><span class="math display">\[
+h(t) =  \underbrace{h_0(t)}_{\text{Depends on time}} \cdot \underbrace{r(X; \beta)}_{\text{Does not depend on time}}
+\]</span></p>
+<p>Given that we want our risk function to always be positive, it’s useful instead to define the hazard rate in terms of the exponential of the risk function (<span class="math inline">\(r(X; \beta)\)</span> is in the log hazard scale units, whereas <span class="math inline">\(\exp{(r(X; \beta)})\)</span> is in the hazard scale units.):</p>
+<p><span class="math display">\[
+h(t) =  \underbrace{h_0(t)}_{\text{Depends on time}} \cdot \underbrace{\exp{(r(X; \beta)})}_{\text{Does not depend on time}}
+\]</span></p>
+<p>And that’s it. That’s the <em>famous</em> functional form for the Cox Proportional Hazards. Before we learn how to actually learn the parameters and the baseline rate function, let’s dive into why it’s called proportional.</p>
+<section id="why-the-proportional-in-the-name-constant-hazard-ratios" class="level3">
+<h3 class="anchored" data-anchor-id="why-the-proportional-in-the-name-constant-hazard-ratios">Why the Proportional in the name? Constant hazard Ratios</h3>
+<p>The above functional form for the hazard rate means that the <em>ratio in the hazard rate</em> between two individuals with different covariate values will always be <em>the same multiplicative constant</em>, regardless of the values of the covariates. That is, the <strong>respective hazard ratios across time will always be a constant</strong> and the hazard curves cannot cross.</p>
+<blockquote class="blockquote">
+<p>This implies that the hazard of an event in any group is a constant multiple of the hazard in any other group</p>
+</blockquote>
+<p>Therefore, whenever we want to understand the predictions a Cox Proportional Hazard model makes we refer to this relative, constant hazard ratio that we will see when comparing differnt observation groups.</p>
+<p>Mathematically, we can see it thus:</p>
+<p>suppose that we have two individuals with covariates <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>, and regression coefficients <span class="math inline">\(\beta_1\)</span> and <span class="math inline">\(\beta_2\)</span>. The hazard rate for the first individual is given by:</p>
+<p><span class="math inline">\(h_1(t) = h_0(t) \cdot \exp(\beta_1 x_1 + \beta_2 x_2)\)</span></p>
+<p>and the hazard rate for the second individual is given by:</p>
+<p><span class="math inline">\(h_2(t) = h_0(t) \cdot \exp(\beta_1 x_1' + \beta_2 x_2')\)</span></p>
+<p>The ratio in the hazard rates for these two individuals is given by:</p>
+<p><span class="math display">\[
+\frac{h_1(t)}{h_2(t)} = \frac{h_0(t) \cdot \exp(\beta_1 x_1 + \beta_2 x_2)}{h_0(t) \cdot \exp(\beta_1 x_1' + \beta_2 x_2')} = \frac{\cdot \exp(\beta_1 x_1 + \beta_2 x_2)}{\exp(\beta_1 x_1' + \beta_2 x_2')} = \frac{h_1}{h_2} = \psi
+\]</span></p>
+<p>This shows that the ratio in the hazard rates for these two individuals is always equal to a constant multiplicative factor, <span class="math inline">\(\psi\)</span>, which is determined by the differences in the covariate values and the regression coefficients, regardless of the survival time in question. This is true for any pair of individuals with different covariate values, so the ratio in the hazard rate between any two groups will always be the same multiplicative constant in the Cox Proportional Hazards model.</p>
+</section>
+</section>
+<section id="constructing-the-likelihood" class="level2">
+<h2 class="anchored" data-anchor-id="constructing-the-likelihood">Constructing the Likelihood</h2>
+<p>Given a model, we can construct the likelihood that will describe the probability of observing what actually happend in our sample.</p>
+<blockquote class="blockquote">
+<p>The key idea behind the construction will be that we can describe non-censored observations with the event density as we would regularly do, but that for Censored observations we will use the Survival function.</p>
+</blockquote>
+<p>Why? For observations who <strong>actually experienced the event</strong> during the study, we know their defined state. We can thus describe <em>their end state with the event density</em>, <span class="math inline">\(f(t)\)</span>. Whereas for <strong>censored observation</strong>, their state is undefined at the moment of the study; the only thing we can say is that <em>they have survived to their censored survival time</em>, and that the chance of that happening is described by <span class="math inline">\(S(t)\)</span>.</p>
+<p>Let’s <span class="math inline">\(c_i\)</span> be an indicator variable indicating whether the observation is censored or not. For a single observation, we can describe the probability of observing it thus:</p>
+<p><span class="math display">\[
+[f(t, \beta, x)]^c \times[S(t, \beta, x)]^{1-c},
+\]</span> Assuming independence, the joint probability of observing the entire sample <span class="math inline">\(n\)</span> is:</p>
+<p><span class="math display">\[
+\prod_{i=1}^n\left\{\left[f\left(t_i, \beta, x_i\right)\right]^{c_i} \times\left[S\left(t_i, \beta, x_i\right)\right]^{1-c_i}\right\}
+\]</span></p>
+<p>If we replace the definition of the event density using our previously defined equations in Survival Math:</p>
+<p><span class="math display">\[
+\prod_{i=1}^n\left\{\left[\lambda(t_i, \beta, x_i) \cdot S\left(t_i, \beta, x_i\right)\right]]^{c_i} \times\left[S\left(t_i, \beta, x_i\right)\right]^{1-c_i}\right\}
+\]</span> <span class="math display">\[
+\prod_{i=1}^n\left\{\left[\lambda(t_i, \beta, x_i) \right]^{c_i} \times\left[S\left(t_i, \beta, x_i\right)\right]\right\}
+\]</span></p>
+<p>This means that the contribution of a <strong>non-censored observation to the loss function is the product of the hazard and survival functions</strong> at the time of the event. Whereas the contribution of a <strong>censored observation to the loss function is only the survival function</strong> at the time of censoring.</p>
+<p>Intuitively, this means that <strong>censored observations have a smaller impact on the loss function than non-censored observations</strong>. This is because <em>censored observations provide less information about the event of interest</em>, so they are less useful for estimating the hazard and survival functions. As a result, the Cox model gives less weight to censored observations when estimating the coefficients.</p>
+<section id="coxs-partial-profile-likelihood" class="level3">
+<h3 class="anchored" data-anchor-id="coxs-partial-profile-likelihood">Cox’s Partial (Profile) Likelihood</h3>
+<p>The above equation gives us a nice intuitive understanding of how the model works. However, the above requires to integrate over time to be able to derive the Survival Function and that would in turn require to specify a functional form for the Hazard Function for all possible event times, which is to ask a lot. We can <em>simplify</em> the problem if we instead assume that the baseline hazard is unknown.</p>
+<p>How? <strong>The gist is that the baseline rate, <span class="math inline">\(h_0(t)\)</span>, is not of our interest</strong>; it’s a nuisance function. So we will consider it a fixed value and estimate the regression parameters first. To do so, we will separate the likelihood on that which depends on <span class="math inline">\(h_0\)</span> and that which doesn’t.</p>
+<span class="math display">\[\begin{aligned}
+L\left(\beta, h_0(\cdot)\right) &amp;= \underbrace{L_1(\beta)}_{\text{function of } \beta,  \text{  whose max converges to }  \beta} \\
+&amp; \cdot \underbrace{L_2\left(\beta, h_0\right)}_{\text{contains little information about} \beta \text{only relevant for } h_0}
+\end{aligned}\]</span>
+<p>The process of doing so is tedious and not worth the trouble. If you are curious, for example, one of the most famous formulations is the Efron approximation.</p>
+<p>Nevertheless, <em>what’s important</em> is that by <strong>performing maximum likelihood on the partial likelihood <span class="math inline">\(L_1(\beta)\)</span> we can replicate the same regression parameters as if we were maximizing the full likelihood</strong>. That is, the maximum we find with the partial likelihood, <span class="math inline">\(\hat{\beta}\)</span>, converges to the original parameter, <span class="math inline">\(\beta\)</span>.</p>
+</section>
+</section>
+</section>
+<section id="fitting-the-model-on-simulated-data" class="level1">
+<h1>Fitting the model on simulated data</h1>
+<p>We will fit our first Cox model on simulated data. Let’s first load the required R packages:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survival)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(coxed)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survminer)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Colors from MetBrewer</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>clrs <span class="ot">&lt;-</span> MetBrewer<span class="sc">::</span><span class="fu">met.brewer</span>(<span class="st">"Java"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Taken from the excellent Andrew Heiss blogpost: https://www.andrewheiss.com/blog/</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Custom ggplot themes to make pretty plots</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Get Roboto Condensed at https://fonts.google.com/specimen/Roboto+Condensed</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Get Roboto Mono at https://fonts.google.com/specimen/Roboto+Mono</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>theme_pred <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_family =</span> <span class="st">"Roboto Condensed"</span>) <span class="sc">+</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>          <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>          <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>          <span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>          <span class="at">strip.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"grey80"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>          <span class="at">axis.title.x =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="dv">0</span>),</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>          <span class="at">axis.title.y =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="dv">0</span>),</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>))</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="fu">update_geom_defaults</span>(<span class="st">"text"</span>, <span class="fu">list</span>(<span class="at">family =</span> <span class="st">"Roboto Condensed"</span>, <span class="at">lineheight =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now let’s use the awesome <code>coxed</code> package to simulate sensible survival data thus:</p>
+<blockquote class="blockquote">
+<p>A cohort with 2000 subjects, with a maximum follow-up time of 500 days. The true log hazard coefficients are 0, 0.4, and -0.4, respectively for X1, X2, X3.</p>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set the seed for reproducibility</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>simulated_betas <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.4</span>, <span class="sc">-</span><span class="fl">0.4</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>sim.data <span class="ot">&lt;-</span> <span class="fu">sim.survdata</span>(<span class="at">N=</span><span class="dv">2000</span>, <span class="at">T=</span><span class="dv">500</span>, <span class="at">num.data.frames=</span><span class="dv">1</span>, </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">beta =</span> simulated_betas)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> sim.data<span class="sc">$</span>data</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>sim.data<span class="sc">$</span>betas</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1]
+[1,]  0.0
+[2,]  0.4
+[3,] -0.4</code></pre>
+</div>
+</div>
+<p>Now that we have the data, it’s useful to fit a non-parametric estimator called the Kaplan Meier estimator.</p>
+<section id="kaplan-meier-estimator" class="level2">
+<h2 class="anchored" data-anchor-id="kaplan-meier-estimator">Kaplan Meier Estimator</h2>
+<blockquote class="blockquote">
+<p>The Kaplan-Meier estimator estimates the survival probability of a population over time by calculating the proportion of individuals that have not experienced the event of interest at each time point.</p>
+</blockquote>
+<p>The Kaplan Meier’s (consistent, unbiased and efficient) estimate Survival Curve will be a quick check to understand how the survival probabilities change across time in our sample.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a Kaplan-Meier estimator for each level of the covariate</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  survminer<span class="sc">::</span><span class="fu">surv_fit</span>(<span class="fu">Surv</span>(y, failed) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> data)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the Kaplan-Meier estimators</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsurvplot</span>(fit, <span class="at">ggtheme =</span> <span class="fu">theme_pred</span>(), <span class="at">color =</span> clrs[[<span class="dv">1</span>]], </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">surv.median.line =</span> <span class="st">'hv'</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">risk.table =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">conf.int =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">title =</span> <span class="st">"Kaplan Meier: Non Parametric estimate"</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>           )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2022-11-27-introduction-survival_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We can see that there’s a huge non-linearity across time that the Kaplan Meier estimator correctly caputres!</p>
+</section>
+<section id="cox-proportional-hazard-model" class="level2">
+<h2 class="anchored" data-anchor-id="cox-proportional-hazard-model">Cox Proportional Hazard model</h2>
+<section id="fitting-the-model" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-the-model">Fitting the model</h3>
+<p>Let’s finally fit our model!</p>
+<blockquote class="blockquote">
+<p>Note that as long as the Cox Proportional Hazard <em>assumptions are met</em> (proportional hazards and we’ve correctly specified the linear regression in the risk function), the Cox model is <strong>consistent and asymptotically unbiased</strong>, meaning that the parameter estimates converge to the true values as the sample size increases.</p>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>cox_fit <span class="ot">&lt;-</span> <span class="fu">coxph</span>(<span class="fu">Surv</span>(y, failed) <span class="sc">~</span> X1 <span class="sc">+</span> X2 <span class="sc">+</span> X3, <span class="at">data =</span> data)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(cox_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Call:
+coxph(formula = Surv(y, failed) ~ X1 + X2 + X3, data = data)
+
+  n= 2000, number of events= 1790 
+
+        coef exp(coef)  se(coef)      z Pr(&gt;|z|)    
+X1  0.008528  1.008565  0.047990  0.178    0.859    
+X2  0.422365  1.525565  0.048643  8.683  &lt; 2e-16 ***
+X3 -0.389458  0.677424  0.049633 -7.847 4.27e-15 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+   exp(coef) exp(-coef) lower .95 upper .95
+X1    1.0086     0.9915    0.9180    1.1080
+X2    1.5256     0.6555    1.3868    1.6782
+X3    0.6774     1.4762    0.6146    0.7466
+
+Concordance= 0.578  (se = 0.008 )
+Likelihood ratio test= 129.8  on 3 df,   p=&lt;2e-16
+Wald test            = 129.7  on 3 df,   p=&lt;2e-16
+Score (logrank) test = 129.7  on 3 df,   p=&lt;2e-16</code></pre>
+</div>
+</div>
+<p>Note that, by default, we don’t have an intercept, as it would just be a constant shift to the baseline hazard, and not a “real” regression coefficient.</p>
+</section>
+<section id="interpreting-the-results" class="level3">
+<h3 class="anchored" data-anchor-id="interpreting-the-results">Interpreting the Results</h3>
+<p>Given that we simulated the data to make sure that the assumptions are met, our estimates are right on the money! The table results above show the huge uncertainty in the <code>x1</code> parameter, and a non-statistically significant result.</p>
+<p>If we remember, we specified the following betas for our simulation:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sim.data<span class="sc">$</span>betas</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1]
+[1,]  0.0
+[2,]  0.4
+[3,] -0.4</code></pre>
+</div>
+</div>
+<p>And here are the model coefficients that pretty nicely line-up with what we know is the truth!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(cox_fit<span class="sc">$</span>coefficients, <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     X1      X2      X3 
+ 0.0085  0.4224 -0.3895 </code></pre>
+</div>
+</div>
+<p>However, the above are coefficients in the log hazard scale, which is very difficult to interpret.</p>
+<blockquote class="blockquote">
+<p>The results are shown in two scales: the log hazard scale, and the hazard scale, respectively. The Hazard scale can be interpreted as the hazard ratio for a 1-unit increase in the continuous variable, or the hazard ratio for the dummy variable relative to the control variable.</p>
+</blockquote>
+<p>Let’s plot the results in the Hazard Scale:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize the estimated coefficients</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggforest</span>(cox_fit, <span class="at">data=</span>data, <span class="at">main=</span><span class="st">"Forest Plot for coefficients in Hazard Scale"</span>) <span class="sc">+</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_pred</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="2022-11-27-introduction-survival_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Given that the results are in the hazard scale and we are assuming proportional hazards, we can interpret the coefficients as hazard ratios: e.g., a coefficient of 1 indicates no difference a hazard ratio of 1 for the change in question.</p>
+<ul>
+<li>For x1, just as expected, the 0 coefficient in the log hazard scale means that an unit increase in X1 is associated with no increase in the proportional hazard.</li>
+<li>Whereas for X2, we find a hazard ratio of 1.53, meaning that an unit increase in X1 is associated with a 53% increase in the hazard, an increase that we assume in constant through time.</li>
+</ul>
+</section>
+</section>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>We introduced Survival Analysis by comparing how it differs from regular binary classification and we introduce the basic mathematical engine that powers it. Also, we defined the most basic Survival model: Cox Proportional Hazards and derive its likelihood to understand how it deals with time and with censored observations. Finally, we simulated data and fitted our first Cox Proportional Hazard model.</p>
+<p>In a later blogpost, we will explore how to relax the proportional hazard assumption and introduce non-linear effects for our covariates across time.</p>
+</section>
+<section id="bibliography" class="level1">
+<h1>Bibliography</h1>
+<ul>
+<li><p>Cox, D.R. (1972). Regression Models and Life Tables. Journal of the Royal Statistical Society, Series B 34, 187-220.</p></li>
+<li><p>https://web.stanford.edu/~lutian/coursepdf/unitcox1.pdf</p></li>
+</ul>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
