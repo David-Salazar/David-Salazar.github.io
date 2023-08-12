@@ -30,6 +30,7 @@
   {
     "listing": "/archive.html",
     "items": [
+      "/posts/gams/simon-wood-summary.html",
       "/posts/survival-analysis/2022-11-27-introduction-survival.html",
       "/posts/fat-vs-thin-tails/2020-09-03-forecasting-elections-taleb-says-no.html",
       "/posts/causality/2020-08-26-causality-mediation-analysis.html",
@@ -170,7 +171,8 @@
       "/posts/causality/2020-08-20-causality-probabilities-of-causation.html",
       "/posts/causality/2020-08-26-causality-mediation-analysis.html",
       "/posts/fat-vs-thin-tails/2020-09-03-forecasting-elections-taleb-says-no.html",
-      "/posts/survival-analysis/2022-11-27-introduction-survival.html"
+      "/posts/survival-analysis/2022-11-27-introduction-survival.html",
+      "/posts/gams/simon-wood-summary.html"
     ]
   }
 ]

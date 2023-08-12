@@ -2,226 +2,230 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://david-salazar.github.io/posts/causality/2020-08-10-causality-counterfactuals-clash-of-worlds.html</loc>
-    <lastmod>2022-12-29T21:10:02.160Z</lastmod>
+    <lastmod>2023-08-12T17:14:15.437Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/causality/2020-07-25-causality-to-adjust-or-not-to-adjust.html</loc>
-    <lastmod>2022-12-29T21:10:02.993Z</lastmod>
+    <lastmod>2023-08-12T17:14:16.474Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/causality/2020-08-16-causality-effect-of-treatment-on-the-treated.html</loc>
-    <lastmod>2022-12-29T21:10:03.680Z</lastmod>
+    <lastmod>2023-08-12T17:14:17.099Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/causality/2020-07-31-causality-testing-identifiability.html</loc>
-    <lastmod>2022-12-29T21:10:04.360Z</lastmod>
+    <lastmod>2023-08-12T17:14:17.791Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/causality/2020-07-30-causality-the-front-door-criterion.html</loc>
-    <lastmod>2022-12-29T21:10:04.947Z</lastmod>
+    <lastmod>2023-08-12T17:14:18.406Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/causality/2020-07-22-causality-invariance-under-interventions.html</loc>
-    <lastmod>2022-12-29T21:10:05.419Z</lastmod>
+    <lastmod>2023-08-12T17:14:18.880Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/causality/2020-07-18-causality-bayesian-networks.html</loc>
-    <lastmod>2022-12-29T21:10:06.122Z</lastmod>
+    <lastmod>2023-08-12T17:14:19.624Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/causality/2020-08-26-causality-mediation-analysis.html</loc>
-    <lastmod>2022-12-29T21:10:06.784Z</lastmod>
+    <lastmod>2023-08-12T17:14:20.302Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/causality/2020-08-20-causality-probabilities-of-causation.html</loc>
-    <lastmod>2022-12-29T21:10:07.145Z</lastmod>
+    <lastmod>2023-08-12T17:14:20.678Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/fat-vs-thin-tails/2020-05-30-central-limit-theorem-in-action.html</loc>
-    <lastmod>2022-12-29T21:10:08.526Z</lastmod>
+    <lastmod>2023-08-12T17:14:22.099Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/fat-vs-thin-tails/2020-05-09-what-does-it-mean-to-fatten-the-tails.html</loc>
-    <lastmod>2022-12-29T21:10:09.115Z</lastmod>
+    <lastmod>2023-08-12T17:14:22.700Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/fat-vs-thin-tails/2020-06-24-probability-calibration-under-fat-tails-useless.html</loc>
-    <lastmod>2022-12-29T21:10:09.422Z</lastmod>
+    <lastmod>2023-08-12T17:14:23.042Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/fat-vs-thin-tails/2020-06-26-gini-index-under-fat-tails.html</loc>
-    <lastmod>2022-12-29T21:10:10.025Z</lastmod>
+    <lastmod>2023-08-12T17:14:23.607Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/fat-vs-thin-tails/2020-06-10-fisher-tippet-th-a-clt-for-the-sample-maxima.html</loc>
-    <lastmod>2022-12-29T21:10:10.592Z</lastmod>
+    <lastmod>2023-08-12T17:14:24.181Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/fat-vs-thin-tails/2020-04-27-spurious-pca-under-thick-tails.html</loc>
-    <lastmod>2022-12-29T21:10:11.139Z</lastmod>
+    <lastmod>2023-08-12T17:14:24.760Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/fat-vs-thin-tails/2020-04-17-fat-vs-thin-does-lln-work.html</loc>
-    <lastmod>2022-12-29T21:10:11.726Z</lastmod>
+    <lastmod>2023-08-12T17:14:25.341Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/fat-vs-thin-tails/2020-06-11-how-to-not-get-fooled-by-the-empirical-distribution.html</loc>
-    <lastmod>2022-12-29T21:10:12.350Z</lastmod>
+    <lastmod>2023-08-12T17:14:25.971Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/fat-vs-thin-tails/2020-05-13-standard-deviation-and-fat-tails.html</loc>
-    <lastmod>2022-12-29T21:10:12.998Z</lastmod>
+    <lastmod>2023-08-12T17:14:26.637Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/fat-vs-thin-tails/2020-05-22-correlation-is-not-correlation.html</loc>
-    <lastmod>2022-12-29T21:10:13.723Z</lastmod>
+    <lastmod>2023-08-12T17:14:27.389Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/fat-vs-thin-tails/2020-06-02-lln-for-higher-p-moments.html</loc>
-    <lastmod>2022-12-29T21:10:14.300Z</lastmod>
+    <lastmod>2023-08-12T17:14:27.973Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/fat-vs-thin-tails/2020-06-14-when-are-garch-and-friends-models-warranted.html</loc>
-    <lastmod>2022-12-29T21:10:14.846Z</lastmod>
+    <lastmod>2023-08-12T17:14:28.514Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/fat-vs-thin-tails/2020-09-03-forecasting-elections-taleb-says-no.html</loc>
-    <lastmod>2022-12-29T21:10:15.174Z</lastmod>
+    <lastmod>2023-08-12T17:14:28.847Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/fat-vs-thin-tails/2020-05-19-understanding-the-tail-exponent.html</loc>
-    <lastmod>2022-12-29T21:10:15.939Z</lastmod>
+    <lastmod>2023-08-12T17:14:29.626Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/fat-vs-thin-tails/2020-07-05-tail-risk-of-diseases-in-r.html</loc>
-    <lastmod>2022-12-29T21:10:16.779Z</lastmod>
+    <lastmod>2023-08-12T17:14:30.582Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/fat-vs-thin-tails/2020-06-17-extreme-value-theory-for-time-series.html</loc>
-    <lastmod>2022-12-29T21:10:17.189Z</lastmod>
+    <lastmod>2023-08-12T17:14:30.984Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/fat-vs-thin-tails/2020-05-26-r-squared-and-fat-tails.html</loc>
-    <lastmod>2022-12-29T21:10:17.793Z</lastmod>
+    <lastmod>2023-08-12T17:14:31.686Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-06-01-understanding-pooling-across-intercepts-and-slopes.html</loc>
-    <lastmod>2022-12-29T21:10:18.282Z</lastmod>
+    <lastmod>2023-08-12T17:14:32.308Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-05-03-statistical-rethinking-week-3.html</loc>
-    <lastmod>2022-12-29T21:10:18.989Z</lastmod>
+    <lastmod>2023-08-12T17:14:33.072Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-07-10-bda-week-8-bayesian-decision-analysis.html</loc>
-    <lastmod>2022-12-29T21:10:19.286Z</lastmod>
+    <lastmod>2023-08-12T17:14:33.389Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-06-29-bayesian-data-analysis-week-5-metropolis.html</loc>
-    <lastmod>2022-12-29T21:10:20.040Z</lastmod>
+    <lastmod>2023-08-12T17:14:34.214Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-05-24-statistical-rethinking-week-7.html</loc>
-    <lastmod>2022-12-29T21:10:20.516Z</lastmod>
+    <lastmod>2023-08-12T17:14:34.701Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-06-03-statistical-rethinking-week-9.html</loc>
-    <lastmod>2022-12-29T21:10:21.320Z</lastmod>
+    <lastmod>2023-08-12T17:14:35.556Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-06-27-bayesian-data-analysis-week-4-importance-sampling.html</loc>
-    <lastmod>2022-12-29T21:10:21.937Z</lastmod>
+    <lastmod>2023-08-12T17:14:36.191Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-05-15-statistical-rethinking-week-5-hmc-samples.html</loc>
-    <lastmod>2022-12-29T21:10:22.390Z</lastmod>
+    <lastmod>2023-08-12T17:14:36.646Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-06-09-statistical-rethinking-week-10.html</loc>
-    <lastmod>2022-12-29T21:10:22.751Z</lastmod>
+    <lastmod>2023-08-12T17:14:37.012Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-04-28-statistical-rethinking-week-2.html</loc>
-    <lastmod>2022-12-29T21:10:23.321Z</lastmod>
+    <lastmod>2023-08-12T17:14:37.673Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-06-22-bayesian-data-analysis-week-2.html</loc>
-    <lastmod>2022-12-29T21:10:23.832Z</lastmod>
+    <lastmod>2023-08-12T17:14:38.249Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-05-11-statistical-rethinking-week-4.html</loc>
-    <lastmod>2022-12-29T21:10:24.184Z</lastmod>
+    <lastmod>2023-08-12T17:14:38.633Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-07-13-bda-week-9-large-sample-theory-for-the-posterior.html</loc>
-    <lastmod>2022-12-29T21:10:24.526Z</lastmod>
+    <lastmod>2023-08-12T17:14:38.950Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-07-02-bda-week-6-mcmc-in-high-dimensions-hamiltonian-monte-carlo.html</loc>
-    <lastmod>2022-12-29T21:10:25.260Z</lastmod>
+    <lastmod>2023-08-12T17:14:39.707Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-05-28-simulating-into-understanding-multilevel-models.html</loc>
-    <lastmod>2022-12-29T21:10:25.934Z</lastmod>
+    <lastmod>2023-08-12T17:14:40.446Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-06-24-bayesian-data-analysis-week-3-fitting-a-gaussian-probability-model.html</loc>
-    <lastmod>2022-12-29T21:10:26.470Z</lastmod>
+    <lastmod>2023-08-12T17:14:41.049Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-06-25-bayesian-data-analysis-week-3-exercises.html</loc>
-    <lastmod>2022-12-29T21:10:27.081Z</lastmod>
+    <lastmod>2023-08-12T17:14:41.705Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-06-03-bayesian-instrumental-variable-regression.html</loc>
-    <lastmod>2022-12-29T21:10:27.620Z</lastmod>
+    <lastmod>2023-08-12T17:14:42.300Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-05-29-statistical-rethinking-week-8.html</loc>
-    <lastmod>2022-12-29T21:10:29.218Z</lastmod>
+    <lastmod>2023-08-12T17:14:44.362Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-05-20-statistical-rethinking-week-6.html</loc>
-    <lastmod>2022-12-29T21:10:30.453Z</lastmod>
+    <lastmod>2023-08-12T17:14:45.668Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-07-08-bda-week-7-loo-and-its-diagnostics.html</loc>
-    <lastmod>2022-12-29T21:10:30.841Z</lastmod>
+    <lastmod>2023-08-12T17:14:46.066Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-05-12-statistical-rethinking-week-5-interactions.html</loc>
-    <lastmod>2022-12-29T21:10:31.285Z</lastmod>
+    <lastmod>2023-08-12T17:14:46.506Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/bayesian-statistics/2020-04-19-statistical-rethinking-week-1.html</loc>
-    <lastmod>2022-12-29T21:10:31.778Z</lastmod>
+    <lastmod>2023-08-12T17:14:47.015Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/posts/survival-analysis/2022-11-27-introduction-survival.html</loc>
-    <lastmod>2022-12-29T21:10:32.620Z</lastmod>
+    <lastmod>2023-08-12T17:14:47.962Z</lastmod>
+  </url>
+  <url>
+    <loc>https://david-salazar.github.io/posts/gams/simon-wood-summary.html</loc>
+    <lastmod>2023-08-12T17:14:48.434Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/bayesian-statistics.html</loc>
-    <lastmod>2022-12-29T21:10:33.264Z</lastmod>
+    <lastmod>2023-08-12T17:14:49.095Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/archive.html</loc>
-    <lastmod>2022-12-29T21:10:34.305Z</lastmod>
+    <lastmod>2023-08-12T17:14:50.179Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/index.html</loc>
-    <lastmod>2022-12-29T21:10:34.604Z</lastmod>
+    <lastmod>2023-08-12T17:14:50.492Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/fat-vs-thin-tails.html</loc>
-    <lastmod>2022-12-29T21:10:35.113Z</lastmod>
+    <lastmod>2023-08-12T17:14:51.044Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/causality.html</loc>
-    <lastmod>2022-12-29T21:10:35.535Z</lastmod>
+    <lastmod>2023-08-12T17:14:51.474Z</lastmod>
   </url>
   <url>
     <loc>https://david-salazar.github.io/blog.html</loc>
-    <lastmod>2022-12-29T21:10:36.705Z</lastmod>
+    <lastmod>2023-08-12T17:14:52.702Z</lastmod>
   </url>
 </urlset>

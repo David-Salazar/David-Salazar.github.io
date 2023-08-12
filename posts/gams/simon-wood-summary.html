@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.262">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="David Salazar">
+<meta name="dcterms.date" content="2023-08-12">
+
+<title>David Salazar - Notes from Simon Wood’s Generalized Additive Models</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">David Salazar</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../archive.html">
+ <span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/David-Salazar"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/DavidSalazarVir"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Notes from Simon Wood’s Generalized Additive Models</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>David Salazar </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">August 12, 2023</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#generalized-additive-model-gam" id="toc-generalized-additive-model-gam" class="nav-link active" data-scroll-target="#generalized-additive-model-gam">Generalized Additive Model (GAM)</a></li>
+  </ul>
+</nav>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>Simon Wood is a world expert on GAMs and creator of the fantastic <a href="https://cran.r-project.org/web/packages/mgcv/index.html">mgcv</a> package in R. His <a href="https://www.taylorfrancis.com/books/mono/10.1201/9781315370279/generalized-additive-models-simon-wood">book</a> on GAMs is a great introduction to the subject. I’ve been re-reading it and taking notes to be able to better teach this to my co-workers. This post is a summary of the notes I’ve taken so far. They are questions that I try to ask myself to make sure that I have a good mental model of the subject. I’ve tried to make them as general as possible, but they are still biased towards my own understanding of the subject.</p>
+<section id="generalized-additive-model-gam" class="level2">
+<h2 class="anchored" data-anchor-id="generalized-additive-model-gam">Generalized Additive Model (GAM)</h2>
+<p><strong>Q:</strong> What is a Generalized Additive Model?<br>
+<strong>A:</strong> A linear model with a linear predictor involving a sum of smooth functions of covariates.</p>
+<p><strong>Q:</strong> What are the two problems of using GAMs?<br>
+<strong>A:</strong> 1. How to represent the smooth functions? 2. How smooth these functions should be?</p>
+<p><strong>Q:</strong> What’s the traditional solution to the above problems?<br>
+<strong>A:</strong> 1. Represent them via basis expansions for each smooth with estimation via penalized regression methods. 2. Estimate the function smoothness via cross validation or marginal likelihood maximization.</p>
+<p><strong>Q:</strong> What’s the restriction on how we represent a smooth to be estimated as a linear model?<br>
+<strong>A:</strong> f must be represented as a linear model. Choose a basis expansion of which f is an element of. Estimate parameters for each function in the basis, and the resulting f is the linear combination using these parameters. <span class="math display">\[ f(x) = \sum_{j=i}^{k} b_j (x) \beta_j\]</span>.</p>
+<p><strong>Q:</strong> Why are polynomial basis expansions frowned upon as it comes to GAMs?<br>
+<strong>A:</strong> Polynomial basis expansions are one possible choice for these functions. However, they have certain limitations: 1. <strong>Runaway Behavior</strong>: Polynomials are unbounded and can have extreme values far from the data points, which can cause model instability and poor extrapolation. This is especially problematic at the boundaries of the data range. 2. <strong>Global Influence</strong>: A change in the data at one point can affect the polynomial fit at all points. In contrast, local regression techniques (like splines or kernel smoothing) used in GAMs are less influenced by distant points. 3. <strong>Inflexibility</strong>: Polynomials of low degree may not be flexible enough to capture complex non-linear relationships, while high degree polynomials can overfit the data and create oscillations. 4. <strong>Curse of Dimensionality</strong>: When dealing with multivariate data, the number of polynomial terms grows exponentially with the degree of the polynomial and the number of variables. This can make the model very complex and computationally expensive.</p>
+<p><strong>Q:</strong> How can we determine the resulting smoothness of the linear combination of the functions in the basis expansion?<br>
+<strong>A:</strong> By using penalized regression and adding a penalty on the “wiggliness” (i.e., integrated squared second derivative in the case of cubic splines). Then, the problem of estimating the wiggliness becomes the problem of adding a hyperparameter to control this penalty.</p>
+<p><strong>Q:</strong> Given the penalized regression approach to estimate the wiggliness of the resulting linear combination of the basis expansion functions, what’s Simon Woods’ advice to choosing the dimension of the basis expansion?<br>
+<strong>A:</strong> Choose a large enough k such that the basis is more flexible than we expect to need to represent f(x), then neither the exact choice of k, nor the precise location of the knots, has a great deal of influence on the model fit. Rather, it is the penalty hyperparameter.</p>
+<p><strong>Q:</strong> How can we justify using Restricted Maximum Likelihood (REML) to estimate the wiggliness hyperparameter?<br>
+<strong>A:</strong> By positing a prior on the wiggliness of the linear combination of the basis expansion, we can estimate the model as a mixed model. Then, we can use REML to estimate the hyperparameter as the variance of random effects.</p>
+<p><strong>Q:</strong> What alternative to REML can we use to estimate the wiggliness hyperparameters?<br>
+<strong>A:</strong> We can use Cross Validation. In particular, Generalized Cross Validation to avoid the computational cost of LOO-CV.</p>
+<p><strong>Q:</strong> Expand on why adding more than one smooth in a GAM introduces an identifiability problem?<br>
+<strong>A:</strong> The identifiability problem arises in the context of Generalized Additive Models (GAMs) when we have more than one smooth term in the model. This is because there can be multiple different combinations of smooth functions that give the same fitted values, which means the model is not identifiable. To understand this, consider a simple GAM with two smooth terms: <span class="math display">\[
+y = f_1(x_1) + f_2(x_2) + \varepsilon
+\]</span> Now imagine that we add a constant $ c $ to $ f_1(x_1) $ and subtract the same constant from $ f_2(x_2) $. The fitted values remain the same: <span class="math display">\[
+y = [f_1(x_1) + c] + [f_2(x_2) - c] + \varepsilon = f_1(x_1) + f_2(x_2) + \varepsilon
+\]</span> However, the functions <span class="math inline">\(f_1(x_1)\)</span> and <span class="math inline">\(f_2(x_2)\)</span> have changed. This means there are multiple different sets of functions <span class="math inline">\(f_1(x_1)\)</span> and <span class="math inline">\(f_2(x_2)\)</span> that give the same fitted values, so the model is not identifiable.</p>
+<p><strong>Q:</strong> What is a common solution to the identifiability problem introduced by having multiple smooths in a GAM?<br>
+<strong>A:</strong> A common solution to this problem is to impose a constraint that the mean of each smooth function is zero over the range of the data. This effectively removes the freedom to add or subtract constants from the functions. The result is that each function can only change the shape of the fitted values, not the overall level. This makes the model identifiable: there is now a unique set of functions <span class="math inline">\(f_1(x_1)\)</span> and <span class="math inline">\(f_2(x_2)\)</span> that give the fitted values.</p>
+<p><strong>Q:</strong> What interpretation change of the smooths must happen once we add the constraint of mean of each smooth be zero over the range of data to deal with identifiability constraints?<br>
+<strong>A:</strong> This constraint has a nice interpretation: it means that each smooth function represents the deviation from the overall mean response. It does not change the overall level of the response, only its shape. This is consistent with the idea that the smooth functions in a GAM capture the non-linear effects of the predictors.</p>
+<p><strong>Q:</strong> How does the identifiability constraint limits the maximum dimension for the basis?<br>
+<strong>A:</strong> It changes that from any k we choose to k-1, due to the zero centering that we need to impose on it if there are more than one spline.</p>
+<p><strong>Q:</strong> What’s a tricky point of setting the dimension k regarding basis with smaller dimensions k?<br>
+<strong>A:</strong> A k=20 will contain a larger number of functions with effective degrees of freedom=5 than a space with k=10.</p>
+<p><strong>Q:</strong> If reducing the k in the smooth won’t necessarily constrain the model to a simpler spline, what can we do to induce larger regularization of the smooth when using the Generalized Cross Validation?<br>
+<strong>A:</strong> We can use gamma hyperparameter to increase the penalty per degree of freedom increases in the GCV and thus increasingly smooth models are produced.</p>
+<p><strong>Q:</strong> In mgcv, when using smooths over several variables, what type of basis expansion are we using?<br>
+<strong>A:</strong> Tensor products of the marginal basis.</p>
+<p><strong>Q:</strong> In mgcv, when specifying the k for a tensor product, what’s the resulting dimension?<br>
+<strong>A:</strong> The product of the dimension of each of the marginal basis. You can define a marginal basis dimension per variable.</p>
+<p><strong>Q:</strong> Name three possible kind of basis expansions (smoothers) to use in GAMs?<br>
+<strong>A:</strong> - Local Linear basis. - Polynomial - Spline bases</p>
+<p><strong>Q:</strong> What’s the least squares method used in GAMs for the penalized likelihood maximization?<br>
+<strong>A:</strong> Penalized iteratively re weighted least squares (PIRLS)</p>
+<p><strong>Q:</strong> What are cubic splines?<br>
+<strong>A:</strong> A cubic spline is a curve constructed from sections of cubic polynomial joined together so that the curve is continuous up to second derivative.</p>
+<p><strong>Q:</strong> What’s the difference between cubic splines interpolators and cubic smoothing splines?<br>
+<strong>A:</strong> Treat the exact values that the function will take at the control points as n free parameters and estimate them by minimizing the squared error of them plus the integral of the second derivative controlled by a hyper parameter lambda.</p>
+<p><strong>Q:</strong> How do B splines improve upon natural polynomial splines?<br>
+<strong>A:</strong> It modifies the basis functions so their effects are strictly local: each basis function is only nonzero over the intervals between m + 3 adjacent knots.</p>
+<p><strong>Q:</strong> What are the improvements of P splines over B Splines?<br>
+<strong>A:</strong> P-splines extend B-splines by adding a penalty on the differences of the coefficients of the B-splines. This penalty typically targets the second or higher-order differences to ensure the resulting curve is smooth. The idea is to strike a balance between fitting the data closely (like B-splines) and keeping the curve smooth (through the penalty).</p>
+<p><strong>Q:</strong> What does it mean for a model smooth to be cyclic?<br>
+<strong>A:</strong> The resulting smooth has the same value and first few derivatives at its upper and lower boundaries.</p>
+<p><strong>Q:</strong> What are adaptive smoothers in the context of GAMs?<br>
+<strong>A:</strong> A spline where the level of smoothing depends on the values of the covariates.</p>
+<p><strong>Q:</strong> Why do most smoothing penalties in GAM have problems outputting the zero function? What can we do about it?<br>
+<strong>A:</strong> Some non-zero functions are in the null space (because they are considered completely smooth). If we want to encourage a zero function we can add an extra penalty that penalizes functions in the null space. The select argument in mgcv does that.</p>
+<p><strong>Q:</strong> What are isotropic smooths in the context of GAMs?<br>
+<strong>A:</strong> Smooths that in the multiple covariate case produce identical predictions of the response variable under any rotation or reflection of the covariates.</p>
+<p><strong>Q:</strong> How do we arrive at the knots selections and basis functions from thin plate splines?<br>
+<strong>A:</strong> These emerge naturally from the mathematical statement of the smoothing problem.</p>
+<p><strong>Q:</strong> What type of basis functions arise out of the thin plate spline formulation?<br>
+<strong>A:</strong> Radial basis functions.</p>
+<p><strong>Q:</strong> What’s the drawback of thin plate splines?<br>
+<strong>A:</strong> Their computational cost.</p>
+<p><strong>Q:</strong> What’s the idea behind thin plate regression splines that reduce their computational cost?<br>
+<strong>A:</strong> Truncating the space of wiggly components of the thin plate spline while leaving the components of zero wiggliness unchanged.</p>
+<p><strong>Q:</strong> When are soap film smoothing useful in gams?<br>
+<strong>A:</strong> When it’s important to not smooth across boundaries.</p>
+<p><strong>Q:</strong> What’s the trick to construct orthogonal non isotropic smooth for interactions of variables?<br>
+<strong>A:</strong> The marginal bases due to identifiability constraints cannot have a zero. Thus, they don’t have the unit vector and thus the product of the basis cannot contain the main effects.</p>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -10,7 +10,362 @@
 <atom:link href="https://david-salazar.github.io/blog.xml" rel="self" type="application/rss+xml"/>
 <description>This is David&#39;s Salazar personal blogpost.</description>
 <generator>quarto-1.2.262</generator>
-<lastBuildDate>Thu, 03 Sep 2020 05:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sat, 12 Aug 2023 05:00:00 GMT</lastBuildDate>
+<item>
+  <title>Notes from Simon Wood’s Generalized Additive Models</title>
+  <dc:creator>David Salazar</dc:creator>
+  <link>https://david-salazar.github.io/posts/gams/simon-wood-summary.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>Simon Wood is a world expert on GAMs and creator of the fantastic <a href="https://cran.r-project.org/web/packages/mgcv/index.html">mgcv</a> package in R. His <a href="https://www.taylorfrancis.com/books/mono/10.1201/9781315370279/generalized-additive-models-simon-wood">book</a> on GAMs is a great introduction to the subject. I’ve been re-reading it and taking notes to be able to better teach this to my co-workers. This post is a summary of the notes I’ve taken so far. They are questions that I try to ask myself to make sure that I have a good mental model of the subject. I’ve tried to make them as general as possible, but they are still biased towards my own understanding of the subject.</p>
+<section id="generalized-additive-model-gam" class="level2">
+<h2 class="anchored" data-anchor-id="generalized-additive-model-gam">Generalized Additive Model (GAM)</h2>
+<p><strong>Q:</strong> What is a Generalized Additive Model?<br>
+<strong>A:</strong> A linear model with a linear predictor involving a sum of smooth functions of covariates.</p>
+<p><strong>Q:</strong> What are the two problems of using GAMs?<br>
+<strong>A:</strong> 1. How to represent the smooth functions? 2. How smooth these functions should be?</p>
+<p><strong>Q:</strong> What’s the traditional solution to the above problems?<br>
+<strong>A:</strong> 1. Represent them via basis expansions for each smooth with estimation via penalized regression methods. 2. Estimate the function smoothness via cross validation or marginal likelihood maximization.</p>
+<p><strong>Q:</strong> What’s the restriction on how we represent a smooth to be estimated as a linear model?<br>
+<strong>A:</strong> f must be represented as a linear model. Choose a basis expansion of which f is an element of. Estimate parameters for each function in the basis, and the resulting f is the linear combination using these parameters. <img src="https://latex.codecogs.com/png.latex?%20f(x)%20=%20%5Csum_%7Bj=i%7D%5E%7Bk%7D%20b_j%20(x)%20%5Cbeta_j">.</p>
+<p><strong>Q:</strong> Why are polynomial basis expansions frowned upon as it comes to GAMs?<br>
+<strong>A:</strong> Polynomial basis expansions are one possible choice for these functions. However, they have certain limitations: 1. <strong>Runaway Behavior</strong>: Polynomials are unbounded and can have extreme values far from the data points, which can cause model instability and poor extrapolation. This is especially problematic at the boundaries of the data range. 2. <strong>Global Influence</strong>: A change in the data at one point can affect the polynomial fit at all points. In contrast, local regression techniques (like splines or kernel smoothing) used in GAMs are less influenced by distant points. 3. <strong>Inflexibility</strong>: Polynomials of low degree may not be flexible enough to capture complex non-linear relationships, while high degree polynomials can overfit the data and create oscillations. 4. <strong>Curse of Dimensionality</strong>: When dealing with multivariate data, the number of polynomial terms grows exponentially with the degree of the polynomial and the number of variables. This can make the model very complex and computationally expensive.</p>
+<p><strong>Q:</strong> How can we determine the resulting smoothness of the linear combination of the functions in the basis expansion?<br>
+<strong>A:</strong> By using penalized regression and adding a penalty on the “wiggliness” (i.e., integrated squared second derivative in the case of cubic splines). Then, the problem of estimating the wiggliness becomes the problem of adding a hyperparameter to control this penalty.</p>
+<p><strong>Q:</strong> Given the penalized regression approach to estimate the wiggliness of the resulting linear combination of the basis expansion functions, what’s Simon Woods’ advice to choosing the dimension of the basis expansion?<br>
+<strong>A:</strong> Choose a large enough k such that the basis is more flexible than we expect to need to represent f(x), then neither the exact choice of k, nor the precise location of the knots, has a great deal of influence on the model fit. Rather, it is the penalty hyperparameter.</p>
+<p><strong>Q:</strong> How can we justify using Restricted Maximum Likelihood (REML) to estimate the wiggliness hyperparameter?<br>
+<strong>A:</strong> By positing a prior on the wiggliness of the linear combination of the basis expansion, we can estimate the model as a mixed model. Then, we can use REML to estimate the hyperparameter as the variance of random effects.</p>
+<p><strong>Q:</strong> What alternative to REML can we use to estimate the wiggliness hyperparameters?<br>
+<strong>A:</strong> We can use Cross Validation. In particular, Generalized Cross Validation to avoid the computational cost of LOO-CV.</p>
+<p><strong>Q:</strong> Expand on why adding more than one smooth in a GAM introduces an identifiability problem?<br>
+<strong>A:</strong> The identifiability problem arises in the context of Generalized Additive Models (GAMs) when we have more than one smooth term in the model. This is because there can be multiple different combinations of smooth functions that give the same fitted values, which means the model is not identifiable. To understand this, consider a simple GAM with two smooth terms: <img src="https://latex.codecogs.com/png.latex?%0Ay%20=%20f_1(x_1)%20+%20f_2(x_2)%20+%20%5Cvarepsilon%0A"> Now imagine that we add a constant $ c $ to $ f_1(x_1) $ and subtract the same constant from $ f_2(x_2) $. The fitted values remain the same: <img src="https://latex.codecogs.com/png.latex?%0Ay%20=%20%5Bf_1(x_1)%20+%20c%5D%20+%20%5Bf_2(x_2)%20-%20c%5D%20+%20%5Cvarepsilon%20=%20f_1(x_1)%20+%20f_2(x_2)%20+%20%5Cvarepsilon%0A"> However, the functions <img src="https://latex.codecogs.com/png.latex?f_1(x_1)"> and <img src="https://latex.codecogs.com/png.latex?f_2(x_2)"> have changed. This means there are multiple different sets of functions <img src="https://latex.codecogs.com/png.latex?f_1(x_1)"> and <img src="https://latex.codecogs.com/png.latex?f_2(x_2)"> that give the same fitted values, so the model is not identifiable.</p>
+<p><strong>Q:</strong> What is a common solution to the identifiability problem introduced by having multiple smooths in a GAM?<br>
+<strong>A:</strong> A common solution to this problem is to impose a constraint that the mean of each smooth function is zero over the range of the data. This effectively removes the freedom to add or subtract constants from the functions. The result is that each function can only change the shape of the fitted values, not the overall level. This makes the model identifiable: there is now a unique set of functions <img src="https://latex.codecogs.com/png.latex?f_1(x_1)"> and <img src="https://latex.codecogs.com/png.latex?f_2(x_2)"> that give the fitted values.</p>
+<p><strong>Q:</strong> What interpretation change of the smooths must happen once we add the constraint of mean of each smooth be zero over the range of data to deal with identifiability constraints?<br>
+<strong>A:</strong> This constraint has a nice interpretation: it means that each smooth function represents the deviation from the overall mean response. It does not change the overall level of the response, only its shape. This is consistent with the idea that the smooth functions in a GAM capture the non-linear effects of the predictors.</p>
+<p><strong>Q:</strong> How does the identifiability constraint limits the maximum dimension for the basis?<br>
+<strong>A:</strong> It changes that from any k we choose to k-1, due to the zero centering that we need to impose on it if there are more than one spline.</p>
+<p><strong>Q:</strong> What’s a tricky point of setting the dimension k regarding basis with smaller dimensions k?<br>
+<strong>A:</strong> A k=20 will contain a larger number of functions with effective degrees of freedom=5 than a space with k=10.</p>
+<p><strong>Q:</strong> If reducing the k in the smooth won’t necessarily constrain the model to a simpler spline, what can we do to induce larger regularization of the smooth when using the Generalized Cross Validation?<br>
+<strong>A:</strong> We can use gamma hyperparameter to increase the penalty per degree of freedom increases in the GCV and thus increasingly smooth models are produced.</p>
+<p><strong>Q:</strong> In mgcv, when using smooths over several variables, what type of basis expansion are we using?<br>
+<strong>A:</strong> Tensor products of the marginal basis.</p>
+<p><strong>Q:</strong> In mgcv, when specifying the k for a tensor product, what’s the resulting dimension?<br>
+<strong>A:</strong> The product of the dimension of each of the marginal basis. You can define a marginal basis dimension per variable.</p>
+<p><strong>Q:</strong> Name three possible kind of basis expansions (smoothers) to use in GAMs?<br>
+<strong>A:</strong> - Local Linear basis. - Polynomial - Spline bases</p>
+<p><strong>Q:</strong> What’s the least squares method used in GAMs for the penalized likelihood maximization?<br>
+<strong>A:</strong> Penalized iteratively re weighted least squares (PIRLS)</p>
+<p><strong>Q:</strong> What are cubic splines?<br>
+<strong>A:</strong> A cubic spline is a curve constructed from sections of cubic polynomial joined together so that the curve is continuous up to second derivative.</p>
+<p><strong>Q:</strong> What’s the difference between cubic splines interpolators and cubic smoothing splines?<br>
+<strong>A:</strong> Treat the exact values that the function will take at the control points as n free parameters and estimate them by minimizing the squared error of them plus the integral of the second derivative controlled by a hyper parameter lambda.</p>
+<p><strong>Q:</strong> How do B splines improve upon natural polynomial splines?<br>
+<strong>A:</strong> It modifies the basis functions so their effects are strictly local: each basis function is only nonzero over the intervals between m + 3 adjacent knots.</p>
+<p><strong>Q:</strong> What are the improvements of P splines over B Splines?<br>
+<strong>A:</strong> P-splines extend B-splines by adding a penalty on the differences of the coefficients of the B-splines. This penalty typically targets the second or higher-order differences to ensure the resulting curve is smooth. The idea is to strike a balance between fitting the data closely (like B-splines) and keeping the curve smooth (through the penalty).</p>
+<p><strong>Q:</strong> What does it mean for a model smooth to be cyclic?<br>
+<strong>A:</strong> The resulting smooth has the same value and first few derivatives at its upper and lower boundaries.</p>
+<p><strong>Q:</strong> What are adaptive smoothers in the context of GAMs?<br>
+<strong>A:</strong> A spline where the level of smoothing depends on the values of the covariates.</p>
+<p><strong>Q:</strong> Why do most smoothing penalties in GAM have problems outputting the zero function? What can we do about it?<br>
+<strong>A:</strong> Some non-zero functions are in the null space (because they are considered completely smooth). If we want to encourage a zero function we can add an extra penalty that penalizes functions in the null space. The select argument in mgcv does that.</p>
+<p><strong>Q:</strong> What are isotropic smooths in the context of GAMs?<br>
+<strong>A:</strong> Smooths that in the multiple covariate case produce identical predictions of the response variable under any rotation or reflection of the covariates.</p>
+<p><strong>Q:</strong> How do we arrive at the knots selections and basis functions from thin plate splines?<br>
+<strong>A:</strong> These emerge naturally from the mathematical statement of the smoothing problem.</p>
+<p><strong>Q:</strong> What type of basis functions arise out of the thin plate spline formulation?<br>
+<strong>A:</strong> Radial basis functions.</p>
+<p><strong>Q:</strong> What’s the drawback of thin plate splines?<br>
+<strong>A:</strong> Their computational cost.</p>
+<p><strong>Q:</strong> What’s the idea behind thin plate regression splines that reduce their computational cost?<br>
+<strong>A:</strong> Truncating the space of wiggly components of the thin plate spline while leaving the components of zero wiggliness unchanged.</p>
+<p><strong>Q:</strong> When are soap film smoothing useful in gams?<br>
+<strong>A:</strong> When it’s important to not smooth across boundaries.</p>
+<p><strong>Q:</strong> What’s the trick to construct orthogonal non isotropic smooth for interactions of variables?<br>
+<strong>A:</strong> The marginal bases due to identifiability constraints cannot have a zero. Thus, they don’t have the unit vector and thus the product of the basis cannot contain the main effects.</p>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section></div> ]]></description>
+  <guid>https://david-salazar.github.io/posts/gams/simon-wood-summary.html</guid>
+  <pubDate>Sat, 12 Aug 2023 05:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Introduction to Survival Analysis</title>
+  <dc:creator>David Salazar</dc:creator>
+  <link>https://david-salazar.github.io/posts/survival-analysis/2022-11-27-introduction-survival.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>Survival Analysis is fun, but not often taught in statistics courses. It’s just like regular statistics but with a few twists.</p>
+<blockquote class="blockquote">
+<p>Survival Analysis is a branch of statistics that is used to study <strong>the time to an event of interest</strong>, such as death, disease, or failure. It is different from regular event models because it focuses on the time to the event and takes into account the fact that not all events may be observed. This is called <strong>censoring</strong>, and it is an important concept in Survival Analysis because it can affect the estimates of the time to the event.</p>
+</blockquote>
+<p>One of the most common Survival models is the Cox Proportional Hazard model, which allows for the analysis of censored data and the estimation of the time to the event. In this blog post, <strong>we will go over the basic construction of the Cox model and how it deals with censoring and time. We will also provide an example to illustrate the concepts and show how the model can be applied in practice.</strong></p>
+<section id="time-matters" class="level1">
+<h1>Time matters</h1>
+<p>Imagine you are trying to predict which are the customers most likely to churn in the next few months. Data Science practitioners will often end up doing some like this:</p>
+<blockquote class="blockquote">
+<p>Use past customer data and create a binary target 0/1 for churn. Then, train a binary classification algorithm to predict risk churn from whatever independent features you have at your disposal. Your end result would be scalar risk predictions for each of your current customers.</p>
+</blockquote>
+<p>How did we <strong>deal with time</strong> in the example above? Well, we just swept time under the rug: our target does not differentiate between someone who had been a regular customer for 2 years and someone who had only been a regular customer for 3 months; they are just a 0 in your target. The same happens for churned customers: churned in 6 months or in 6 days, they are just a 1 in your target.</p>
+<p>In both cases, whether they churned or not, you threw away time and its relationship to your target: maybe someone has very high risk of churning in the first few months but then it plateaus, or someone has a constant medium risk of churn; nevertheless, your scalar prediction won’t have this kind of information and thus won’t be able to deal with these types of customers differently.</p>
+<p><strong>Survival Analysis</strong> aims to solve this problem: it’s useful when you care to predict <strong>if and when</strong> an event will happen. By predicting the time to the event, we can expand our risk predictions across time and act accordingly!</p>
+</section>
+<section id="undefined-state-censoring" class="level1">
+<h1>Undefined state: Censoring</h1>
+<p>Let’s continue with our Churn example. At the moment of creating the training dataset, we will have individuals who have not churned, but maybe that’s just an artifact of when we are observing them; maybe, they will churn tomorrow and the model would have incorrectly assumed that they are exemplary of customers who don’t churn.</p>
+<p>To deal with these undefined states, Survival models have the concept of <strong>censored observations: observations for which we haven’t observed their end state yet.</strong> They should contribute to our model, just not as much as observations who have an end state defined. The clearest example is death: survival models are routinely used in medicine to predict time to death: if the patient has not died, it’s just a matter of time until they do (At the end, that’s the end for all phenomena: death, right?)</p>
+<blockquote class="blockquote">
+<p>This undefined state called Censoring is what renders traditional statistical methods inappropriate: they are not like other observations, and they warrant a different treatment in our statistical machinery. Survival Models are exactly this type of models.</p>
+</blockquote>
+</section>
+<section id="cox-proportional-hazard-and-survival-math" class="level1">
+<h1>Cox Proportional Hazard and Survival Math</h1>
+<p>Let’s put what we just said to good use. We have records of events, but we want to differentiate the events depending on how long it took them to happen and we want to differentiate between censored and uncensored events.</p>
+<p>Before we introduce the Cox Proportional Hazards model, let’s introduce some useful math notation.</p>
+<section id="survival-math" class="level2">
+<h2 class="anchored" data-anchor-id="survival-math">Survival math</h2>
+<p>We are interested in the probability that event will happen as a function of time. There are three equivalent mathematical representations to model this time-to-event modeling:</p>
+<ul>
+<li><p>The <strong>Survival Function</strong>: <em>the probability that an event of interest will not occur up to a given time</em>. Mathematically, we can define it thus: <img src="https://latex.codecogs.com/png.latex?S(t)%20=%201%20-%20F(t)">, where <img src="https://latex.codecogs.com/png.latex?F(t)"> is the lifetime distribution function for the time to the event of interest, and <img src="https://latex.codecogs.com/png.latex?f(t)"> being the <strong>event density</strong>. Thus, we can expand both mathematical representations thus <img src="https://latex.codecogs.com/png.latex?S(t)%20=%20%5CPr(T%20%3E%20t)%20=%20%5Cint_t%5E%7B%5Cinfty%7D%20f(u)%5C,du%20=%201-F(t)"> and <img src="https://latex.codecogs.com/png.latex?s(t)%20=%20S'(t)%20=%20%5Cfrac%7Bd%7D%7Bdt%7D%20S(t)%20=%20%5Cfrac%7Bd%7D%7Bdt%7D%20%5Cint_t%5E%7B%5Cinfty%7D%20f(u)%5C,du%20=%20%5Cfrac%7Bd%7D%7Bdt%7D%20%5B1-F(t)%5D%20=%20-f(t)">.</p></li>
+<li><p>The <strong>Hazard Rate</strong>: the instantaneous probability of an event of interest occurring at a given time, given that the event has not occurred up to that time. Mathematically: <img src="https://latex.codecogs.com/png.latex?%5Clambda%20(t)%20=%20%5Clim_%7Bdt%20%5Crightarrow%200%7D%20%5Cfrac%7B%5CPr(t%20%5Cleq%20T%20%3C%20t+dt)%7D%7Bdt%5Ccdot%20S(t)%7D%20=%20%5Cfrac%7Bf(t)%7D%7BS(t)%7D%20=%20-%20%5Cfrac%7BS'(t)%7D%7BS(t)%7D"></p></li>
+<li><p>The <strong>Cumulative Hazard Rate</strong>: <img src="https://latex.codecogs.com/png.latex?%5CLambda(t)%20=%20%5Cint_0%5E%7Bt%7D%20%5Clambda(u)%5C,du%20=%20-%5Clog%20S(t)"></p></li>
+</ul>
+<p>Sometimes, a given representation will be more useful than others. Crucially, they are all related thus:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AS(t)%20=%20%5Cexp%20%5B%20-%5CLambda(t)%20%5D%20=%20%5Cfrac%7Bf(t)%7D%7B%5Clambda(t)%7D%20=%201-F(t),%20%5Cquad%20t%20%3E%200%0A"> We see that with survival math, unlike regular binary classification algorithms, <strong>time to event</strong> is a first class citizen. Let’s see a particular instance of such model: the Cox Proportional Hazards model.</p>
+</section>
+<section id="the-cox-proportional-hazards-model" class="level2">
+<h2 class="anchored" data-anchor-id="the-cox-proportional-hazards-model">The Cox Proportional Hazards Model</h2>
+<p>Now that we’ve gotten some notation out of the way, let’s lay out the intuition and the math for the Cox Proportional Hazards Model.</p>
+<p>To start with, we will model the hazard rate directly <strong>by separating the functional form into two parts</strong>: <em>a baseline rate function that will vary exclusively with time</em> <img src="https://latex.codecogs.com/png.latex?h_0(t)">, and a <em>risk function that will NOT vary with time but with whatever predictor variables we have</em> <img src="https://latex.codecogs.com/png.latex?r(X;%20%5Cbeta)">:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Ah(t)%20=%20%20%5Cunderbrace%7Bh_0(t)%7D_%7B%5Ctext%7BDepends%20on%20time%7D%7D%20%5Ccdot%20%5Cunderbrace%7Br(X;%20%5Cbeta)%7D_%7B%5Ctext%7BDoes%20not%20depend%20on%20time%7D%7D%0A"></p>
+<p>Given that we want our risk function to always be positive, it’s useful instead to define the hazard rate in terms of the exponential of the risk function (<img src="https://latex.codecogs.com/png.latex?r(X;%20%5Cbeta)"> is in the log hazard scale units, whereas <img src="https://latex.codecogs.com/png.latex?%5Cexp%7B(r(X;%20%5Cbeta)%7D)"> is in the hazard scale units.):</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Ah(t)%20=%20%20%5Cunderbrace%7Bh_0(t)%7D_%7B%5Ctext%7BDepends%20on%20time%7D%7D%20%5Ccdot%20%5Cunderbrace%7B%5Cexp%7B(r(X;%20%5Cbeta)%7D)%7D_%7B%5Ctext%7BDoes%20not%20depend%20on%20time%7D%7D%0A"></p>
+<p>And that’s it. That’s the <em>famous</em> functional form for the Cox Proportional Hazards. Before we learn how to actually learn the parameters and the baseline rate function, let’s dive into why it’s called proportional.</p>
+<section id="why-the-proportional-in-the-name-constant-hazard-ratios" class="level3">
+<h3 class="anchored" data-anchor-id="why-the-proportional-in-the-name-constant-hazard-ratios">Why the Proportional in the name? Constant hazard Ratios</h3>
+<p>The above functional form for the hazard rate means that the <em>ratio in the hazard rate</em> between two individuals with different covariate values will always be <em>the same multiplicative constant</em>, regardless of the values of the covariates. That is, the <strong>respective hazard ratios across time will always be a constant</strong> and the hazard curves cannot cross.</p>
+<blockquote class="blockquote">
+<p>This implies that the hazard of an event in any group is a constant multiple of the hazard in any other group</p>
+</blockquote>
+<p>Therefore, whenever we want to understand the predictions a Cox Proportional Hazard model makes we refer to this relative, constant hazard ratio that we will see when comparing differnt observation groups.</p>
+<p>Mathematically, we can see it thus:</p>
+<p>suppose that we have two individuals with covariates <img src="https://latex.codecogs.com/png.latex?x_1"> and <img src="https://latex.codecogs.com/png.latex?x_2">, and regression coefficients <img src="https://latex.codecogs.com/png.latex?%5Cbeta_1"> and <img src="https://latex.codecogs.com/png.latex?%5Cbeta_2">. The hazard rate for the first individual is given by:</p>
+<p><img src="https://latex.codecogs.com/png.latex?h_1(t)%20=%20h_0(t)%20%5Ccdot%20%5Cexp(%5Cbeta_1%20x_1%20+%20%5Cbeta_2%20x_2)"></p>
+<p>and the hazard rate for the second individual is given by:</p>
+<p><img src="https://latex.codecogs.com/png.latex?h_2(t)%20=%20h_0(t)%20%5Ccdot%20%5Cexp(%5Cbeta_1%20x_1'%20+%20%5Cbeta_2%20x_2')"></p>
+<p>The ratio in the hazard rates for these two individuals is given by:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7Bh_1(t)%7D%7Bh_2(t)%7D%20=%20%5Cfrac%7Bh_0(t)%20%5Ccdot%20%5Cexp(%5Cbeta_1%20x_1%20+%20%5Cbeta_2%20x_2)%7D%7Bh_0(t)%20%5Ccdot%20%5Cexp(%5Cbeta_1%20x_1'%20+%20%5Cbeta_2%20x_2')%7D%20=%20%5Cfrac%7B%5Ccdot%20%5Cexp(%5Cbeta_1%20x_1%20+%20%5Cbeta_2%20x_2)%7D%7B%5Cexp(%5Cbeta_1%20x_1'%20+%20%5Cbeta_2%20x_2')%7D%20=%20%5Cfrac%7Bh_1%7D%7Bh_2%7D%20=%20%5Cpsi%0A"></p>
+<p>This shows that the ratio in the hazard rates for these two individuals is always equal to a constant multiplicative factor, <img src="https://latex.codecogs.com/png.latex?%5Cpsi">, which is determined by the differences in the covariate values and the regression coefficients, regardless of the survival time in question. This is true for any pair of individuals with different covariate values, so the ratio in the hazard rate between any two groups will always be the same multiplicative constant in the Cox Proportional Hazards model.</p>
+</section>
+</section>
+<section id="constructing-the-likelihood" class="level2">
+<h2 class="anchored" data-anchor-id="constructing-the-likelihood">Constructing the Likelihood</h2>
+<p>Given a model, we can construct the likelihood that will describe the probability of observing what actually happend in our sample.</p>
+<blockquote class="blockquote">
+<p>The key idea behind the construction will be that we can describe non-censored observations with the event density as we would regularly do, but that for Censored observations we will use the Survival function.</p>
+</blockquote>
+<p>Why? For observations who <strong>actually experienced the event</strong> during the study, we know their defined state. We can thus describe <em>their end state with the event density</em>, <img src="https://latex.codecogs.com/png.latex?f(t)">. Whereas for <strong>censored observation</strong>, their state is undefined at the moment of the study; the only thing we can say is that <em>they have survived to their censored survival time</em>, and that the chance of that happening is described by <img src="https://latex.codecogs.com/png.latex?S(t)">.</p>
+<p>Let’s <img src="https://latex.codecogs.com/png.latex?c_i"> be an indicator variable indicating whether the observation is censored or not. For a single observation, we can describe the probability of observing it thus:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Bf(t,%20%5Cbeta,%20x)%5D%5Ec%20%5Ctimes%5BS(t,%20%5Cbeta,%20x)%5D%5E%7B1-c%7D,%0A"> Assuming independence, the joint probability of observing the entire sample <img src="https://latex.codecogs.com/png.latex?n"> is:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cprod_%7Bi=1%7D%5En%5Cleft%5C%7B%5Cleft%5Bf%5Cleft(t_i,%20%5Cbeta,%20x_i%5Cright)%5Cright%5D%5E%7Bc_i%7D%20%5Ctimes%5Cleft%5BS%5Cleft(t_i,%20%5Cbeta,%20x_i%5Cright)%5Cright%5D%5E%7B1-c_i%7D%5Cright%5C%7D%0A"></p>
+<p>If we replace the definition of the event density using our previously defined equations in Survival Math:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cprod_%7Bi=1%7D%5En%5Cleft%5C%7B%5Cleft%5B%5Clambda(t_i,%20%5Cbeta,%20x_i)%20%5Ccdot%20S%5Cleft(t_i,%20%5Cbeta,%20x_i%5Cright)%5Cright%5D%5D%5E%7Bc_i%7D%20%5Ctimes%5Cleft%5BS%5Cleft(t_i,%20%5Cbeta,%20x_i%5Cright)%5Cright%5D%5E%7B1-c_i%7D%5Cright%5C%7D%0A"> <img src="https://latex.codecogs.com/png.latex?%0A%5Cprod_%7Bi=1%7D%5En%5Cleft%5C%7B%5Cleft%5B%5Clambda(t_i,%20%5Cbeta,%20x_i)%20%5Cright%5D%5E%7Bc_i%7D%20%5Ctimes%5Cleft%5BS%5Cleft(t_i,%20%5Cbeta,%20x_i%5Cright)%5Cright%5D%5Cright%5C%7D%0A"></p>
+<p>This means that the contribution of a <strong>non-censored observation to the loss function is the product of the hazard and survival functions</strong> at the time of the event. Whereas the contribution of a <strong>censored observation to the loss function is only the survival function</strong> at the time of censoring.</p>
+<p>Intuitively, this means that <strong>censored observations have a smaller impact on the loss function than non-censored observations</strong>. This is because <em>censored observations provide less information about the event of interest</em>, so they are less useful for estimating the hazard and survival functions. As a result, the Cox model gives less weight to censored observations when estimating the coefficients.</p>
+<section id="coxs-partial-profile-likelihood" class="level3">
+<h3 class="anchored" data-anchor-id="coxs-partial-profile-likelihood">Cox’s Partial (Profile) Likelihood</h3>
+<p>The above equation gives us a nice intuitive understanding of how the model works. However, the above requires to integrate over time to be able to derive the Survival Function and that would in turn require to specify a functional form for the Hazard Function for all possible event times, which is to ask a lot. We can <em>simplify</em> the problem if we instead assume that the baseline hazard is unknown.</p>
+<p>How? <strong>The gist is that the baseline rate, <img src="https://latex.codecogs.com/png.latex?h_0(t)">, is not of our interest</strong>; it’s a nuisance function. So we will consider it a fixed value and estimate the regression parameters first. To do so, we will separate the likelihood on that which depends on <img src="https://latex.codecogs.com/png.latex?h_0"> and that which doesn’t.</p>
+<img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Baligned%7D%0AL%5Cleft(%5Cbeta,%20h_0(%5Ccdot)%5Cright)%20&amp;=%20%5Cunderbrace%7BL_1(%5Cbeta)%7D_%7B%5Ctext%7Bfunction%20of%20%7D%20%5Cbeta,%20%20%5Ctext%7B%20%20whose%20max%20converges%20to%20%7D%20%20%5Cbeta%7D%20%5C%5C%0A&amp;%20%5Ccdot%20%5Cunderbrace%7BL_2%5Cleft(%5Cbeta,%20h_0%5Cright)%7D_%7B%5Ctext%7Bcontains%20little%20information%20about%7D%20%5Cbeta%20%5Ctext%7Bonly%20relevant%20for%20%7D%20h_0%7D%0A%5Cend%7Baligned%7D">
+<p>The process of doing so is tedious and not worth the trouble. If you are curious, for example, one of the most famous formulations is the Efron approximation.</p>
+<p>Nevertheless, <em>what’s important</em> is that by <strong>performing maximum likelihood on the partial likelihood <img src="https://latex.codecogs.com/png.latex?L_1(%5Cbeta)"> we can replicate the same regression parameters as if we were maximizing the full likelihood</strong>. That is, the maximum we find with the partial likelihood, <img src="https://latex.codecogs.com/png.latex?%5Chat%7B%5Cbeta%7D">, converges to the original parameter, <img src="https://latex.codecogs.com/png.latex?%5Cbeta">.</p>
+</section>
+</section>
+</section>
+<section id="fitting-the-model-on-simulated-data" class="level1">
+<h1>Fitting the model on simulated data</h1>
+<p>We will fit our first Cox model on simulated data. Let’s first load the required R packages:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;">library</span>(tidyverse)</span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;">library</span>(survival)</span>
+<span id="cb1-3"><span class="fu" style="color: #4758AB;">library</span>(coxed)</span>
+<span id="cb1-4"><span class="fu" style="color: #4758AB;">library</span>(survminer)</span>
+<span id="cb1-5"></span>
+<span id="cb1-6"><span class="co" style="color: #5E5E5E;"># Colors from MetBrewer</span></span>
+<span id="cb1-7">clrs <span class="ot" style="color: #003B4F;">&lt;-</span> MetBrewer<span class="sc" style="color: #5E5E5E;">::</span><span class="fu" style="color: #4758AB;">met.brewer</span>(<span class="st" style="color: #20794D;">"Java"</span>)</span>
+<span id="cb1-8"></span>
+<span id="cb1-9"><span class="co" style="color: #5E5E5E;"># Taken from the excellent Andrew Heiss blogpost: https://www.andrewheiss.com/blog/</span></span>
+<span id="cb1-10"><span class="co" style="color: #5E5E5E;"># Custom ggplot themes to make pretty plots</span></span>
+<span id="cb1-11"><span class="co" style="color: #5E5E5E;"># Get Roboto Condensed at https://fonts.google.com/specimen/Roboto+Condensed</span></span>
+<span id="cb1-12"><span class="co" style="color: #5E5E5E;"># Get Roboto Mono at https://fonts.google.com/specimen/Roboto+Mono</span></span>
+<span id="cb1-13">theme_pred <span class="ot" style="color: #003B4F;">&lt;-</span> <span class="cf" style="color: #003B4F;">function</span>() {</span>
+<span id="cb1-14">  <span class="fu" style="color: #4758AB;">theme_minimal</span>(<span class="at" style="color: #657422;">base_family =</span> <span class="st" style="color: #20794D;">"Roboto Condensed"</span>) <span class="sc" style="color: #5E5E5E;">+</span></span>
+<span id="cb1-15">    <span class="fu" style="color: #4758AB;">theme</span>(<span class="at" style="color: #657422;">panel.grid.minor =</span> <span class="fu" style="color: #4758AB;">element_blank</span>(),</span>
+<span id="cb1-16">          <span class="at" style="color: #657422;">plot.background =</span> <span class="fu" style="color: #4758AB;">element_rect</span>(<span class="at" style="color: #657422;">fill =</span> <span class="st" style="color: #20794D;">"white"</span>, <span class="at" style="color: #657422;">color =</span> <span class="cn" style="color: #8f5902;">NA</span>),</span>
+<span id="cb1-17">          <span class="at" style="color: #657422;">plot.title =</span> <span class="fu" style="color: #4758AB;">element_text</span>(<span class="at" style="color: #657422;">face =</span> <span class="st" style="color: #20794D;">"bold"</span>),</span>
+<span id="cb1-18">          <span class="at" style="color: #657422;">strip.text =</span> <span class="fu" style="color: #4758AB;">element_text</span>(<span class="at" style="color: #657422;">face =</span> <span class="st" style="color: #20794D;">"bold"</span>),</span>
+<span id="cb1-19">          <span class="at" style="color: #657422;">strip.background =</span> <span class="fu" style="color: #4758AB;">element_rect</span>(<span class="at" style="color: #657422;">fill =</span> <span class="st" style="color: #20794D;">"grey80"</span>, <span class="at" style="color: #657422;">color =</span> <span class="cn" style="color: #8f5902;">NA</span>),</span>
+<span id="cb1-20">          <span class="at" style="color: #657422;">axis.title.x =</span> <span class="fu" style="color: #4758AB;">element_text</span>(<span class="at" style="color: #657422;">hjust =</span> <span class="dv" style="color: #AD0000;">0</span>),</span>
+<span id="cb1-21">          <span class="at" style="color: #657422;">axis.title.y =</span> <span class="fu" style="color: #4758AB;">element_text</span>(<span class="at" style="color: #657422;">hjust =</span> <span class="dv" style="color: #AD0000;">0</span>),</span>
+<span id="cb1-22">          <span class="at" style="color: #657422;">legend.title =</span> <span class="fu" style="color: #4758AB;">element_text</span>(<span class="at" style="color: #657422;">face =</span> <span class="st" style="color: #20794D;">"bold"</span>))</span>
+<span id="cb1-23">}</span>
+<span id="cb1-24"></span>
+<span id="cb1-25"><span class="fu" style="color: #4758AB;">update_geom_defaults</span>(<span class="st" style="color: #20794D;">"text"</span>, <span class="fu" style="color: #4758AB;">list</span>(<span class="at" style="color: #657422;">family =</span> <span class="st" style="color: #20794D;">"Roboto Condensed"</span>, <span class="at" style="color: #657422;">lineheight =</span> <span class="dv" style="color: #AD0000;">1</span>))</span></code></pre></div>
+</div>
+<p>Now let’s use the awesome <code>coxed</code> package to simulate sensible survival data thus:</p>
+<blockquote class="blockquote">
+<p>A cohort with 2000 subjects, with a maximum follow-up time of 500 days. The true log hazard coefficients are 0, 0.4, and -0.4, respectively for X1, X2, X3.</p>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="co" style="color: #5E5E5E;"># Set the seed for reproducibility</span></span>
+<span id="cb2-2"><span class="fu" style="color: #4758AB;">set.seed</span>(<span class="dv" style="color: #AD0000;">1234</span>)</span>
+<span id="cb2-3">simulated_betas <span class="ot" style="color: #003B4F;">&lt;-</span> <span class="fu" style="color: #4758AB;">c</span>(<span class="dv" style="color: #AD0000;">0</span>, <span class="fl" style="color: #AD0000;">0.4</span>, <span class="sc" style="color: #5E5E5E;">-</span><span class="fl" style="color: #AD0000;">0.4</span>)</span>
+<span id="cb2-4"></span>
+<span id="cb2-5">sim.data <span class="ot" style="color: #003B4F;">&lt;-</span> <span class="fu" style="color: #4758AB;">sim.survdata</span>(<span class="at" style="color: #657422;">N=</span><span class="dv" style="color: #AD0000;">2000</span>, <span class="at" style="color: #657422;">T=</span><span class="dv" style="color: #AD0000;">500</span>, <span class="at" style="color: #657422;">num.data.frames=</span><span class="dv" style="color: #AD0000;">1</span>, </span>
+<span id="cb2-6">                         <span class="at" style="color: #657422;">beta =</span> simulated_betas)</span>
+<span id="cb2-7">data <span class="ot" style="color: #003B4F;">&lt;-</span> sim.data<span class="sc" style="color: #5E5E5E;">$</span>data</span>
+<span id="cb2-8">sim.data<span class="sc" style="color: #5E5E5E;">$</span>betas</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1]
+[1,]  0.0
+[2,]  0.4
+[3,] -0.4</code></pre>
+</div>
+</div>
+<p>Now that we have the data, it’s useful to fit a non-parametric estimator called the Kaplan Meier estimator.</p>
+<section id="kaplan-meier-estimator" class="level2">
+<h2 class="anchored" data-anchor-id="kaplan-meier-estimator">Kaplan Meier Estimator</h2>
+<blockquote class="blockquote">
+<p>The Kaplan-Meier estimator estimates the survival probability of a population over time by calculating the proportion of individuals that have not experienced the event of interest at each time point.</p>
+</blockquote>
+<p>The Kaplan Meier’s (consistent, unbiased and efficient) estimate Survival Curve will be a quick check to understand how the survival probabilities change across time in our sample.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="co" style="color: #5E5E5E;"># Fit a Kaplan-Meier estimator for each level of the covariate</span></span>
+<span id="cb4-2">fit <span class="ot" style="color: #003B4F;">&lt;-</span></span>
+<span id="cb4-3">  survminer<span class="sc" style="color: #5E5E5E;">::</span><span class="fu" style="color: #4758AB;">surv_fit</span>(<span class="fu" style="color: #4758AB;">Surv</span>(y, failed) <span class="sc" style="color: #5E5E5E;">~</span> <span class="dv" style="color: #AD0000;">1</span>, <span class="at" style="color: #657422;">data =</span> data)</span>
+<span id="cb4-4"></span>
+<span id="cb4-5"><span class="co" style="color: #5E5E5E;"># Plot the Kaplan-Meier estimators</span></span>
+<span id="cb4-6"><span class="fu" style="color: #4758AB;">ggsurvplot</span>(fit, <span class="at" style="color: #657422;">ggtheme =</span> <span class="fu" style="color: #4758AB;">theme_pred</span>(), <span class="at" style="color: #657422;">color =</span> clrs[[<span class="dv" style="color: #AD0000;">1</span>]], </span>
+<span id="cb4-7">           <span class="at" style="color: #657422;">surv.median.line =</span> <span class="st" style="color: #20794D;">'hv'</span>,</span>
+<span id="cb4-8">           <span class="at" style="color: #657422;">risk.table =</span> <span class="cn" style="color: #8f5902;">TRUE</span>,</span>
+<span id="cb4-9">           <span class="at" style="color: #657422;">conf.int =</span> <span class="cn" style="color: #8f5902;">TRUE</span>,</span>
+<span id="cb4-10">           <span class="at" style="color: #657422;">title =</span> <span class="st" style="color: #20794D;">"Kaplan Meier: Non Parametric estimate"</span></span>
+<span id="cb4-11">           )</span></code></pre></div>
+<div class="cell-output-display">
+<p><img src="https://david-salazar.github.io/posts/survival-analysis/2022-11-27-introduction-survival_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We can see that there’s a huge non-linearity across time that the Kaplan Meier estimator correctly caputres!</p>
+</section>
+<section id="cox-proportional-hazard-model" class="level2">
+<h2 class="anchored" data-anchor-id="cox-proportional-hazard-model">Cox Proportional Hazard model</h2>
+<section id="fitting-the-model" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-the-model">Fitting the model</h3>
+<p>Let’s finally fit our model!</p>
+<blockquote class="blockquote">
+<p>Note that as long as the Cox Proportional Hazard <em>assumptions are met</em> (proportional hazards and we’ve correctly specified the linear regression in the risk function), the Cox model is <strong>consistent and asymptotically unbiased</strong>, meaning that the parameter estimates converge to the true values as the sample size increases.</p>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">cox_fit <span class="ot" style="color: #003B4F;">&lt;-</span> <span class="fu" style="color: #4758AB;">coxph</span>(<span class="fu" style="color: #4758AB;">Surv</span>(y, failed) <span class="sc" style="color: #5E5E5E;">~</span> X1 <span class="sc" style="color: #5E5E5E;">+</span> X2 <span class="sc" style="color: #5E5E5E;">+</span> X3, <span class="at" style="color: #657422;">data =</span> data)</span>
+<span id="cb5-2"><span class="fu" style="color: #4758AB;">summary</span>(cox_fit)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Call:
+coxph(formula = Surv(y, failed) ~ X1 + X2 + X3, data = data)
+
+  n= 2000, number of events= 1790 
+
+        coef exp(coef)  se(coef)      z Pr(&gt;|z|)    
+X1  0.008528  1.008565  0.047990  0.178    0.859    
+X2  0.422365  1.525565  0.048643  8.683  &lt; 2e-16 ***
+X3 -0.389458  0.677424  0.049633 -7.847 4.27e-15 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+   exp(coef) exp(-coef) lower .95 upper .95
+X1    1.0086     0.9915    0.9180    1.1080
+X2    1.5256     0.6555    1.3868    1.6782
+X3    0.6774     1.4762    0.6146    0.7466
+
+Concordance= 0.578  (se = 0.008 )
+Likelihood ratio test= 129.8  on 3 df,   p=&lt;2e-16
+Wald test            = 129.7  on 3 df,   p=&lt;2e-16
+Score (logrank) test = 129.7  on 3 df,   p=&lt;2e-16</code></pre>
+</div>
+</div>
+<p>Note that, by default, we don’t have an intercept, as it would just be a constant shift to the baseline hazard, and not a “real” regression coefficient.</p>
+</section>
+<section id="interpreting-the-results" class="level3">
+<h3 class="anchored" data-anchor-id="interpreting-the-results">Interpreting the Results</h3>
+<p>Given that we simulated the data to make sure that the assumptions are met, our estimates are right on the money! The table results above show the huge uncertainty in the <code>x1</code> parameter, and a non-statistically significant result.</p>
+<p>If we remember, we specified the following betas for our simulation:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1">sim.data<span class="sc" style="color: #5E5E5E;">$</span>betas</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1]
+[1,]  0.0
+[2,]  0.4
+[3,] -0.4</code></pre>
+</div>
+</div>
+<p>And here are the model coefficients that pretty nicely line-up with what we know is the truth!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><span class="fu" style="color: #4758AB;">round</span>(cox_fit<span class="sc" style="color: #5E5E5E;">$</span>coefficients, <span class="dv" style="color: #AD0000;">4</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     X1      X2      X3 
+ 0.0085  0.4224 -0.3895 </code></pre>
+</div>
+</div>
+<p>However, the above are coefficients in the log hazard scale, which is very difficult to interpret.</p>
+<blockquote class="blockquote">
+<p>The results are shown in two scales: the log hazard scale, and the hazard scale, respectively. The Hazard scale can be interpreted as the hazard ratio for a 1-unit increase in the continuous variable, or the hazard ratio for the dummy variable relative to the control variable.</p>
+</blockquote>
+<p>Let’s plot the results in the Hazard Scale:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><span class="co" style="color: #5E5E5E;"># Visualize the estimated coefficients</span></span>
+<span id="cb11-2"><span class="fu" style="color: #4758AB;">ggforest</span>(cox_fit, <span class="at" style="color: #657422;">data=</span>data, <span class="at" style="color: #657422;">main=</span><span class="st" style="color: #20794D;">"Forest Plot for coefficients in Hazard Scale"</span>) <span class="sc" style="color: #5E5E5E;">+</span> </span>
+<span id="cb11-3">  <span class="fu" style="color: #4758AB;">theme_pred</span>()</span></code></pre></div>
+<div class="cell-output-display">
+<p><img src="https://david-salazar.github.io/posts/survival-analysis/2022-11-27-introduction-survival_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Given that the results are in the hazard scale and we are assuming proportional hazards, we can interpret the coefficients as hazard ratios: e.g., a coefficient of 1 indicates no difference a hazard ratio of 1 for the change in question.</p>
+<ul>
+<li>For x1, just as expected, the 0 coefficient in the log hazard scale means that an unit increase in X1 is associated with no increase in the proportional hazard.</li>
+<li>Whereas for X2, we find a hazard ratio of 1.53, meaning that an unit increase in X1 is associated with a 53% increase in the hazard, an increase that we assume in constant through time.</li>
+</ul>
+</section>
+</section>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>We introduced Survival Analysis by comparing how it differs from regular binary classification and we introduce the basic mathematical engine that powers it. Also, we defined the most basic Survival model: Cox Proportional Hazards and derive its likelihood to understand how it deals with time and with censored observations. Finally, we simulated data and fitted our first Cox Proportional Hazard model.</p>
+<p>In a later blogpost, we will explore how to relax the proportional hazard assumption and introduce non-linear effects for our covariates across time.</p>
+</section>
+<section id="bibliography" class="level1">
+<h1>Bibliography</h1>
+<ul>
+<li><p>Cox, D.R. (1972). Regression Models and Life Tables. Journal of the Royal Statistical Society, Series B 34, 187-220.</p></li>
+<li><p>https://web.stanford.edu/~lutian/coursepdf/unitcox1.pdf</p></li>
+</ul>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section></div> ]]></description>
+  <guid>https://david-salazar.github.io/posts/survival-analysis/2022-11-27-introduction-survival.html</guid>
+  <pubDate>Thu, 17 Nov 2022 05:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Forecasting elections? Taleb says no</title>
   <dc:creator>David Salazar</dc:creator>
@@ -4921,389 +5276,6 @@ convergence, Rhat=1).</code></pre>
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section></div> ]]></description>
   <guid>https://david-salazar.github.io/posts/fat-vs-thin-tails/2020-06-26-gini-index-under-fat-tails.html</guid>
   <pubDate>Fri, 26 Jun 2020 05:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Bayesian Data Analysis: Week 3-&gt; Exercises</title>
-  <dc:creator>David Salazar</dc:creator>
-  <link>https://david-salazar.github.io/posts/bayesian-statistics/2020-06-25-bayesian-data-analysis-week-3-exercises.html</link>
-  <description><![CDATA[ 
-
-
-
-
-<p>Bayesian Data Analysis (Gelman, Vehtari et. alter) is equals part a great introduction and THE reference for advanced Bayesian Statistics. Luckily, it’s <a href="http://www.stat.columbia.edu/~gelman/book/">freely available online</a>. To make things even better for the online learner, Aki Vehtari (one of the authors) has a set of online lectures and homeworks that go through the basics of Bayesian Data Analysis.</p>
-<p>In this blogpost, I’ll go over a couple of the selected exercises for week 3: exercise number 2 and exercise number 3.</p>
-<section id="exercise-2" class="level2">
-<h2 class="anchored" data-anchor-id="exercise-2">Exercise 2</h2>
-<p>Comparison of two multinomial observations: on September ( 25,1988, ) the evening of a presidential campaign debate, ABC News conducted a survey of registered voters in the United States; 639 persons were polled before the debate, and 639 different persons were polled after. Assume the surveys are independent simple random samples from the population of registered voters. Model the data with two different multinomial distributions. For ( t=1,2, ) let ( _{t} ) be the proportion of voters who preferred Bush, out of those who had a preference for either Bush or Dukakis at the time of survey ( t . ) <strong>Plot a histogram of the posterior density for ( <em>{2}-</em>{1} . ) What is the posterior probability that there was a shift toward Bush?</strong></p>
-<p>The results of the surveys are thus:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Barray%7D%7Bc%7Cccc%7Cc%7D%0A%5Ctext%20%7B%20Survey%20%7D%20&amp;%20%5Ctext%20%7B%20Bush%20%7D%20&amp;%20%5Ctext%20%7B%20Dukakis%20%7D%20&amp;%20%5Ctext%20%7B%20No%20opinion/other%20%7D%20&amp;%20%5Ctext%20%7B%20Total%20%7D%20%5C%5C%0A%5Chline%20%5Ctext%20%7B%20pre-debate%20%7D%20&amp;%20294%20&amp;%20307%20&amp;%2038%20&amp;%20639%20%5C%5C%0A%5Ctext%20%7B%20post-debate%20%7D%20&amp;%20288%20&amp;%20332%20&amp;%2019%20&amp;%20639%0A%5Cend%7Barray%7D%0A"></p>
-<section id="solution" class="level3">
-<h3 class="anchored" data-anchor-id="solution">Solution</h3>
-<p>Therefore, for the pre-debate we posit a multinomial model. A multinomial model is nothing more than the extension of the binomial model to more than 2 categories. Here we have 3: Bush, Dukakis and other. For both models, <strong>we assume that the 639 observations are independent and exchangeable</strong>. The likelihood for each survey is thus:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0Ap(y%20%5Cmid%20%5Ctheta)%20%5Cpropto%20%5Cprod_%7Bj=1%7D%5E%7Bk%7D%20%5Ctheta_%7Bj%7D%5E%7By_%7Bj%7D%7D%0A"></p>
-<p>Where <img src="https://latex.codecogs.com/png.latex?%5Ctheta_j"> is the probability of choosing the <img src="https://latex.codecogs.com/png.latex?j"> option. The conjugate prior for the distribution is a multivariate generalization of the beta distribution known as Dirichlet:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0Ap(%5Ctheta%20%5Cmid%20%5Cbeta)%20%5Cpropto%20%5Cprod_%7Bj=1%7D%5E%7Bk%7D%20%5Ctheta_%7Bj%7D%5E%7B%5Cbeta_%7Bj%7D-1%7D%0A"></p>
-<p>If we set all <img src="https://latex.codecogs.com/png.latex?%5Cbeta_j%20=%201">, we get an uniform distribution on the possible distributions for the <img src="https://latex.codecogs.com/png.latex?%5Ctheta">’s. That is, <strong>just as the beta distribution, the Dirichlet distribution is a distribution of distributions.</strong></p>
-<p>The resulting posterior distribution for the <img src="https://latex.codecogs.com/png.latex?%5Ctheta_j">’s is a Dirichlet with parameters <img src="https://latex.codecogs.com/png.latex?%5Cbeta_j%20+%20y_j">. The question, then, is how to go from the <img src="https://latex.codecogs.com/png.latex?%5Ctheta_j">, the proportion that favors the option <img src="https://latex.codecogs.com/png.latex?j">, to the requested <img src="https://latex.codecogs.com/png.latex?%5Calpha_t">:</p>
-<blockquote class="blockquote">
-<p>Proportion of voters who preferred Bush, out of those who had a preference for either Bush or Dukakis at the time of survey t.</p>
-</blockquote>
-<p>Note that given the inherent restriction on the Dirichlet, we can rewrite the distribution of the <img src="https://latex.codecogs.com/png.latex?%5Ctheta_j">’s as <img src="https://latex.codecogs.com/png.latex?(%5Ctheta_1,%20%5Ctheta_2,%201%20-%20%5Ctheta_1%20-%20%5Ctheta_2)">. We can then perform a change of variables: <img src="https://latex.codecogs.com/png.latex?(%5Calpha,%20%5Cgamma)%20=%20(%5Cdfrac%7B%5Ctheta_1%7D%7B%5Ctheta_1%20+%20%5Ctheta_2%7D,%20%5Ctheta_1%20+%20%5Ctheta_2)">. Which it can be shown that <img src="https://latex.codecogs.com/png.latex?%5Calpha"> is then distributed thus:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Calpha%20%7C%20y%20%5Csim%20Beta(y_1%20+%20%5Cbeta_1,%20y_2%20+%20%5Cbeta_2)%0A"> ### Pre-Debate</p>
-<p>Therefore, setting an uniform prior (<img src="https://latex.codecogs.com/png.latex?%5Cbeta_j%20=%201%20%5C%20%5Cforall%20j">) on the possible distribution of the <img src="https://latex.codecogs.com/png.latex?%5Ctheta_j">’s, the posterior distribution is:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A(%5Ctheta_%7Bbush%7D,%20%5Ctheta_%7Bdukakis%7D,%20%5Ctheta_%7Bneither%7D)%20%7C%20y%20%5Csim%20Dirichlet(295,%20308,%2039)%0A"> Which then amounts that the proportion that favor Bush, out of those who had a preference for either Bush or Dukakis in the pre-debate, that is, <img src="https://latex.codecogs.com/png.latex?%5Calpha_1"> is thus:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Calpha_1%20%7C%20y%20%5Csim%20Beta(295,%20308)%0A"> Which we can visualize thus:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">alpha1 <span class="ot" style="color: #003B4F;">=</span> <span class="fu" style="color: #4758AB;">rbeta</span>(<span class="dv" style="color: #AD0000;">10000</span>, <span class="dv" style="color: #AD0000;">295</span>, <span class="dv" style="color: #AD0000;">308</span>)</span>
-<span id="cb1-2"><span class="fu" style="color: #4758AB;">data.frame</span>(alpha1) <span class="ot" style="color: #003B4F;">-&gt;</span> simulations_alpha1</span>
-<span id="cb1-3"></span>
-<span id="cb1-4">simulations_alpha1 <span class="sc" style="color: #5E5E5E;">%&gt;%</span> </span>
-<span id="cb1-5">  <span class="fu" style="color: #4758AB;">ggplot</span>(<span class="fu" style="color: #4758AB;">aes</span>(alpha1)) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb1-6">  <span class="fu" style="color: #4758AB;">geom_histogram</span>(<span class="at" style="color: #657422;">binwidth =</span> <span class="fl" style="color: #AD0000;">0.01</span>, <span class="at" style="color: #657422;">color =</span> <span class="st" style="color: #20794D;">"black"</span>, <span class="at" style="color: #657422;">fill =</span> <span class="st" style="color: #20794D;">"dodgerblue4"</span>, <span class="at" style="color: #657422;">alpha =</span> <span class="fl" style="color: #AD0000;">0.7</span>) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb1-7">  <span class="fu" style="color: #4758AB;">geom_vline</span>(<span class="fu" style="color: #4758AB;">aes</span>(<span class="at" style="color: #657422;">xintercept =</span> <span class="fl" style="color: #AD0000;">0.5</span>), <span class="at" style="color: #657422;">linetype =</span> <span class="dv" style="color: #AD0000;">2</span>, <span class="at" style="color: #657422;">color =</span> <span class="st" style="color: #20794D;">"red"</span>) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb1-8">  <span class="fu" style="color: #4758AB;">labs</span>(<span class="at" style="color: #657422;">title =</span> <span class="fu" style="color: #4758AB;">TeX</span>(<span class="st" style="color: #20794D;">"Posterior distribution for $</span><span class="sc" style="color: #5E5E5E;">\\</span><span class="st" style="color: #20794D;">alpha_1$"</span>),</span>
-<span id="cb1-9">       <span class="at" style="color: #657422;">subtitle =</span> <span class="st" style="color: #20794D;">" Proportion of voters who preferred Bush, out of those who had a preference </span></span>
-<span id="cb1-10"><span class="st" style="color: #20794D;">       for either Bush or Dukakis at pre-debate"</span>,</span>
-<span id="cb1-11">       <span class="at" style="color: #657422;">x =</span> <span class="fu" style="color: #4758AB;">TeX</span>(<span class="st" style="color: #20794D;">"$</span><span class="sc" style="color: #5E5E5E;">\\</span><span class="st" style="color: #20794D;">alpha_1$"</span>))</span></code></pre></div>
-<div class="cell-output-display">
-<p><img src="https://david-salazar.github.io/posts/bayesian-statistics/2020-06-25-bayesian-data-analysis-week-3-exercises_files/figure-html/alpha1-1.png" class="img-fluid" width="768"></p>
-</div>
-</div>
-<p>That is, our posterior distribution points that at the pre-debate, there was already a majority of people (among the already decided) who favored Dukakis. Indeed:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">predebate <span class="ot" style="color: #003B4F;">&lt;-</span> <span class="fu" style="color: #4758AB;">pbeta</span>(<span class="fl" style="color: #AD0000;">0.5</span>, <span class="dv" style="color: #AD0000;">295</span>, <span class="dv" style="color: #AD0000;">308</span>)</span>
-<span id="cb2-2">glue<span class="sc" style="color: #5E5E5E;">::</span><span class="fu" style="color: #4758AB;">glue</span>(<span class="st" style="color: #20794D;">"There's a {round(predebate, 2)*100}% posterior probability that among decided voters Dukakis had a majority in</span></span>
-<span id="cb2-3"><span class="st" style="color: #20794D;">           the pre-debate."</span>)</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>There's a 70% posterior probability that among decided voters Dukakis had a majority in
-the pre-debate.</code></pre>
-</div>
-</div>
-</section>
-<section id="post-debate" class="level3">
-<h3 class="anchored" data-anchor-id="post-debate">Post-Debate</h3>
-<p>Therefore, setting an uniform prior (<img src="https://latex.codecogs.com/png.latex?%5Cbeta_j%20=%201%20%5C%20%5Cforall%20j">) on the possible distribution of the <img src="https://latex.codecogs.com/png.latex?%5Ctheta_j">’s, the posterior distribution is:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A(%5Ctheta_%7Bbush%7D,%20%5Ctheta_%7Bdukakis%7D,%20%5Ctheta_%7Bneither%7D)%20%7C%20y%20%5Csim%20Dirichlet(289,%20333,%2039)%0A"> Which then amounts that the proportion that favor Bush, out of those who had a preference for either Bush or Dukakis in the post-debate, that is, <img src="https://latex.codecogs.com/png.latex?%5Calpha_2"> is thus:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Calpha_1%20%7C%20y%20%5Csim%20Beta(289,%20333)%0A"></p>
-<p>Which we can visualize thus:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">alpha2 <span class="ot" style="color: #003B4F;">=</span> <span class="fu" style="color: #4758AB;">rbeta</span>(<span class="dv" style="color: #AD0000;">10000</span>, <span class="dv" style="color: #AD0000;">289</span>, <span class="dv" style="color: #AD0000;">333</span>)</span>
-<span id="cb4-2"><span class="fu" style="color: #4758AB;">data.frame</span>(alpha2) <span class="ot" style="color: #003B4F;">-&gt;</span> simulations_alpha2</span>
-<span id="cb4-3"></span>
-<span id="cb4-4">simulations_alpha2 <span class="sc" style="color: #5E5E5E;">%&gt;%</span> </span>
-<span id="cb4-5">  <span class="fu" style="color: #4758AB;">ggplot</span>(<span class="fu" style="color: #4758AB;">aes</span>(alpha2)) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb4-6">  <span class="fu" style="color: #4758AB;">geom_histogram</span>(<span class="at" style="color: #657422;">binwidth =</span> <span class="fl" style="color: #AD0000;">0.01</span>, <span class="at" style="color: #657422;">color =</span> <span class="st" style="color: #20794D;">"black"</span>, <span class="at" style="color: #657422;">fill =</span> <span class="st" style="color: #20794D;">"dodgerblue4"</span>, <span class="at" style="color: #657422;">alpha =</span> <span class="fl" style="color: #AD0000;">0.7</span>) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb4-7">  <span class="fu" style="color: #4758AB;">geom_vline</span>(<span class="fu" style="color: #4758AB;">aes</span>(<span class="at" style="color: #657422;">xintercept =</span> <span class="fl" style="color: #AD0000;">0.5</span>), <span class="at" style="color: #657422;">linetype =</span> <span class="dv" style="color: #AD0000;">2</span>, <span class="at" style="color: #657422;">color =</span> <span class="st" style="color: #20794D;">"red"</span>) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb4-8">  <span class="fu" style="color: #4758AB;">labs</span>(<span class="at" style="color: #657422;">title =</span> <span class="fu" style="color: #4758AB;">TeX</span>(<span class="st" style="color: #20794D;">"Posterior distribution for $</span><span class="sc" style="color: #5E5E5E;">\\</span><span class="st" style="color: #20794D;">alpha_2$"</span>),</span>
-<span id="cb4-9">       <span class="at" style="color: #657422;">subtitle =</span> <span class="st" style="color: #20794D;">" Proportion of voters who preferred Bush, out of those who had a preference </span></span>
-<span id="cb4-10"><span class="st" style="color: #20794D;">       for either Bush or Dukakis at post-debate"</span>,</span>
-<span id="cb4-11">       <span class="at" style="color: #657422;">x =</span> <span class="fu" style="color: #4758AB;">TeX</span>(<span class="st" style="color: #20794D;">"$</span><span class="sc" style="color: #5E5E5E;">\\</span><span class="st" style="color: #20794D;">alpha_2$"</span>))</span></code></pre></div>
-<div class="cell-output-display">
-<p><img src="https://david-salazar.github.io/posts/bayesian-statistics/2020-06-25-bayesian-data-analysis-week-3-exercises_files/figure-html/alpha2-1.png" class="img-fluid" width="768"></p>
-</div>
-</div>
-<p>After the debate, Dukakis won an even larger majority among the decided voters:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">postdebeate <span class="ot" style="color: #003B4F;">&lt;-</span> <span class="fu" style="color: #4758AB;">pbeta</span>(<span class="fl" style="color: #AD0000;">0.5</span>, <span class="dv" style="color: #AD0000;">289</span>, <span class="dv" style="color: #AD0000;">333</span>)</span>
-<span id="cb5-2">glue<span class="sc" style="color: #5E5E5E;">::</span><span class="fu" style="color: #4758AB;">glue</span>(<span class="st" style="color: #20794D;">"There's a {round(postdebeate, 2)*100}% posterior probability that among decided voters Dukakis had a majority in</span></span>
-<span id="cb5-3"><span class="st" style="color: #20794D;">           the pre-debate."</span>)</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>There's a 96% posterior probability that among decided voters Dukakis had a majority in
-the pre-debate.</code></pre>
-</div>
-</div>
-</section>
-<section id="a-shift-toward-bush" class="level3">
-<h3 class="anchored" data-anchor-id="a-shift-toward-bush">A shift toward Bush?</h3>
-<p>We have the posterior probability for both <img src="https://latex.codecogs.com/png.latex?%5Calpha_1"> and <img src="https://latex.codecogs.com/png.latex?%5Calpha_2">. Sampling form these posteriors, we can then arrive at a posterior distribution for <img src="https://latex.codecogs.com/png.latex?%5Calpha_2%20-%20%5Calpha_1"></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1">difference <span class="ot" style="color: #003B4F;">&lt;-</span> alpha2 <span class="sc" style="color: #5E5E5E;">-</span> alpha1</span>
-<span id="cb7-2"></span>
-<span id="cb7-3"><span class="fu" style="color: #4758AB;">data.frame</span>(difference) <span class="sc" style="color: #5E5E5E;">%&gt;%</span> </span>
-<span id="cb7-4">  <span class="fu" style="color: #4758AB;">ggplot</span>(<span class="fu" style="color: #4758AB;">aes</span>(difference)) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb7-5">  <span class="fu" style="color: #4758AB;">geom_vline</span>(<span class="fu" style="color: #4758AB;">aes</span>(<span class="at" style="color: #657422;">xintercept =</span> <span class="dv" style="color: #AD0000;">0</span>), <span class="at" style="color: #657422;">color =</span> <span class="st" style="color: #20794D;">"red"</span>, <span class="at" style="color: #657422;">linetype =</span> <span class="dv" style="color: #AD0000;">2</span>) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb7-6">  <span class="fu" style="color: #4758AB;">geom_histogram</span>(<span class="at" style="color: #657422;">binwidth =</span> <span class="fl" style="color: #AD0000;">0.01</span>, <span class="at" style="color: #657422;">color =</span> <span class="st" style="color: #20794D;">"black"</span>, <span class="at" style="color: #657422;">fill =</span> <span class="st" style="color: #20794D;">"dodgerblue4"</span>, <span class="at" style="color: #657422;">alpha =</span> <span class="fl" style="color: #AD0000;">0.7</span>)  <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb7-7">  <span class="fu" style="color: #4758AB;">labs</span>(<span class="at" style="color: #657422;">title =</span> <span class="fu" style="color: #4758AB;">TeX</span>(<span class="st" style="color: #20794D;">"Posterior distribution for $</span><span class="sc" style="color: #5E5E5E;">\\</span><span class="st" style="color: #20794D;">alpha_2 - </span><span class="sc" style="color: #5E5E5E;">\\</span><span class="st" style="color: #20794D;">alpha_1$"</span>))</span></code></pre></div>
-<div class="cell-output-display">
-<p><img src="https://david-salazar.github.io/posts/bayesian-statistics/2020-06-25-bayesian-data-analysis-week-3-exercises_files/figure-html/difference-1.png" class="img-fluid" width="768"></p>
-</div>
-</div>
-<p>The posterior probability that there was a shift toward Bush is the probability that <img src="https://latex.codecogs.com/png.latex?%5Calpha_2%20-%20%5Calpha_1%20%3E%200"></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1">shift <span class="ot" style="color: #003B4F;">&lt;-</span> <span class="fu" style="color: #4758AB;">sum</span>(difference <span class="sc" style="color: #5E5E5E;">&gt;</span> <span class="dv" style="color: #AD0000;">0</span>) <span class="sc" style="color: #5E5E5E;">/</span> <span class="fu" style="color: #4758AB;">length</span>(difference)</span>
-<span id="cb8-2">glue<span class="sc" style="color: #5E5E5E;">::</span><span class="fu" style="color: #4758AB;">glue</span>(<span class="st" style="color: #20794D;">"The posterior probability that there was a shift toward Bush is thus {round(shift, 2)*100}%"</span>)</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>The posterior probability that there was a shift toward Bush is thus 19%</code></pre>
-</div>
-</div>
-</section>
-</section>
-<section id="exercise-3" class="level2">
-<h2 class="anchored" data-anchor-id="exercise-3">Exercise 3</h2>
-<p>Estimation from two independent experiments: an experiment was performed on the effects of magnetic fields on the flow of calcium out of chicken brains. Two groups of chickens were involved: a control group of 32 chickens and an exposed group of 36 chickens. One measurement was taken on each chicken, and the purpose of the experiment was to measure the average flow ( <em>{c} ) in untreated (control) chickens and the average flow ( </em>{t} ) in treated chickens. The 32 measurements on the control group had a sample mean of 1.013 and a sample standard deviation of ( 0.24 . ) The 36 measurements on the treatment group had a sample mean of 1.173 and a sample standard deviation of 0.20</p>
-<ol type="a">
-<li><p>Assuming the control measurements were taken at random from a normal distribution with mean ( <em>{c} ) and variance ( </em>{c}^{2}, ) what is the posterior distribution of ( <em>{c} ? ) Similarly, use the treatment group measurements to determine the marginal posterior distribution of ( </em>{t} . ) Assume a uniform prior distribution on ( (<em>{c}, </em>{t}, <em>{c}, </em>{t}) )</p></li>
-<li><p>What is the posterior distribution for the difference, ( <em>{t}-</em>{c} ? ) To get this, you may sample from the independent ( t ) distributions you obtained in part(a) above. Plot a histogram of your samples and give an approximate ( 95 % ) posterior interval for ( <em>{t}-</em>{c} )</p></li>
-</ol>
-</section>
-<section id="solution-1" class="level2">
-<h2 class="anchored" data-anchor-id="solution-1">Solution</h2>
-<p>Let’s posit two normal probability models for both the control measurements and the treatment measurements, assuming exchangeability among these two groups.</p>
-<section id="control-group" class="level3">
-<h3 class="anchored" data-anchor-id="control-group">Control group</h3>
-<p>Therefore:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0Ay_c%20%7C%20%5Cmu,%20%5Csigma%5E2%20%5Csim%20N(%5Cmu_c,%20%5Csigma_c%5E2)%20%5C%5C%0Ap(%5Cmu_c,%20%5Csigma_c%20%7C%20y)%20%5Cpropto%20p%20(y%20%7C%20%5Cmu_c,%20%5Csigma_c)%20p(%5Cmu_c,%20%5Csigma_c)%0A"> If we posit an uniform prior on <img src="https://latex.codecogs.com/png.latex?(%5Cmu_c,%20log%20%5Csigma_c)"></p>
-<p><img src="https://latex.codecogs.com/png.latex?%0Ap(%5Cmu_c,%20%5Csigma_c%5E2)%20%5Cpropto%20(%5Csigma_c%5E2)%5E%7B-1%7D%0A"></p>
-<p>Then, the marginal posterior distribution for <img src="https://latex.codecogs.com/png.latex?%5Cmu_c"> is a t-distribution:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cdfrac%7B%5Cmu_c%20%20-%20%5Cbar%20y_c%7D%7Bs_c/%5Csqrt%7Bn_c%7D%7D%20%7C%20y%20%5Csim%20t_%7Bn_c-1%7D%0A"></p>
-<p>For the control group, we have <img src="https://latex.codecogs.com/png.latex?n_c%20=%2032">, <img src="https://latex.codecogs.com/png.latex?%5Cbar%20y_c%20=%201.013"> and <img src="https://latex.codecogs.com/png.latex?s_c%20=%200.24"></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1">mu_c <span class="ot" style="color: #003B4F;">&lt;-</span> <span class="fu" style="color: #4758AB;">rtnew</span>(<span class="dv" style="color: #AD0000;">10000</span>, <span class="at" style="color: #657422;">df =</span> <span class="dv" style="color: #AD0000;">31</span>, <span class="at" style="color: #657422;">mean =</span> <span class="fl" style="color: #AD0000;">1.013</span>, <span class="at" style="color: #657422;">scale =</span> <span class="fl" style="color: #AD0000;">0.24</span><span class="sc" style="color: #5E5E5E;">/</span><span class="fu" style="color: #4758AB;">sqrt</span>(<span class="dv" style="color: #AD0000;">32</span>) )</span>
-<span id="cb10-2"></span>
-<span id="cb10-3"><span class="fu" style="color: #4758AB;">data.frame</span>(<span class="at" style="color: #657422;">mu_control =</span> mu_c) <span class="sc" style="color: #5E5E5E;">%&gt;%</span> </span>
-<span id="cb10-4">  <span class="fu" style="color: #4758AB;">ggplot</span>(<span class="fu" style="color: #4758AB;">aes</span>(mu_control)) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb10-5">  <span class="fu" style="color: #4758AB;">geom_histogram</span>(<span class="at" style="color: #657422;">binwidth =</span> <span class="fl" style="color: #AD0000;">0.01</span>, <span class="at" style="color: #657422;">color =</span> <span class="st" style="color: #20794D;">"black"</span>, <span class="at" style="color: #657422;">fill =</span> <span class="st" style="color: #20794D;">"dodgerblue4"</span>, <span class="at" style="color: #657422;">alpha =</span> <span class="fl" style="color: #AD0000;">0.7</span>) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb10-6">  <span class="fu" style="color: #4758AB;">labs</span>(<span class="at" style="color: #657422;">title =</span> <span class="fu" style="color: #4758AB;">TeX</span>(<span class="st" style="color: #20794D;">"Posterior distribution for $</span><span class="sc" style="color: #5E5E5E;">\\</span><span class="st" style="color: #20794D;">mu_c$"</span>))</span></code></pre></div>
-<div class="cell-output-display">
-<p><img src="https://david-salazar.github.io/posts/bayesian-statistics/2020-06-25-bayesian-data-analysis-week-3-exercises_files/figure-html/muc-1.png" class="img-fluid" width="768"></p>
-</div>
-</div>
-</section>
-<section id="treatment-group" class="level3">
-<h3 class="anchored" data-anchor-id="treatment-group">Treatment Group</h3>
-<p>The same likelihood and prior are valid for the treatment measurements. Therefore, the marginal posterior for <img src="https://latex.codecogs.com/png.latex?%5Cmu_t">:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cdfrac%7B%5Cmu_t%20%20-%20%5Cbar%20y_t%7D%7Bs_t/%5Csqrt%7Bn_t%7D%7D%20%7C%20y%20%5Csim%20t_%7Bn_t-1%7D%0A"></p>
-<p>For the treatment group, we have <img src="https://latex.codecogs.com/png.latex?n_t%20=%2036">, <img src="https://latex.codecogs.com/png.latex?%5Cmu_t%20=%201.173">, <img src="https://latex.codecogs.com/png.latex?s_t%20=%200.2">:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1">mu_t <span class="ot" style="color: #003B4F;">&lt;-</span> <span class="fu" style="color: #4758AB;">rtnew</span>(<span class="dv" style="color: #AD0000;">10000</span>, <span class="at" style="color: #657422;">df =</span> <span class="dv" style="color: #AD0000;">35</span>, <span class="at" style="color: #657422;">mean =</span> <span class="fl" style="color: #AD0000;">1.173</span>, <span class="at" style="color: #657422;">scale =</span> <span class="fl" style="color: #AD0000;">0.2</span><span class="sc" style="color: #5E5E5E;">/</span><span class="fu" style="color: #4758AB;">sqrt</span>(<span class="dv" style="color: #AD0000;">36</span>) )</span>
-<span id="cb11-2"></span>
-<span id="cb11-3"><span class="fu" style="color: #4758AB;">data.frame</span>(<span class="at" style="color: #657422;">mu_treatment =</span> mu_t) <span class="sc" style="color: #5E5E5E;">%&gt;%</span> </span>
-<span id="cb11-4">  <span class="fu" style="color: #4758AB;">ggplot</span>(<span class="fu" style="color: #4758AB;">aes</span>(mu_treatment)) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb11-5">  <span class="fu" style="color: #4758AB;">geom_histogram</span>(<span class="at" style="color: #657422;">binwidth =</span> <span class="fl" style="color: #AD0000;">0.01</span>, <span class="at" style="color: #657422;">color =</span> <span class="st" style="color: #20794D;">"black"</span>, <span class="at" style="color: #657422;">fill =</span> <span class="st" style="color: #20794D;">"dodgerblue4"</span>, <span class="at" style="color: #657422;">alpha =</span> <span class="fl" style="color: #AD0000;">0.7</span>) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb11-6">  <span class="fu" style="color: #4758AB;">labs</span>(<span class="at" style="color: #657422;">title =</span> <span class="fu" style="color: #4758AB;">TeX</span>(<span class="st" style="color: #20794D;">"Posterior distribution for $</span><span class="sc" style="color: #5E5E5E;">\\</span><span class="st" style="color: #20794D;">mu_t$"</span>))</span></code></pre></div>
-<div class="cell-output-display">
-<p><img src="https://david-salazar.github.io/posts/bayesian-statistics/2020-06-25-bayesian-data-analysis-week-3-exercises_files/figure-html/mut-1.png" class="img-fluid" width="768"></p>
-</div>
-</div>
-</section>
-<section id="posterior-difference-between-mu_c-and-mu_t" class="level3">
-<h3 class="anchored" data-anchor-id="posterior-difference-between-mu_c-and-mu_t">Posterior difference between mu_c and mu_t</h3>
-<p>To get the posterior distribution of the difference, we compare the samples from the marginal posterior of <img src="https://latex.codecogs.com/png.latex?%5Cmu_c,%20%5Cmu_t">. Therefore, the 95% posterior credibility interval on the different is thus</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1">different_mu <span class="ot" style="color: #003B4F;">&lt;-</span> mu_t <span class="sc" style="color: #5E5E5E;">-</span> mu_c</span>
-<span id="cb12-2">interval <span class="ot" style="color: #003B4F;">&lt;-</span> rethinking<span class="sc" style="color: #5E5E5E;">::</span><span class="fu" style="color: #4758AB;">PI</span>(different_mu, <span class="at" style="color: #657422;">prob =</span> <span class="fl" style="color: #AD0000;">0.95</span>)</span>
-<span id="cb12-3">lower <span class="ot" style="color: #003B4F;">&lt;-</span> interval[[<span class="dv" style="color: #AD0000;">1</span>]]</span>
-<span id="cb12-4">upper <span class="ot" style="color: #003B4F;">&lt;-</span> interval[[<span class="dv" style="color: #AD0000;">2</span>]]</span>
-<span id="cb12-5">glue<span class="sc" style="color: #5E5E5E;">::</span><span class="fu" style="color: #4758AB;">glue</span>(<span class="st" style="color: #20794D;">"The 95% posterior credibility interval for the difference is {round(lower, 2)}, {round(upper, 2)}"</span>)</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>The 95% posterior credibility interval for the difference is 0.05, 0.27</code></pre>
-</div>
-</div>
-<p>And the full posterior of the difference is thus:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><span class="fu" style="color: #4758AB;">data.frame</span>(different_mu) <span class="sc" style="color: #5E5E5E;">%&gt;%</span> </span>
-<span id="cb14-2">  <span class="fu" style="color: #4758AB;">ggplot</span>(<span class="fu" style="color: #4758AB;">aes</span>(different_mu)) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb14-3">  <span class="fu" style="color: #4758AB;">geom_histogram</span>(<span class="at" style="color: #657422;">binwidth =</span> <span class="fl" style="color: #AD0000;">0.01</span>, <span class="at" style="color: #657422;">color =</span> <span class="st" style="color: #20794D;">"black"</span>, <span class="at" style="color: #657422;">fill =</span> <span class="st" style="color: #20794D;">"dodgerblue4"</span>, <span class="at" style="color: #657422;">alpha =</span> <span class="fl" style="color: #AD0000;">0.7</span>) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb14-4">  <span class="fu" style="color: #4758AB;">labs</span>(<span class="at" style="color: #657422;">title =</span> <span class="fu" style="color: #4758AB;">TeX</span>(<span class="st" style="color: #20794D;">"Posterior distribution for $</span><span class="sc" style="color: #5E5E5E;">\\</span><span class="st" style="color: #20794D;">mu_t - </span><span class="sc" style="color: #5E5E5E;">\\</span><span class="st" style="color: #20794D;">mu_c$"</span>))</span></code></pre></div>
-<div class="cell-output-display">
-<p><img src="https://david-salazar.github.io/posts/bayesian-statistics/2020-06-25-bayesian-data-analysis-week-3-exercises_files/figure-html/differentmu-1.png" class="img-fluid" width="768"></p>
-</div>
-</div>
-
-
-</section>
-</section>
-
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section></div> ]]></description>
-  <guid>https://david-salazar.github.io/posts/bayesian-statistics/2020-06-25-bayesian-data-analysis-week-3-exercises.html</guid>
-  <pubDate>Thu, 25 Jun 2020 05:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Bayesian Data Analysis: Week 3 -&gt; Fitting a Gaussian probability model</title>
-  <dc:creator>David Salazar</dc:creator>
-  <link>https://david-salazar.github.io/posts/bayesian-statistics/2020-06-24-bayesian-data-analysis-week-3-fitting-a-gaussian-probability-model.html</link>
-  <description><![CDATA[ 
-
-
-
-
-<p>Bayesian Data Analysis (Gelman, Vehtari et. alter) is equals part a great introduction and THE reference for advanced Bayesian Statistics. Luckily, it’s <a href="http://www.stat.columbia.edu/~gelman/book/">freely available online</a>. To make things even better for the online learner, Aki Vehtari (one of the authors) has a set of online lectures and homeworks that go through the basics of Bayesian Data Analysis.</p>
-<p>Instead of going through the homeworks (due to the fear of ruining the fun for future students of Aki’s), I’ll go through some of the examples of the book as case studies. In this blogpost, I’ll (wrongly) estimate the speed of light from the measurements of Simon Newcomb’s 1882 experiments.</p>
-<section id="the-gaussian-probability-model" class="level2">
-<h2 class="anchored" data-anchor-id="the-gaussian-probability-model">The Gaussian Probability model</h2>
-<p>When fitting a Gaussian probability model, there are to parameters to estimate: <img src="https://latex.codecogs.com/png.latex?%5Cmu,%20%5Csigma">. Therefore, we arrive at a joint posterior distribution:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0Ay%20%7C%20%5Cmu,%20%5Csigma%5E2%20%5Csim%20N(%5Cmu,%20%5Csigma%5E2)%20%5C%5C%0Ap(%5Cmu,%20%5Csigma%20%7C%20y)%20%5Cpropto%20p%20(y%20%7C%20%5Cmu,%20%5Csigma)%20p(%5Cmu,%20%5Csigma)%0A"> In this case, <img src="https://latex.codecogs.com/png.latex?%5Csigma"> is a nuisance parameter: we are only really interested in knowing <img src="https://latex.codecogs.com/png.latex?%5Cmu">. The following we assume the non-informative prior:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0Ap(%5Cmu,%20%5Csigma%5E2)%20%5Cpropto%20(%5Csigma%5E2)%5E%7B-1%7D%0A"></p>
-<section id="posterior-marginal-of-sigma" class="level3">
-<h3 class="anchored" data-anchor-id="posterior-marginal-of-sigma">Posterior marginal of sigma</h3>
-<p>We can show that the marginal posterior distribution for <img src="https://latex.codecogs.com/png.latex?%5Csigma"> is:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Csigma%5E2%20%7C%20y%20%5Csim%20Inv%20-%5Cchi%5E2%20(n%20-%201,%20s%5E2)%0A"> Where <img src="https://latex.codecogs.com/png.latex?s%5E2"> is the sample variance of the <img src="https://latex.codecogs.com/png.latex?y_i">’s.</p>
-</section>
-<section id="marginal-conditional-posterior-for-mu" class="level3">
-<h3 class="anchored" data-anchor-id="marginal-conditional-posterior-for-mu">Marginal Conditional posterior for mu</h3>
-<p>Then:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmu%20%7C%20%5Csigma%5E2,%20y%20%5Csim%20N(%5Cbar%20y,%20%5Csigma%5E2%20/%20n)%0A"> &gt; The posterior distribution of <img src="https://latex.codecogs.com/png.latex?%5Cmu"> can be regarded as a mixture of normal distributions, mixed over the scaled inverse <img src="https://latex.codecogs.com/png.latex?%5Cchi%5E2"> distribution for the variance, <img src="https://latex.codecogs.com/png.latex?%5Csigma%5E2">.</p>
-</section>
-<section id="marginal-posterior-for-mu" class="level3">
-<h3 class="anchored" data-anchor-id="marginal-posterior-for-mu">Marginal posterior for mu</h3>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cdfrac%7B%5Cmu%20%20-%20%5Cbar%20y%7D%7Bs/%5Csqrt%7Bn%7D%7D%20%7C%20y%20%5Csim%20t_%7Bn-1%7D%0A"></p>
-<p>Which has a nice correspondence with the distribution used for the mean estimator in frequentist statistics in the case of small samples.<br>
-## Fitting it with data</p>
-<p>Then, let’s read the measurements from Newcomb’s experiment:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;">read_delim</span>(<span class="st" style="color: #20794D;">"http://www.stat.columbia.edu/~gelman/book/data/light.asc"</span>, </span>
-<span id="cb1-2">                     <span class="at" style="color: #657422;">delim =</span> <span class="st" style="color: #20794D;">" "</span>, <span class="at" style="color: #657422;">skip =</span> <span class="dv" style="color: #AD0000;">3</span>,<span class="at" style="color: #657422;">col_names =</span> F) <span class="sc" style="color: #5E5E5E;">%&gt;%</span> </span>
-<span id="cb1-3">  <span class="fu" style="color: #4758AB;">pivot_longer</span>(<span class="fu" style="color: #4758AB;">everything</span>()) <span class="sc" style="color: #5E5E5E;">%&gt;%</span> </span>
-<span id="cb1-4">  <span class="fu" style="color: #4758AB;">select</span>(value) <span class="sc" style="color: #5E5E5E;">%&gt;%</span> </span>
-<span id="cb1-5">  <span class="fu" style="color: #4758AB;">drop_na</span>()<span class="ot" style="color: #003B4F;">-&gt;</span> measurements</span>
-<span id="cb1-6"></span>
-<span id="cb1-7">measurements <span class="sc" style="color: #5E5E5E;">%&gt;%</span> </span>
-<span id="cb1-8">  <span class="fu" style="color: #4758AB;">ggplot</span>(<span class="fu" style="color: #4758AB;">aes</span>(value)) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb1-9">  <span class="fu" style="color: #4758AB;">geom_histogram</span>(<span class="at" style="color: #657422;">binwidth =</span> <span class="dv" style="color: #AD0000;">1</span>, <span class="at" style="color: #657422;">color =</span> <span class="st" style="color: #20794D;">"black"</span>, <span class="at" style="color: #657422;">fill =</span> <span class="st" style="color: #20794D;">"dodgerblue4"</span>, <span class="at" style="color: #657422;">alpha =</span> <span class="fl" style="color: #AD0000;">0.5</span>) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb1-10">  <span class="fu" style="color: #4758AB;">labs</span>(<span class="at" style="color: #657422;">title =</span> <span class="st" style="color: #20794D;">"Newcomb's measurements for the speed of light"</span>,</span>
-<span id="cb1-11">       <span class="at" style="color: #657422;">subtitle =</span> <span class="st" style="color: #20794D;">"There are clearly problems with the data"</span>,</span>
-<span id="cb1-12">       <span class="at" style="color: #657422;">x =</span> <span class="st" style="color: #20794D;">"measurement"</span>)</span></code></pre></div>
-<div class="cell-output-display">
-<p><img src="https://david-salazar.github.io/posts/bayesian-statistics/2020-06-24-bayesian-data-analysis-week-3-fitting-a-gaussian-probability-model_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<p>There are clearly some problems with the data. Garbage in, garbage out.</p>
-</section>
-<section id="marginal-for-sigma" class="level3">
-<h3 class="anchored" data-anchor-id="marginal-for-sigma">Marginal for sigma</h3>
-<p>We therefore can derive the marginal distribution for <img src="https://latex.codecogs.com/png.latex?%5Csigma">:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">measurements<span class="sc" style="color: #5E5E5E;">%&gt;%</span> </span>
-<span id="cb2-2">  skimr<span class="sc" style="color: #5E5E5E;">::</span><span class="fu" style="color: #4758AB;">skim</span>()</span></code></pre></div>
-<div class="cell-output-display">
-<table class="table table-sm table-striped">
-<caption>Data summary</caption>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Name</td>
-<td style="text-align: left;">Piped data</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Number of rows</td>
-<td style="text-align: left;">66</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Number of columns</td>
-<td style="text-align: left;">1</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">_______________________</td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Column type frequency:</td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">numeric</td>
-<td style="text-align: left;">1</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">________________________</td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Group variables</td>
-<td style="text-align: left;">None</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Variable type: numeric</strong></p>
-<table class="table table-sm table-striped">
-<colgroup>
-<col style="width: 17%">
-<col style="width: 12%">
-<col style="width: 17%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 5%">
-<col style="width: 5%">
-<col style="width: 5%">
-<col style="width: 7%">
-<col style="width: 6%">
-<col style="width: 7%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">skim_variable</th>
-<th style="text-align: right;">n_missing</th>
-<th style="text-align: right;">complete_rate</th>
-<th style="text-align: right;">mean</th>
-<th style="text-align: right;">sd</th>
-<th style="text-align: right;">p0</th>
-<th style="text-align: right;">p25</th>
-<th style="text-align: right;">p50</th>
-<th style="text-align: right;">p75</th>
-<th style="text-align: right;">p100</th>
-<th style="text-align: left;">hist</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">value</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">26.21</td>
-<td style="text-align: right;">10.75</td>
-<td style="text-align: right;">-44</td>
-<td style="text-align: right;">24</td>
-<td style="text-align: right;">27</td>
-<td style="text-align: right;">30.75</td>
-<td style="text-align: right;">40</td>
-<td style="text-align: left;">▁▁▁▂▇</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>Thus:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Csigma%5E2%20%7C%20y%20%5Csim%20Inv%20-%5Cchi%5E2%20(65,%2010.7%5E2)%0A"></p>
-<p>Whereas for mu we have :</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cdfrac%7B%5Cmu%20%20-%2026.2%7D%7B10.7/%5Csqrt%7B66%7D%7D%20%7C%20y%20%5Csim%20t_%7Bn-1%7D%0A"> In code:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">rsinvchisq <span class="ot" style="color: #003B4F;">&lt;-</span> <span class="cf" style="color: #003B4F;">function</span>(n, nu, s2, ...) nu<span class="sc" style="color: #5E5E5E;">*</span>s2 <span class="sc" style="color: #5E5E5E;">/</span> <span class="fu" style="color: #4758AB;">rchisq</span>(n , nu, ...)</span>
-<span id="cb3-2"></span>
-<span id="cb3-3">sigma_draw <span class="ot" style="color: #003B4F;">=</span> <span class="fu" style="color: #4758AB;">rinvchisq</span>(<span class="dv" style="color: #AD0000;">1000</span>, <span class="dv" style="color: #AD0000;">65</span>, <span class="fl" style="color: #AD0000;">10.7</span><span class="sc" style="color: #5E5E5E;">^</span><span class="dv" style="color: #AD0000;">2</span>)</span>
-<span id="cb3-4">mu_draw <span class="ot" style="color: #003B4F;">=</span> <span class="fu" style="color: #4758AB;">rtnew</span>(<span class="dv" style="color: #AD0000;">10000</span>, <span class="at" style="color: #657422;">df =</span> <span class="dv" style="color: #AD0000;">65</span>, <span class="at" style="color: #657422;">mean =</span> <span class="fl" style="color: #AD0000;">26.2</span>, <span class="at" style="color: #657422;">scale =</span> <span class="fl" style="color: #AD0000;">10.7</span><span class="sc" style="color: #5E5E5E;">/</span><span class="fu" style="color: #4758AB;">sqrt</span>(<span class="dv" style="color: #AD0000;">66</span>) )</span></code></pre></div>
-</div>
-<p>The 95% credible interval for our <img src="https://latex.codecogs.com/png.latex?%5Cmu"> is thus:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">interval <span class="ot" style="color: #003B4F;">&lt;-</span> rethinking<span class="sc" style="color: #5E5E5E;">::</span><span class="fu" style="color: #4758AB;">PI</span>(mu_draw, <span class="at" style="color: #657422;">prob =</span> <span class="fl" style="color: #AD0000;">0.95</span>)</span>
-<span id="cb4-2">lower <span class="ot" style="color: #003B4F;">&lt;-</span> interval[[<span class="dv" style="color: #AD0000;">1</span>]]</span>
-<span id="cb4-3">upper <span class="ot" style="color: #003B4F;">&lt;-</span> interval[[<span class="dv" style="color: #AD0000;">2</span>]]</span>
-<span id="cb4-4">glue<span class="sc" style="color: #5E5E5E;">::</span><span class="fu" style="color: #4758AB;">glue</span>(<span class="st" style="color: #20794D;">"The 95% credible interval is thus: {round(lower, 1)}, {round(upper, 1)}"</span>)</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>The 95% credible interval is thus: 23.6, 28.8</code></pre>
-</div>
-</div>
-<p>A visualization may help:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="fu" style="color: #4758AB;">data.frame</span>(mu_draw) <span class="sc" style="color: #5E5E5E;">%&gt;%</span> </span>
-<span id="cb6-2">  <span class="fu" style="color: #4758AB;">ggplot</span>(<span class="fu" style="color: #4758AB;">aes</span>(mu_draw)) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb6-3">  <span class="fu" style="color: #4758AB;">geom_histogram</span>(<span class="at" style="color: #657422;">binwidth =</span> <span class="fl" style="color: #AD0000;">0.1</span>, <span class="at" style="color: #657422;">color =</span> <span class="st" style="color: #20794D;">"black"</span>, <span class="at" style="color: #657422;">fill =</span> <span class="st" style="color: #20794D;">"dodgerblue4"</span>, <span class="at" style="color: #657422;">alpha =</span> <span class="fl" style="color: #AD0000;">0.5</span>) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb6-4">  <span class="fu" style="color: #4758AB;">geom_vline</span>(<span class="fu" style="color: #4758AB;">aes</span>(<span class="at" style="color: #657422;">xintercept =</span> lower), <span class="at" style="color: #657422;">color =</span> <span class="st" style="color: #20794D;">"red"</span>, <span class="at" style="color: #657422;">linetype =</span> <span class="dv" style="color: #AD0000;">2</span>) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb6-5">  <span class="fu" style="color: #4758AB;">geom_vline</span>(<span class="fu" style="color: #4758AB;">aes</span>(<span class="at" style="color: #657422;">xintercept =</span> upper), <span class="at" style="color: #657422;">color =</span> <span class="st" style="color: #20794D;">"red"</span>, <span class="at" style="color: #657422;">linetype =</span> <span class="dv" style="color: #AD0000;">2</span>) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb6-6">  <span class="fu" style="color: #4758AB;">geom_vline</span>(<span class="fu" style="color: #4758AB;">aes</span>(<span class="at" style="color: #657422;">xintercept =</span> <span class="dv" style="color: #AD0000;">33</span>), <span class="at" style="color: #657422;">color =</span> <span class="st" style="color: #20794D;">"black"</span>, <span class="at" style="color: #657422;">linetype =</span> <span class="dv" style="color: #AD0000;">1</span>) <span class="sc" style="color: #5E5E5E;">+</span></span>
-<span id="cb6-7">  <span class="fu" style="color: #4758AB;">labs</span>(<span class="at" style="color: #657422;">title =</span> <span class="st" style="color: #20794D;">"Speed of light: Posterior draws for mu"</span>,</span>
-<span id="cb6-8">       <span class="at" style="color: #657422;">subtitle =</span> <span class="st" style="color: #20794D;">"Contemporary estimates for the speed of light in the experiment is 33. Garbage in, garbage..."</span>)</span></code></pre></div>
-<div class="cell-output-display">
-<p><img src="https://david-salazar.github.io/posts/bayesian-statistics/2020-06-24-bayesian-data-analysis-week-3-fitting-a-gaussian-probability-model_files/figure-html/mu-1.png" class="img-fluid" width="768"></p>
-</div>
-</div>
-
-
-</section>
-</section>
-
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section></div> ]]></description>
-  <guid>https://david-salazar.github.io/posts/bayesian-statistics/2020-06-24-bayesian-data-analysis-week-3-fitting-a-gaussian-probability-model.html</guid>
-  <pubDate>Wed, 24 Jun 2020 05:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>
