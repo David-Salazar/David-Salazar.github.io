@@ -1,5 +1,6 @@
 ---
 title: "Introduction to Survival Analysis"
+date: '2022-11-17'
 editor: visual
 ---
 
@@ -31,56 +32,53 @@ To deal with these undefined states, Survival models have the concept of **censo
 
 # Cox Proportional Hazard and Survival Math
 
-Let's put what we just said to good use. We have records of events, but we want to differentiate the events depending on how long it took them to happen and we want to differentiate between censored and uncensored events. 
+Let's put what we just said to good use. We have records of events, but we want to differentiate the events depending on how long it took them to happen and we want to differentiate between censored and uncensored events.
 
-Before we introduce the Cox Proportional Hazards model, let's introduce some useful math notation. 
+Before we introduce the Cox Proportional Hazards model, let's introduce some useful math notation.
 
 ## Survival math
 
-We are interested in the probability that event will happen as a function of time. There are three equivalent mathematical representations to model this time-to-event modeling: 
+We are interested in the probability that event will happen as a function of time. There are three equivalent mathematical representations to model this time-to-event modeling:
 
-- The **Survival Function**: *the probability that an event of interest will not occur up to a given time*. Mathematically, we can define it thus:  $S(t) = 1 - F(t)$, where $F(t)$ is the lifetime distribution function for the time to the event of interest, and $f(t)$ being the **event density**.  Thus, we can expand both mathematical representations thus  $S(t) = \Pr(T > t) = \int_t^{\infty} f(u)\,du = 1-F(t)$ and $s(t) = S'(t) = \frac{d}{dt} S(t) = \frac{d}{dt} \int_t^{\infty} f(u)\,du = \frac{d}{dt} [1-F(t)] = -f(t)$.
+-   The **Survival Function**: *the probability that an event of interest will not occur up to a given time*. Mathematically, we can define it thus: $S(t) = 1 - F(t)$, where $F(t)$ is the lifetime distribution function for the time to the event of interest, and $f(t)$ being the **event density**. Thus, we can expand both mathematical representations thus $S(t) = \Pr(T > t) = \int_t^{\infty} f(u)\,du = 1-F(t)$ and $s(t) = S'(t) = \frac{d}{dt} S(t) = \frac{d}{dt} \int_t^{\infty} f(u)\,du = \frac{d}{dt} [1-F(t)] = -f(t)$.
 
-- The **Hazard Rate**: the instantaneous probability of an event of interest occurring at a given time, given that the event has not occurred up to that time. Mathematically: $\lambda (t) = \lim_{dt \rightarrow 0} \frac{\Pr(t \leq T < t+dt)}{dt\cdot S(t)} = \frac{f(t)}{S(t)} = - \frac{S'(t)}{S(t)}$
+-   The **Hazard Rate**: the instantaneous probability of an event of interest occurring at a given time, given that the event has not occurred up to that time. Mathematically: $\lambda (t) = \lim_{dt \rightarrow 0} \frac{\Pr(t \leq T < t+dt)}{dt\cdot S(t)} = \frac{f(t)}{S(t)} = - \frac{S'(t)}{S(t)}$
 
-- The **Cumulative Hazard Rate**: $\Lambda(t) = \int_0^{t} \lambda(u)\,du = -\log S(t)$
+-   The **Cumulative Hazard Rate**: $\Lambda(t) = \int_0^{t} \lambda(u)\,du = -\log S(t)$
 
-Sometimes, a given representation will be more useful than others. Crucially, they are all related thus: 
+Sometimes, a given representation will be more useful than others. Crucially, they are all related thus:
 
 $$
 S(t) = \exp [ -\Lambda(t) ] = \frac{f(t)}{\lambda(t)} = 1-F(t), \quad t > 0
-$$
-We see that with survival math, unlike regular binary classification algorithms, **time to event** is a first class citizen. Let's see a particular instance of such model: the Cox Proportional Hazards model. 
+$$ We see that with survival math, unlike regular binary classification algorithms, **time to event** is a first class citizen. Let's see a particular instance of such model: the Cox Proportional Hazards model.
 
 ## The Cox Proportional Hazards Model
 
-Now that we've gotten some notation out of the way, let's lay out the intuition and the math for the Cox Proportional Hazards Model. 
+Now that we've gotten some notation out of the way, let's lay out the intuition and the math for the Cox Proportional Hazards Model.
 
-To start with, we will model the hazard rate directly **by separating the functional form into two parts**: *a baseline rate function that will vary exclusively with time* $h_0(t)$, and a *risk function that will NOT vary with time but with whatever predictor variables we have* $r(X; \beta)$: 
-
+To start with, we will model the hazard rate directly **by separating the functional form into two parts**: *a baseline rate function that will vary exclusively with time* $h_0(t)$, and a *risk function that will NOT vary with time but with whatever predictor variables we have* $r(X; \beta)$:
 
 $$
 h(t) =  \underbrace{h_0(t)}_{\text{Depends on time}} \cdot \underbrace{r(X; \beta)}_{\text{Does not depend on time}}
 $$
 
-Given that we want our risk function to always be positive, it's useful instead to define the hazard rate in terms of the exponential of the risk function ($r(X; \beta)$ is in the log hazard scale units, whereas $\exp{(r(X; \beta)})$ is in the hazard scale units.): 
-
+Given that we want our risk function to always be positive, it's useful instead to define the hazard rate in terms of the exponential of the risk function ($r(X; \beta)$ is in the log hazard scale units, whereas $\exp{(r(X; \beta)})$ is in the hazard scale units.):
 
 $$
 h(t) =  \underbrace{h_0(t)}_{\text{Depends on time}} \cdot \underbrace{\exp{(r(X; \beta)})}_{\text{Does not depend on time}}
 $$
 
- And that's it. That's the *famous* functional form for the Cox Proportional Hazards. Before we learn how to actually learn the parameters and the baseline rate function, let's dive into why it's called proportional. 
+And that's it. That's the *famous* functional form for the Cox Proportional Hazards. Before we learn how to actually learn the parameters and the baseline rate function, let's dive into why it's called proportional.
 
 ### Why the Proportional in the name? Constant hazard Ratios
 
-The above functional form for the hazard rate means that the *ratio in the hazard rate* between two individuals with different covariate values will always be *the same multiplicative constant*, regardless of the values of the covariates. That is, the **respective hazard ratios across time will always be a constant** and the hazard curves  cannot cross. 
+The above functional form for the hazard rate means that the *ratio in the hazard rate* between two individuals with different covariate values will always be *the same multiplicative constant*, regardless of the values of the covariates. That is, the **respective hazard ratios across time will always be a constant** and the hazard curves cannot cross.
 
 > This implies that the hazard of an event in any group is a constant multiple of the hazard in any other group
 
-Therefore, whenever we want to understand the predictions a Cox Proportional Hazard model makes we refer to this relative, constant hazard ratio that we will see when comparing differnt observation groups. 
+Therefore, whenever we want to understand the predictions a Cox Proportional Hazard model makes we refer to this relative, constant hazard ratio that we will see when comparing differnt observation groups.
 
-Mathematically, we can see it thus: 
+Mathematically, we can see it thus:
 
 suppose that we have two individuals with covariates $x_1$ and $x_2$, and regression coefficients $\beta_1$ and $\beta_2$. The hazard rate for the first individual is given by:
 
@@ -96,58 +94,57 @@ $$
 \frac{h_1(t)}{h_2(t)} = \frac{h_0(t) \cdot \exp(\beta_1 x_1 + \beta_2 x_2)}{h_0(t) \cdot \exp(\beta_1 x_1' + \beta_2 x_2')} = \frac{\cdot \exp(\beta_1 x_1 + \beta_2 x_2)}{\exp(\beta_1 x_1' + \beta_2 x_2')} = \frac{h_1}{h_2} = \psi
 $$
 
-This shows that the ratio in the hazard rates for these two individuals is always equal to a constant multiplicative factor, $\psi$,  which is determined by the differences in the covariate values and the regression coefficients, regardless of the survival time in question. This is true for any pair of individuals with different covariate values, so the ratio in the hazard rate between any two groups will always be the same multiplicative constant in the Cox Proportional Hazards model.
+This shows that the ratio in the hazard rates for these two individuals is always equal to a constant multiplicative factor, $\psi$, which is determined by the differences in the covariate values and the regression coefficients, regardless of the survival time in question. This is true for any pair of individuals with different covariate values, so the ratio in the hazard rate between any two groups will always be the same multiplicative constant in the Cox Proportional Hazards model.
 
 ## Constructing the Likelihood
 
-Given a model, we can construct the likelihood that will describe the probability of observing what actually happend in our sample. 
+Given a model, we can construct the likelihood that will describe the probability of observing what actually happend in our sample.
 
-> The key idea behind the construction will be that we can describe non-censored observations with the event density as we would regularly do, but that for Censored observations we will use the Survival function. 
+> The key idea behind the construction will be that we can describe non-censored observations with the event density as we would regularly do, but that for Censored observations we will use the Survival function.
 
-Why? For observations who **actually experienced the event** during the study, we know their defined state. We can thus describe *their end state with the event density*, $f(t)$. Whereas for **censored observation**, their state is undefined at the moment of the study; the only thing we can say is that *they have survived to their censored survival time*, and that the chance of that happening is described by $S(t)$. 
+Why? For observations who **actually experienced the event** during the study, we know their defined state. We can thus describe *their end state with the event density*, $f(t)$. Whereas for **censored observation**, their state is undefined at the moment of the study; the only thing we can say is that *they have survived to their censored survival time*, and that the chance of that happening is described by $S(t)$.
 
 Let's $c_i$ be an indicator variable indicating whether the observation is censored or not. For a single observation, we can describe the probability of observing it thus:
 
 $$
 [f(t, \beta, x)]^c \times[S(t, \beta, x)]^{1-c},
-$$
-Assuming independence, the joint probability of observing the entire sample $n$ is: 
+$$ Assuming independence, the joint probability of observing the entire sample $n$ is:
 
 $$
 \prod_{i=1}^n\left\{\left[f\left(t_i, \beta, x_i\right)\right]^{c_i} \times\left[S\left(t_i, \beta, x_i\right)\right]^{1-c_i}\right\}
 $$
 
-If we replace the definition of the event density using our previously defined equations in Survival Math: 
+If we replace the definition of the event density using our previously defined equations in Survival Math:
 
 $$
 \prod_{i=1}^n\left\{\left[\lambda(t_i, \beta, x_i) \cdot S\left(t_i, \beta, x_i\right)\right]]^{c_i} \times\left[S\left(t_i, \beta, x_i\right)\right]^{1-c_i}\right\}
-$$
-$$
+$$ $$
 \prod_{i=1}^n\left\{\left[\lambda(t_i, \beta, x_i) \right]^{c_i} \times\left[S\left(t_i, \beta, x_i\right)\right]\right\}
 $$
 
-This means that the contribution of a **non-censored observation to the loss function is the product of the hazard and survival functions** at the time of the event. Whereas  the contribution of a **censored observation to the loss function is only the survival function** at the time of censoring. 
+This means that the contribution of a **non-censored observation to the loss function is the product of the hazard and survival functions** at the time of the event. Whereas the contribution of a **censored observation to the loss function is only the survival function** at the time of censoring.
 
 Intuitively, this means that **censored observations have a smaller impact on the loss function than non-censored observations**. This is because *censored observations provide less information about the event of interest*, so they are less useful for estimating the hazard and survival functions. As a result, the Cox model gives less weight to censored observations when estimating the coefficients.
 
 ### Cox's Partial (Profile) Likelihood
 
-The above equation gives us a nice intuitive understanding of how the model works. However, the above requires to integrate over time to be able to derive the Survival Function and that would in turn require to specify a functional form for the Hazard Function for all possible event times, which is to ask a lot. We can *simplify* the problem if we instead assume that the baseline hazard is unknown. 
+The above equation gives us a nice intuitive understanding of how the model works. However, the above requires to integrate over time to be able to derive the Survival Function and that would in turn require to specify a functional form for the Hazard Function for all possible event times, which is to ask a lot. We can *simplify* the problem if we instead assume that the baseline hazard is unknown.
 
-How? **The gist is that the baseline rate, $h_0(t)$, is not of our interest**; it's a nuisance function. So we will consider it a fixed value and estimate the regression parameters first. To do so, we will separate the likelihood on that which depends on $h_0$ and that which doesn't. 
+How? **The gist is that the baseline rate,** $h_0(t)$, is not of our interest; it's a nuisance function. So we will consider it a fixed value and estimate the regression parameters first. To do so, we will separate the likelihood on that which depends on $h_0$ and that which doesn't.
 
+```{=tex}
 \begin{aligned}
 L\left(\beta, h_0(\cdot)\right) &= \underbrace{L_1(\beta)}_{\text{function of } \beta,  \text{  whose max converges to }  \beta} \\ 
 & \cdot \underbrace{L_2\left(\beta, h_0\right)}_{\text{contains little information about} \beta \text{only relevant for } h_0}
 \end{aligned}
+```
+The process of doing so is tedious and not worth the trouble. If you are curious, for example, one of the most famous formulations is the Efron approximation.
 
-The process of doing so is tedious and not worth the trouble. If you are curious, for example, one of the most famous formulations is the Efron approximation. 
-
-Nevertheless, *what's important* is that by **performing maximum likelihood on the partial likelihood $L_1(\beta)$ we can replicate the same regression parameters as if we were maximizing the full likelihood**. That is, the maximum we find with the partial likelihood, $\hat{\beta}$, converges to the original parameter, $\beta$. 
+Nevertheless, *what's important* is that by **performing maximum likelihood on the partial likelihood** $L_1(\beta)$ we can replicate the same regression parameters as if we were maximizing the full likelihood. That is, the maximum we find with the partial likelihood, $\hat{\beta}$, converges to the original parameter, $\beta$.
 
 # Fitting the model on simulated data
 
-We will fit our first Cox model on simulated data. Let's first load the required R packages: 
+We will fit our first Cox model on simulated data. Let's first load the required R packages:
 
 ```{r}
 library(tidyverse)
@@ -177,9 +174,9 @@ theme_pred <- function() {
 update_geom_defaults("text", list(family = "Roboto Condensed", lineheight = 1))
 ```
 
-Now let's use the awesome `coxed` package to simulate sensible survival data thus: 
+Now let's use the awesome `coxed` package to simulate sensible survival data thus:
 
-> A cohort with 2000 subjects, with a maximum follow-up time of 500 days. The true log hazard coefficients are 0, 0.4, and -0.4, respectively for X1, X2, X3. 
+> A cohort with 2000 subjects, with a maximum follow-up time of 500 days. The true log hazard coefficients are 0, 0.4, and -0.4, respectively for X1, X2, X3.
 
 ```{r}
 # Set the seed for reproducibility
@@ -192,16 +189,13 @@ data <- sim.data$data
 sim.data$betas
 ```
 
-
-Now that we have the data, it's useful to fit a non-parametric estimator called the Kaplan Meier estimator. 
+Now that we have the data, it's useful to fit a non-parametric estimator called the Kaplan Meier estimator.
 
 ## Kaplan Meier Estimator
 
->The Kaplan-Meier estimator estimates the survival probability of a population over time by calculating the proportion of individuals that have not experienced the event of interest at each time point.
+> The Kaplan-Meier estimator estimates the survival probability of a population over time by calculating the proportion of individuals that have not experienced the event of interest at each time point.
 
-
-The Kaplan Meier's (consistent, unbiased and efficient) estimate Survival Curve will be a quick check to understand how the survival probabilities change across time in our sample. 
-
+The Kaplan Meier's (consistent, unbiased and efficient) estimate Survival Curve will be a quick check to understand how the survival probabilities change across time in our sample.
 
 ```{r}
 # Fit a Kaplan-Meier estimator for each level of the covariate
@@ -217,7 +211,7 @@ ggsurvplot(fit, ggtheme = theme_pred(), color = clrs[[1]],
            )
 ```
 
-We can see that there's a huge non-linearity across time that the Kaplan Meier estimator correctly caputres! 
+We can see that there's a huge non-linearity across time that the Kaplan Meier estimator correctly caputres!
 
 ## Cox Proportional Hazard model
 
@@ -232,30 +226,29 @@ cox_fit <- coxph(Surv(y, failed) ~ X1 + X2 + X3, data = data)
 summary(cox_fit)
 ```
 
-Note that, by default, we don't have an intercept, as it would just be a constant shift to the baseline hazard, and not a "real" regression coefficient. 
+Note that, by default, we don't have an intercept, as it would just be a constant shift to the baseline hazard, and not a "real" regression coefficient.
 
 ### Interpreting the Results
 
-Given that we simulated the data to make sure that the assumptions are met, our estimates are right on the money! The table results above show the huge uncertainty in the `x1` parameter, and a non-statistically significant result. 
+Given that we simulated the data to make sure that the assumptions are met, our estimates are right on the money! The table results above show the huge uncertainty in the `x1` parameter, and a non-statistically significant result.
 
-If we remember, we specified the following betas for our simulation: 
+If we remember, we specified the following betas for our simulation:
 
 ```{r}
 sim.data$betas
 ```
 
-And here are the model coefficients that pretty nicely line-up with what we know is the truth! 
+And here are the model coefficients that pretty nicely line-up with what we know is the truth!
 
 ```{r}
 round(cox_fit$coefficients, 4)
 ```
 
-However, the above are coefficients in the log hazard scale, which is very difficult to interpret. 
+However, the above are coefficients in the log hazard scale, which is very difficult to interpret.
 
-> The results are shown in two scales: the log hazard scale, and the hazard scale, respectively. The Hazard scale can be interpreted as the hazard ratio for a 1-unit increase in the continuous variable, or the hazard ratio for the dummy variable relative to the control variable. 
+> The results are shown in two scales: the log hazard scale, and the hazard scale, respectively. The Hazard scale can be interpreted as the hazard ratio for a 1-unit increase in the continuous variable, or the hazard ratio for the dummy variable relative to the control variable.
 
-
-Let's plot the results in the Hazard Scale: 
+Let's plot the results in the Hazard Scale:
 
 ```{r}
 # Visualize the estimated coefficients
@@ -263,22 +256,19 @@ ggforest(cox_fit, data=data, main="Forest Plot for coefficients in Hazard Scale"
   theme_pred()
 ```
 
-Given that the results are in the hazard scale and we are assuming proportional hazards, we can interpret the coefficients as hazard ratios: e.g., a coefficient of 1 indicates no difference a hazard ratio of 1 for the change in question. 
+Given that the results are in the hazard scale and we are assuming proportional hazards, we can interpret the coefficients as hazard ratios: e.g., a coefficient of 1 indicates no difference a hazard ratio of 1 for the change in question.
 
-- For x1, just as expected, the 0 coefficient in the log hazard scale means that an unit increase in X1 is associated with no increase in the proportional hazard.
-- Whereas for X2, we find a hazard ratio of 1.53, meaning that an unit increase in X1 is associated with a 53% increase in the hazard, an increase that we assume in constant through time. 
+-   For x1, just as expected, the 0 coefficient in the log hazard scale means that an unit increase in X1 is associated with no increase in the proportional hazard.
+-   Whereas for X2, we find a hazard ratio of 1.53, meaning that an unit increase in X1 is associated with a 53% increase in the hazard, an increase that we assume in constant through time.
 
 # Conclusion
 
-We introduced Survival Analysis by comparing how it differs from regular binary classification and we introduce the basic mathematical engine that powers it. Also, we defined the most basic Survival model: Cox Proportional Hazards and derive its likelihood to understand how it deals with time and with censored observations. Finally, we simulated data and fitted our first Cox Proportional Hazard model. 
+We introduced Survival Analysis by comparing how it differs from regular binary classification and we introduce the basic mathematical engine that powers it. Also, we defined the most basic Survival model: Cox Proportional Hazards and derive its likelihood to understand how it deals with time and with censored observations. Finally, we simulated data and fitted our first Cox Proportional Hazard model.
 
-In a later blogpost, we will explore how to relax the proportional hazard assumption and introduce non-linear effects for our covariates across time. 
+In a later blogpost, we will explore how to relax the proportional hazard assumption and introduce non-linear effects for our covariates across time.
 
 # Bibliography
 
-- Cox, D.R. (1972). Regression Models and Life Tables. Journal of the Royal Statistical Society, Series B 34, 187-220.
+-   Cox, D.R. (1972). Regression Models and Life Tables. Journal of the Royal Statistical Society, Series B 34, 187-220.
 
-- https://web.stanford.edu/~lutian/coursepdf/unitcox1.pdf
-
-
-
+-   https://web.stanford.edu/\~lutian/coursepdf/unitcox1.pdf
